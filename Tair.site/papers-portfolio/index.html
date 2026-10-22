@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="color-scheme" content="dark">
+  <title>Таир — Портфолио инспектора | Papers, Please</title>
+  <meta name="description" content="Интерактивное портфолио Таира в ретро-эстетике Papers, Please. Справочник инспектора, рабочий допуск, личные дела и форма связи.">
+  <meta name="theme-color" content="#1d221c">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Таир — Портфолио инспектора">
+  <meta property="og:description" content="Справочник инспектора: паспорт, рабочий допуск, личные дела и связь.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+
+  <!-- CSS Design System -->
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/desk.css">
+  <link rel="stylesheet" href="css/book.css">
+  <link rel="stylesheet" href="css/documents.css">
+  <link rel="stylesheet" href="css/receipts.css">
+</head>
+<body>
+  <!-- START OVERLAY -->
+  <section id="start-screen" aria-label="Экран входа на пост">
+    <h1 class="start__title">ПОРТФОЛИО ИНСПЕКТОРА</h1>
+    <p class="start__sub">СПРАВОЧНИК МИНИСТЕРСТВА ВЪЕЗДА // КПП АРСТОТЦКА</p>
+    
+    <div class="progress" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Синтез аудио">
+      <div class="progress__block"></div>
+      <div class="progress__block"></div>
+      <div class="progress__block"></div>
+      <div class="progress__block"></div>
+      <div class="progress__block"></div>
+      <div class="progress__block"></div>
+      <div class="progress__block"></div>
+      <div class="progress__block"></div>
+      <div class="progress__block"></div>
+      <div class="progress__block"></div>
+    </div>
+
+    <div class="start__actions">
+      <button class="btn btn--primary" id="btn-start" disabled>НАЧАТЬ СМЕНУ</button>
+      <button class="btn btn--secondary" id="btn-mute" disabled>БЕЗ ЗВУКА</button>
+    </div>
+  </section>
+
+  <!-- INSPECTOR'S DESK -->
+  <div id="desk">
+    <!-- Mute sound toggle -->
+    <button class="mute" aria-label="Выключить звук" aria-pressed="false" hidden></button>
+
+    <!-- Retro 3×5 LED Digital Clock -->
+    <div class="clock" aria-label="Часы инспектора">
+      <div class="clock__display" role="timer" aria-label="Текущее время">
+        <div class="clock__digit" aria-hidden="true">
+          <div class="clock__dot is-off"></div><div class="clock__dot is-off"></div><div class="clock__dot is-off"></div>
+          <div class="clock__dot is-off"></div><div class="clock__dot is-off"></div><div class="clock__dot is-off"></div>
+          <div class="clock__dot is-off"></div><div class="clock__dot is-off"></div><div class="clock__dot is-off"></div>
+          <div class="clock__dot is-off"></div><div class="clock__dot is-off"></div><div class="clock__dot is-off"></div>
+          <div class="clock__dot is-off"></div><div class="clock__dot is-off"></div><div class="clock__dot is-off"></div>
+        </div>
+        <div class="clock__digit" aria-hidden="true">
+          <div class="clock__dot is-off"></div><div class="clock__dot is-off"></div><div class="clock__dot is-off"></div>
+          <div class="clock__dot is-off"></div><div class="clock__dot is-off"></div><div class="clock__dot is-off"></div>
+          <div class="clock__dot is-off"></div><div class="clock__dot is-off"></div><div class="clock__dot is-off"></div>
+          <div class="clock__dot is-off"></div><div class="clock__dot is-off"></div><div class="clock__dot is-off"></div>
+          <div class="clock__dot is-off"></div><div class="clock__dot is-off"></div><div class="clock__dot is-off"></div>
+        </div>
+        <div class="clock__colon" aria-hidden="true">
+          <div class="clock__colon-dot"></div>
+          <div class="clock__colon-dot"></div>
+        </div>
+        <div class="clock__digit" aria-hidden="true">
+          <div class="clock__dot is-off"></div><div class="clock__dot is-off"></div><div class="clock__dot is-off"></div>
+          <div class="clock__dot is-off"></div><div class="clock__dot is-off"></div><div class="clock__dot is-off"></div>
+          <div class="clock__dot is-off"></div><div class="clock__dot is-off"></div><div class="clock__dot is-off"></div>
+          <div class="clock__dot is-off"></div><div class="clock__dot is-off"></div><div class="clock__dot is-off"></div>
+          <div class="clock__dot is-off"></div><div class="clock__dot is-off"></div><div class="clock__dot is-off"></div>
+        </div>
+        <div class="clock__digit" aria-hidden="true">
+          <div class="clock__dot is-off"></div><div class="clock__dot is-off"></div><div class="clock__dot is-off"></div>
+          <div class="clock__dot is-off"></div><div class="clock__dot is-off"></div><div class="clock__dot is-off"></div>
+          <div class="clock__dot is-off"></div><div class="clock__dot is-off"></div><div class="clock__dot is-off"></div>
+          <div class="clock__dot is-off"></div><div class="clock__dot is-off"></div><div class="clock__dot is-off"></div>
+          <div class="clock__dot is-off"></div><div class="clock__dot is-off"></div><div class="clock__dot is-off"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Канцелярия и тайная записка -->
+    <div class="clip clip--a" aria-hidden="true"></div>
+    <button class="clip clip--b" type="button" aria-label="Открыть секретную записку EZIC">
+      <span class="secret-note__tag">НАЙДЕННАЯ ЗАПИСКА</span>
+      <strong class="secret-note__title">Прочитать</strong>
+      <span class="secret-note__hint">КОНТАКТ EZIC · НАЖМИТЕ</span>
+    </button>
+
+    <aside class="dispatch" aria-label="Газетный лист новостей смены">
+      <header class="dispatch__masthead">
+        <div>
+          <span class="dispatch__kicker">АРХИВ КОНТРОЛЬНОГО ПОСТА</span>
+          <h2 class="dispatch__heading">ВЕСТИ СМЕНЫ</h2>
+        </div>
+        <button class="dispatch__refresh" type="button" data-news-refresh aria-label="Обновить новости">↻</button>
+      </header>
+      <p class="dispatch__edition">Официальные новости · выпуск 01</p>
+      <section class="dispatch__lead" aria-label="Сводка по ситуации в Иркутске">
+        <span class="dispatch__category">ЗДОРОВЬЕ · ИРКУТСК</span>
+        <h3>Чуму не подтвердили</h3>
+        <p>ВОЗ: чуму не выявили. Причина пневмонии неизвестна; связанных случаев нет.</p>
+        <a href="https://www.who.int/india/home/emergencies/disease-outbreak-news/item/2026-DON620" target="_blank" rel="noopener noreferrer">Сводка ВОЗ ↗</a>
+        <time datetime="2026-10-10">10 октября 2026</time>
+      </section>
+      <section class="dispatch__story" aria-label="Сообщение о визите в Казахстан">
+        <span class="dispatch__category">КАЗАХСТАН · ДИПЛОМАТИЯ</span>
+        <a href="https://www.gov.kz/memleket/entities/mfa-baku/press/news/details/1089048" target="_blank" rel="noopener noreferrer">Анонс визита Алиева · 20–21.10 ↗</a>
+      </section>
+      <div class="dispatch__feed-head">
+        <span>ПОСЛЕДНИЕ СООБЩЕНИЯ</span>
+        <time data-news-updated>Загрузка…</time>
+      </div>
+      <ol class="dispatch__items" data-news-items aria-live="polite" aria-busy="true"></ol>
+      <p class="dispatch__status" data-news-status role="status">Подключаем архив новостей…</p>
+      <footer class="dispatch__footer">Автообновление · 15 минут</footer>
+    </aside>
+
+    <aside class="desk-file" aria-label="Краткая карточка кандидата">
+      <h2 class="desk-file__heading">КАРТОЧКА КАНДИДАТА</h2>
+      <div class="desk-file__body">
+        <div class="desk-file__photo" data-desk-photo></div>
+        <dl class="desk-file__fields">
+          <dt>ИМЯ</dt><dd data-dossier-name>ТАИР</dd>
+          <dt>ВОЗРАСТ</dt><dd data-dossier-age>18</dd>
+          <dt>ГОРОД</dt><dd data-dossier-city>ПАВЛОДАР</dd>
+          <dt>СПЕЦИАЛЬНОСТЬ</dt><dd data-dossier-major>ИНФОРМАЦИОННЫЕ СИСТЕМЫ</dd>
+        </dl>
+      </div>
+      <div class="desk-file__barcode" aria-hidden="true"></div>
+    </aside>
+
+    <!-- Сканер документов -->
+    <aside class="esp32" aria-label="Сканер документов на плате ESP32">
+      <div class="esp32__device" aria-hidden="true"></div>
+      <div class="esp32__copy">
+        <strong class="esp32__label">СКАНЕР ДОКУМЕНТОВ</strong>
+        <span class="esp32__status"><i aria-hidden="true"></i> ГОТОВ К СВЕРКЕ</span>
+        <small class="esp32__code">RFID · ESP32</small>
+      </div>
+    </aside>
+
+    <!-- Duplicate Button -->
+    <button class="dup-btn" id="btn-duplicate" aria-label="Печать копии документов">
+      КОПИРОВАТЬ<br>МАТЕРИАЛЫ
+    </button>
+
+    <!-- CENTRAL HANDBOOK (BOOK) -->
+    <main class="book" role="main">
+      <h1 class="sr-only">Портфолио Таира — справочник инспектора</h1>
+      <div class="page page--left" aria-hidden="true"></div>
+      <div class="page page--right"></div>
+      <div class="book__rings" aria-hidden="true"></div>
+      <nav class="book__tabs" aria-label="Разделы справочника"></nav>
+      <button class="book__ribbon" aria-label="Закладка: вернуться в оглавление"></button>
+      <div class="page-turn" aria-hidden="true"></div>
+    </main>
+
+    <!-- DOCUMENT DIALOGS -->
+
+    <!-- 1. PASSPORT DIALOG -->
+    <dialog id="doc-passport" class="doc" aria-labelledby="passport-title">
+      <button class="doc__close" aria-label="Закрыть паспорт">[X] ВЕРНУТЬ</button>
+      <article class="passport pxframe">
+        <header class="passport__header">
+          <h2 id="passport-title">ПАСПОРТ ГРАЖДАНИНА</h2>
+        <div class="passport__docno">АРСТОТЦКА · <span data-passport-number></span></div>
+        </header>
+        <div class="passport__body">
+          <div class="passport__photo"></div>
+          <div class="passport__fields"></div>
+        </div>
+        <div class="passport__barcode" aria-hidden="true"></div>
+        <div class="passport__stamps" aria-hidden="true"></div>
+      </article>
+    </dialog>
+
+    <!-- 2. WORK PASS DIALOG -->
+    <dialog id="doc-pass" class="doc doc--pass" aria-labelledby="pass-title">
+      <button class="doc__close" aria-label="Закрыть допуск">[X] ВЕРНУТЬ</button>
+      <article class="workpass pxframe">
+        <header class="workpass__header">
+          <h2 id="pass-title">РАБОЧИЙ ДОПУСК ИНСПЕКТОРА</h2>
+        </header>
+        <div class="workpass__grid"></div>
+        <footer class="workpass__footer">
+          <div class="workpass__stamp-label" data-workpass-label>
+            <span>ВЫДАНО: ОТДЕЛ АНАЛИТИКИ И СЕТЕЙ</span>
+          </div>
+          <div class="workpass__barcode" aria-hidden="true"></div>
+        </footer>
+      </article>
+    </dialog>
+
+    <!-- 3. CASES DIALOG -->
+    <dialog id="doc-cases" class="doc doc--cases" aria-labelledby="cases-title">
+      <button class="doc__close" aria-label="Закрыть дело">[X] ЗАКРЫТЬ</button>
+      <article class="cases pxframe">
+        <h2 id="cases-title" class="sr-only">Личные дела и проекты</h2>
+        <nav class="cases__tabs" role="tablist" aria-label="Список дел"></nav>
+        <div class="case-panel" role="tabpanel" aria-live="polite"></div>
+      </article>
+    </dialog>
+
+    <!-- 4. CONTACT FORM DIALOG -->
+    <dialog id="doc-contact" class="doc doc--form" aria-labelledby="contact-title">
+      <button class="doc__close" aria-label="Закрыть бланк">[X] ЗАКРЫТЬ</button>
+      <form class="request pxframe" novalidate>
+        <h2 id="contact-title" class="request__title">БЛАНК ЗАПРОСА В ОТДЕЛ СВЯЗИ</h2>
+        <p class="request__notice" data-contact-note>ПУБЛИЧНЫЙ КАНАЛ СВЯЗИ НЕ УКАЗАН. БЛАНК ПОДГОТОВИТ ЧЕРНОВИК ДЛЯ ОТПРАВКИ.</p>
+        
+        <label>ЦЕЛЬ ОБРАЩЕНИЯ:
+          <select name="purpose"></select>
+        </label>
+        
+        <label>ВАШЕ ИМЯ ИЛИ ОРГАНИЗАЦИЯ:
+          <input type="text" name="name" placeholder="Рекрутер / Компания" required maxlength="80" autocomplete="off">
+        </label>
+
+        <label>КОНТАКТ ДЛЯ СВЯЗИ (ПОЧТА / TG):
+          <input type="text" name="contact" placeholder="@пользователь или адрес почты" required maxlength="200" autocomplete="email">
+        </label>
+
+        <label>СУТЬ ПРЕДЛОЖЕНИЯ / ВОПРОС:
+          <textarea name="message" rows="3" minlength="10" maxlength="2000" placeholder="Опишите предложение о работе, проект или вопрос..." required></textarea>
+        </label>
+
+        <!-- Honeypot -->
+        <input type="text" name="hp" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+        <div class="request__status" role="status" aria-live="polite"></div>
+        <button type="submit" class="btn btn--primary">СКОПИРОВАТЬ ЧЕРНОВИК</button>
+        <div class="request__stamp" aria-hidden="true"></div>
+      </form>
+    </dialog>
+
+    <!-- RECEIPTS (CITATIONS) CONTAINER -->
+    <div id="receipts" popover="manual" aria-live="polite" role="region" aria-label="Уведомления поста"></div>
+
+    <!-- FLASH FOR SECRET EZIC EASTER EGG -->
+    <div id="flash" aria-hidden="true"></div>
+
+    <!-- SECRET TERMINAL OVERLAY -->
+    <button class="ezic-terminal" type="button" hidden aria-live="assertive" aria-label="Закрыть секретную записку"></button>
+
+    <!-- FOOTER -->
+  <footer class="site-footer">
+    <span data-footer-copy>Фанатское портфолио по мотивам Papers, Please. Не связано с создателями игры.</span>
+    </footer>
+  </div>
+
+  <noscript>
+    <main class="noscript-card">
+      <h1>Портфолио Таира</h1>
+      <p>Интерактивный справочник инспектора требует JavaScript. Включите JavaScript, чтобы открыть паспорт, рабочий допуск, личные дела и форму связи.</p>
+    </main>
+  </noscript>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
