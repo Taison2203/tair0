@@ -1,0 +1,682 @@
+/* === DOCUMENT DIALOGS === */
+
+dialog.doc {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  padding: 0;
+  border: none;
+  background: transparent;
+  max-width: calc(100vw - 8 * var(--u));
+  max-height: calc(100vh - 8 * var(--u));
+  max-height: calc(100svh - 8 * var(--u));
+  overflow: visible;
+  z-index: 60;
+}
+
+dialog.doc::backdrop {
+  background: transparent;
+}
+
+dialog.doc[open] {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Close button */
+.doc__close {
+  position: absolute;
+  top: calc(var(--u) * -8);
+  right: 0;
+  font-family: var(--font-display);
+  font-size: var(--fs-s);
+  color: var(--paper);
+  background: var(--frame);
+  padding: calc(var(--u) * 1) calc(var(--u) * 3);
+  cursor: pointer;
+  z-index: 70;
+  box-shadow:
+    var(--u) var(--u) 0 var(--frame-d);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .doc__close:hover {
+    background: var(--no);
+    transition: background calc(var(--f) * 2) steps(2, end);
+  }
+}
+
+/* === PASSPORT === */
+
+.passport {
+  background: var(--paper);
+  color: var(--ink);
+  width: calc(var(--u) * 180);
+  min-height: calc(var(--u) * 120);
+  padding: calc(var(--u) * 6);
+  overflow-x: hidden;
+  overflow-y: auto;
+  position: relative;
+}
+
+.passport__header {
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: var(--fs-m);
+  color: var(--ink);
+  padding-bottom: calc(var(--u) * 2);
+  margin-bottom: calc(var(--u) * 4);
+  border-bottom: var(--u) solid var(--ink-s);
+}
+
+.passport__docno {
+  font-family: var(--font-ui);
+  font-size: var(--fs-s);
+  color: var(--ink-s);
+  margin-top: calc(var(--u) * 1);
+}
+
+.passport__body {
+  display: flex;
+  gap: calc(var(--u) * 6);
+  margin-bottom: calc(var(--u) * 4);
+}
+
+.passport__photo {
+  flex-shrink: 0;
+  width: calc(var(--u) * 40);
+  height: calc(var(--u) * 52);
+  background: var(--paper-d);
+  position: relative;
+  overflow: hidden;
+}
+
+.passport__photo canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.passport__fields {
+  flex: 1;
+  min-width: 0;
+}
+
+.passport__fields dl {
+  display: grid;
+  width: 100%;
+  min-width: 0;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  gap: calc(var(--u) * 1) calc(var(--u) * 3);
+  align-items: start;
+}
+
+.passport__fields dt {
+  font-family: var(--font-ui);
+  font-size: calc(var(--u) * 5);
+  color: var(--ink-s);
+  overflow-wrap: anywhere;
+}
+
+.passport__fields dd {
+  min-width: 0;
+  font-family: var(--font-display);
+  font-size: calc(var(--u) * 6);
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+.passport__barcode {
+  height: calc(var(--u) * 8);
+  margin-top: calc(var(--u) * 4);
+  overflow: hidden;
+}
+
+.passport__barcode canvas {
+  display: block;
+  height: 100%;
+}
+
+/* Censored / Classified */
+.classified {
+  background: var(--ink);
+  color: var(--paper);
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  padding: calc(var(--u) * 1) calc(var(--u) * 2);
+  font-family: var(--font-ui);
+  font-size: calc(var(--u) * 4.5);
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+/* Stamps on passport */
+.passport__stamps {
+  position: relative;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: calc(var(--u) * 2);
+  min-height: calc(var(--u) * 18);
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.passport__stamps canvas {
+  position: static;
+  mix-blend-mode: multiply;
+}
+
+/* === WORK PASS === */
+
+.doc--pass {
+  width: calc(var(--u) * 190);
+}
+
+.workpass {
+  background: var(--paper);
+  color: var(--ink);
+  padding: calc(var(--u) * 6);
+  overflow-y: auto;
+  max-height: calc(100vh - 16 * var(--u));
+  max-height: calc(100svh - 16 * var(--u));
+}
+
+.workpass__header {
+  background: var(--swamp);
+  color: var(--paper);
+  font-family: var(--font-display);
+  font-size: var(--fs-m);
+  text-align: center;
+  padding: calc(var(--u) * 3) calc(var(--u) * 4);
+  margin: calc(var(--u) * -6);
+  margin-bottom: calc(var(--u) * 6);
+}
+
+.workpass__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: calc(var(--u) * 6);
+}
+
+.wp-cat {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--u) * 3);
+  min-width: 0;
+  padding: calc(var(--u) * 3);
+  background-image: var(--grain-tex);
+  border-bottom: var(--u) solid var(--paper-dd);
+}
+
+.wp-cat__icon {
+  display: block;
+}
+
+.wp-cat__title {
+  font-family: var(--font-display);
+  font-size: calc(var(--u) * 8);
+  color: var(--ink);
+}
+
+.wp-cat__items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--u) * 2);
+}
+
+.wp-chip {
+  font-family: var(--font-ui);
+  font-size: var(--fs-s);
+  color: var(--ink);
+  background: var(--paper-d);
+  padding: calc(var(--u) * 1) calc(var(--u) * 2);
+  box-shadow:
+    0 calc(var(--u) * -1) 0 0 var(--paper-dd),
+    0 var(--u) 0 0 var(--paper-dd),
+    calc(var(--u) * -1) 0 0 0 var(--paper-dd),
+    var(--u) 0 0 0 var(--paper-dd);
+}
+
+.workpass__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: calc(var(--u) * 6);
+  padding-top: calc(var(--u) * 4);
+  border-top: var(--u) solid var(--paper-dd);
+}
+
+.workpass__stamp-label {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--u) * 3);
+  max-width: 70%;
+  color: var(--ink-s);
+  font-family: var(--font-ui);
+  font-size: calc(var(--u) * 6);
+  line-height: 1.4;
+}
+
+.workpass__valid-stamp {
+  position: static;
+  flex: 0 0 auto;
+}
+
+.workpass__barcode {
+  height: calc(var(--u) * 8);
+  overflow: hidden;
+}
+
+.workpass__barcode canvas {
+  display: block;
+  height: 100%;
+}
+
+/* === CASES === */
+
+.doc--cases {
+  width: calc(var(--u) * 200);
+}
+
+.cases {
+  background: var(--paper);
+  color: var(--ink);
+  padding: calc(var(--u) * 6);
+  display: flex;
+  gap: calc(var(--u) * 4);
+  min-height: calc(var(--u) * 150);
+  overflow-y: auto;
+  max-height: calc(100vh - 16 * var(--u));
+  max-height: calc(100svh - 16 * var(--u));
+}
+
+.cases__tabs {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--u) * 2);
+  flex-shrink: 0;
+  width: calc(var(--u) * 44);
+}
+
+.case-tab {
+  font-family: var(--font-display);
+  font-size: calc(var(--u) * 5);
+  color: var(--ink-s);
+  background: var(--paper-d);
+  padding: calc(var(--u) * 3) calc(var(--u) * 2);
+  text-align: left;
+  cursor: pointer;
+  box-shadow:
+    calc(var(--u) * -1) 0 0 0 var(--paper-dd);
+}
+
+.case-tab[aria-selected="true"] {
+  background: var(--swamp-d);
+  color: var(--paper);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .case-tab:not([aria-selected="true"]):hover {
+    background: var(--paper-dd);
+    transition: background calc(var(--f) * 2) steps(2, end);
+  }
+}
+
+.case-panel {
+  flex: 1;
+  padding: calc(var(--u) * 4);
+  border-left: var(--u) solid var(--paper-dd);
+}
+
+.case-panel[hidden] {
+  display: none;
+}
+
+.case-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: calc(var(--u) * 2);
+  font-family: var(--font-display);
+  font-size: var(--fs-s);
+  color: var(--ink-s);
+  margin-bottom: calc(var(--u) * 2);
+}
+
+.case-panel__header .stamp {
+  flex: 0 0 auto;
+  mix-blend-mode: multiply;
+}
+
+.case-panel__title {
+  font-family: var(--font-display);
+  font-size: var(--fs-m);
+  color: var(--ink);
+  margin-bottom: calc(var(--u) * 4);
+  line-height: 1.8;
+}
+
+.case-panel__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--u) * 2);
+  margin-bottom: calc(var(--u) * 4);
+}
+
+.case-tag {
+  font-family: var(--font-ui);
+  font-size: var(--fs-s);
+  color: var(--paper);
+  background: var(--swamp);
+  padding: calc(var(--u) * 1) calc(var(--u) * 2);
+}
+
+.case-tag--empty {
+  color: var(--ink-s);
+  background: var(--paper-d);
+}
+
+.case-panel__body {
+  margin-bottom: calc(var(--u) * 4);
+}
+
+.case-panel__classified {
+  font-family: var(--font-display);
+  font-size: var(--fs-s);
+  color: var(--no);
+  background: repeating-linear-gradient(
+    90deg,
+    var(--ink) 0,
+    var(--ink) calc(var(--u) * 4),
+    transparent calc(var(--u) * 4),
+    transparent calc(var(--u) * 5)
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  padding: calc(var(--u) * 2) 0;
+  user-select: none;
+}
+
+.case-panel__classified-label {
+  font-family: var(--font-display);
+  font-size: var(--fs-s);
+  color: var(--no);
+  text-align: center;
+  padding: calc(var(--u) * 4);
+  border: var(--u) solid var(--no);
+}
+
+.case-panel__summary {
+  margin-bottom: calc(var(--u) * 4);
+  font-family: var(--font-ui);
+  font-size: var(--fs-m);
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.case-panel__links-disabled {
+  font-family: var(--font-ui);
+  font-size: var(--fs-s);
+  color: var(--ink-s);
+  background: var(--paper-d);
+  border: var(--u) dashed var(--paper-dd);
+  padding: calc(var(--u) * 2) calc(var(--u) * 3);
+  cursor: not-allowed;
+}
+
+.case-panel__links-disabled:disabled {
+  cursor: not-allowed;
+}
+
+.case-panel__link {
+  display: block;
+  margin-top: calc(var(--u) * 2);
+  color: var(--swamp-d);
+  font-family: var(--font-ui);
+  font-size: var(--fs-s);
+  text-decoration: underline;
+  overflow-wrap: anywhere;
+}
+
+.case-panel__sprite {
+  margin-bottom: calc(var(--u) * 4);
+}
+
+/* === CONTACT FORM === */
+
+.doc--form {
+  width: calc(var(--u) * 180);
+}
+
+.request {
+  background: var(--paper);
+  color: var(--ink);
+  padding: calc(var(--u) * 6);
+  position: relative;
+  overflow-y: auto;
+  max-height: calc(100vh - 16 * var(--u));
+  max-height: calc(100svh - 16 * var(--u));
+}
+
+.request__title {
+  font-family: var(--font-display);
+  font-size: var(--fs-m);
+  color: var(--ink);
+  text-align: center;
+  margin-bottom: calc(var(--u) * 6);
+  padding-bottom: calc(var(--u) * 2);
+  border-bottom: var(--u) solid var(--ink-s);
+}
+
+.request__notice {
+  margin: calc(var(--u) * -2) 0 calc(var(--u) * 5);
+  padding-left: calc(var(--u) * 3);
+  border-left: calc(var(--u) * 2) solid var(--gold);
+  color: var(--ink-s);
+  font-family: var(--font-ui);
+  font-size: var(--fs-s);
+  line-height: 1.5;
+}
+
+.request label {
+  display: block;
+  font-family: var(--font-ui);
+  font-size: var(--fs-s);
+  color: var(--ink-s);
+  margin-bottom: calc(var(--u) * 4);
+}
+
+.request input[type="text"],
+.request input[type="email"],
+.request input:not([type]),
+.request select,
+.request textarea {
+  display: block;
+  width: 100%;
+  font-family: var(--font-ui);
+  font-size: var(--fs-m);
+  color: var(--ink);
+  background: var(--paper-d);
+  border: var(--u) solid var(--paper-dd);
+  padding: calc(var(--u) * 2) calc(var(--u) * 3);
+  margin-top: calc(var(--u) * 1);
+  min-height: calc(var(--u) * 12);
+}
+
+.request textarea {
+  min-height: calc(var(--u) * 30);
+  resize: vertical;
+  font-size: 16px; /* prevent iOS zoom */
+}
+
+.request select {
+  cursor: pointer;
+  appearance: none;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--ink-s) 50%),
+    linear-gradient(135deg, var(--ink-s) 50%, transparent 50%);
+  background-position:
+    calc(100% - var(--u) * 6) center,
+    calc(100% - var(--u) * 3) center;
+  background-size:
+    calc(var(--u) * 3) calc(var(--u) * 3),
+    calc(var(--u) * 3) calc(var(--u) * 3);
+  background-repeat: no-repeat;
+}
+
+.request input.is-invalid,
+.request textarea.is-invalid {
+  border-color: var(--no);
+  box-shadow: 0 var(--u) 0 0 var(--no);
+}
+
+.request__status {
+  font-family: var(--font-ui);
+  font-size: var(--fs-s);
+  min-height: calc(var(--u) * 8);
+  padding: calc(var(--u) * 2) 0;
+}
+
+.request__status.is-error {
+  color: var(--no);
+}
+
+.request__status.is-success {
+  color: var(--ok);
+}
+
+.request__status:not(.is-error):not(.is-success) {
+  color: var(--ink-s);
+}
+
+.request .btn {
+  width: 100%;
+  margin-top: calc(var(--u) * 2);
+}
+
+.request__stamp {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  pointer-events: none;
+}
+
+.request__new {
+  margin-top: calc(var(--u) * 4);
+  width: 100%;
+}
+
+.request__draft {
+  display: block;
+  width: 100%;
+  margin: calc(var(--u) * 3) 0;
+  padding: calc(var(--u) * 2);
+  color: var(--ink);
+  background: var(--paper-d);
+  border: var(--u) solid var(--ink-s);
+  font-family: var(--font-term);
+  font-size: calc(var(--u) * 10);
+  line-height: 1.25;
+  resize: vertical;
+}
+
+.request__telegram {
+  display: block;
+  margin-top: calc(var(--u) * 3);
+  color: var(--swamp-d);
+  font-family: var(--font-display);
+  font-size: var(--fs-s);
+  text-align: center;
+  text-decoration: underline;
+}
+
+/* === RESPONSIVE: MOBILE DOCUMENTS === */
+
+@media (max-width: 599px) {
+  dialog.doc {
+    max-width: calc(100vw - 8 * var(--u));
+    max-height: calc(100vh - 8 * var(--u));
+    max-height: calc(100svh - 8 * var(--u));
+    width: calc(100vw - 8 * var(--u));
+    height: fit-content;
+  }
+  dialog.doc[open] .doc__close {
+    position: absolute;
+    top: calc(var(--u) * 2);
+    right: calc(var(--u) * 2);
+  }
+  .passport, .workpass, .cases, .request {
+    width: 100%;
+    max-height: calc(100vh - 8 * var(--u));
+    max-height: calc(100svh - 8 * var(--u));
+    height: auto;
+    padding-top: calc(var(--u) * 16);
+  }
+  .workpass {
+    padding-top: calc(var(--u) * 18);
+  }
+  .passport__body {
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    min-width: 0;
+  }
+  .passport {
+    overflow-x: hidden;
+  }
+  .passport__header h2 {
+    max-width: 100%;
+    font-size: calc(var(--u) * 6);
+    letter-spacing: 0;
+    overflow-wrap: anywhere;
+  }
+  .passport__fields {
+    width: 100%;
+    min-width: 0;
+  }
+  .passport__fields dl {
+    width: 100%;
+    min-width: 0;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    column-gap: calc(var(--u) * 2);
+    align-items: start;
+  }
+  .passport__fields dt {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    font-size: calc(var(--u) * 4);
+  }
+  .passport__fields dd {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    font-size: calc(var(--u) * 5);
+    line-height: 1.25;
+  }
+  .passport__stamps { display: none; }
+  .workpass__grid {
+    grid-template-columns: 1fr;
+  }
+  .cases {
+    flex-direction: column;
+  }
+  .cases__tabs {
+    flex-direction: row;
+    width: 100%;
+    overflow-x: auto;
+  }
+  .case-tab {
+    flex-shrink: 0;
+  }
+  .case-panel {
+    border-left: none;
+    border-top: var(--u) solid var(--paper-dd);
+  }
+  .passport__fields dl {
+    width: 100%;
+  }
+}

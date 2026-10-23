@@ -1,0 +1,16 @@
+{
+  "name": "papers-portfolio",
+  "version": "1.0.0",
+  "description": "Inspector portfolio in the retro aesthetic of Papers, Please",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": ["portfolio", "papers-please", "pixel-art", "retro"],
+  "author": "Tair",
+  "license": "MIT"
+}

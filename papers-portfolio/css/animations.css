@@ -1,0 +1,167 @@
+/* === ALL KEYFRAMES — steps() ONLY === */
+
+@keyframes doc-in {
+  from { transform: translateY(110vh); }
+  to   { transform: translateY(0); }
+}
+
+@keyframes doc-out {
+  from { transform: translateY(0); }
+  to   { transform: translateY(110vh); }
+}
+
+@keyframes settle {
+  from { transform: translateY(calc(var(--u) * 2)); }
+  to   { transform: translateY(0); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25%, 75% { transform: translateX(calc(var(--u) * -1)); }
+  50%      { transform: translateX(var(--u)); }
+}
+
+@keyframes stamp-hit {
+  from { transform: translateY(calc(var(--u) * -24)); }
+  to   { transform: translateY(0); }
+}
+
+@keyframes wipe-in {
+  from { clip-path: inset(0 100% 0 0); }
+  to   { clip-path: inset(0); }
+}
+
+@keyframes wipe-out {
+  from { clip-path: inset(0); }
+  to   { clip-path: inset(0 0 0 100%); }
+}
+
+@keyframes blink {
+  0%        { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+@keyframes screen-wipe {
+  from { clip-path: inset(0); }
+  to   { clip-path: inset(0 0 0 100%); }
+}
+
+@keyframes receipt-in {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+@keyframes receipt-out {
+  from { transform: translateY(0); }
+  to   { transform: translateY(100%); }
+}
+
+@keyframes type-cursor {
+  0%, 100% { border-right-color: var(--pink-ink); }
+  50%      { border-right-color: transparent; }
+}
+
+@keyframes tab-press {
+  from { transform: translateX(calc(var(--u) * -2)); }
+  to   { transform: translateX(0); }
+}
+
+@keyframes chip-settle {
+  from { transform: translateY(calc(var(--u) * 1)); }
+  to   { transform: translateY(0); }
+}
+
+@keyframes ezic-blink {
+  0%         { opacity: 0.85; }
+  25%        { opacity: 0; }
+  50%        { opacity: 0.85; }
+  75%, 100%  { opacity: 0; }
+}
+
+@keyframes clip-shift {
+  from { transform: translateY(0); }
+  to   { transform: translateY(calc(var(--u) * -6)); }
+}
+
+@keyframes case-swap {
+  from { clip-path: inset(0 100% 0 0); }
+  to   { clip-path: inset(0); }
+}
+
+@keyframes progress-fill {
+  from { width: 0; }
+  to   { width: 100%; }
+}
+
+/* === ANIMATION CLASSES === */
+
+.doc.is-entering {
+  animation: doc-in calc(var(--f) * 6) steps(6, end) both;
+}
+
+.doc.is-leaving {
+  animation: doc-out calc(var(--f) * 4) steps(4, end) both;
+}
+
+.is-settling {
+  animation: settle calc(var(--f) * 2) steps(2, end) both;
+}
+
+.is-shaking {
+  animation: shake calc(var(--f) * 3) steps(1, end);
+}
+
+.stamp.is-hit {
+  animation: stamp-hit calc(var(--f) * 3) steps(3, end) both;
+}
+
+.led {
+  animation: blink 1s steps(1, end) infinite;
+}
+
+.page-turn.is-wiping-in {
+  animation: wipe-in calc(var(--f) * 3) steps(3, end) both;
+}
+
+.page-turn.is-wiping-out {
+  animation: wipe-out calc(var(--f) * 3) steps(3, end) both;
+}
+
+#start-screen.is-leaving {
+  animation: screen-wipe calc(var(--f) * 6) steps(6, end) both;
+}
+
+.receipt.is-entering {
+  animation: receipt-in calc(var(--f) * 6) steps(6, end) both;
+}
+
+.receipt.is-leaving {
+  animation: receipt-out calc(var(--f) * 4) steps(4, end) both;
+}
+
+#flash.is-on {
+  animation: ezic-blink calc(var(--f) * 14) steps(1, end) both;
+}
+
+.clip--b.is-shifting {
+  animation: clip-shift calc(var(--f) * 3) steps(3, end) both;
+}
+
+.case-panel.is-swapping {
+  animation: case-swap calc(var(--f) * 3) steps(3, end) both;
+}
+
+/* === REDUCED MOTION === */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  #flash.is-on {
+    animation: none;
+    opacity: 0.5;
+  }
+}

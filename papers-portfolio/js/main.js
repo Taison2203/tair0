@@ -1,0 +1,132 @@
+/** Application entry point: load type, prepare documents, then allow the shift to start. */
+
+import { AudioEngine } from './audio/engine.js';
+import { SFX } from './audio/sfx.js';
+import { Music } from './audio/music.js';
+import { initScale } from './core/scale.js';
+import {
+  makeDeskTexture, makeGrainTexture, makeRingTexture, initClock,
+  createESP32, createClips, initMuteButton,
+} from './components/desk.js';
+import { initStartScreen } from './components/startScreen.js';
+import { initBook } from './components/book.js';
+import { initDocuments } from './components/documents.js';
+import { initReceipts } from './components/receipts.js';
+import { initNews } from './components/news.js';
+import { initEzic, initPenalty } from './components/ezic.js';
+import { bus } from './core/bus.js';
+import { CONTENT } from './config/content.js';
+import { makePortrait } from './core/pixelate.js';
+
+async function loadRequiredFonts() {
+  if (!document.fonts?.load) return;
+  const sample = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюя';
+  await Promise.all([
+    document.fonts.load('8px "Press Start 2P"', sample),
+    document.fonts.load('16px "Pixelify Sans"', sample),
+    document.fonts.load('16px "VT323"', sample),
+  ].map((promise) => promise.catch(() => [])));
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  document.body.dataset.phase = 'boot';
+  initScale();
+
+  const startScreen = initStartScreen();
+  const audio = new AudioEngine(SFX);
+  const music = new Music(audio);
+
+  makeDeskTexture();
+  makeGrainTexture();
+  makeRingTexture();
+  initClock();
+  createESP32();
+  createClips();
+
+  const footer = document.querySelector('[data-footer-copy]');
+  if (footer) footer.textContent = CONTENT.footer;
+  const ownerName = document.querySelector('[data-owner-name]');
+  if (ownerName) ownerName.textContent = CONTENT.owner.givenName.toUpperCase();
+  const caseCount = document.querySelector('[data-case-count]');
+  if (caseCount) caseCount.textContent = String(CONTENT.cases.length).padStart(2, '0');
+  const skillCount = document.querySelector('[data-skill-count]');
+  if (skillCount) skillCount.textContent = String(CONTENT.workPass.length).padStart(2, '0');
+
+  try {
+    await loadRequiredFonts();
+    const deskPhoto = document.querySelector('[data-desk-photo]');
+    if (deskPhoto) deskPhoto.replaceChildren(await makePortrait(CONTENT.passport.photo, 32, 42));
+    const dossierValues = [
+      ['[data-dossier-name]', CONTENT.owner.givenName],
+      ['[data-dossier-age]', String(CONTENT.passport.issueYear - CONTENT.passport.birthYear)],
+      ['[data-dossier-city]', CONTENT.passport.city.toUpperCase()],
+      ['[data-dossier-major]', CONTENT.passport.major.toUpperCase()],
+    ];
+    dossierValues.forEach(([selector, value]) => {
+      const field = document.querySelector(selector);
+      if (field) field.textContent = value;
+    });
+    initBook(audio);
+    initReceipts(audio);
+    initNews();
+    await initDocuments(audio);
+    initEzic(audio);
+    initPenalty({ audio, isShiftActive: () => document.body.dataset.phase === 'shift' });
+
+    await audio.preload((progress) => startScreen.updateProgress(progress));
+    if (!audio.supported || typeof OfflineAudioContext === 'undefined') startScreen.updateProgress(1);
+    startScreen.setReady();
+    document.body.dataset.phase = 'ready';
+  } catch (error) {
+    console.error('[boot] required interface could not be prepared:', error);
+    startScreen.updateProgress(1);
+    startScreen.setReady();
+    document.body.dataset.phase = 'ready';
+  }
+
+  startScreen.onStart(async ({ muted }) => {
+    await audio.unlock({ muted });
+    document.body.dataset.phase = 'shift';
+    initMuteButton(audio, {
+      onMute: () => music.stop(),
+      onUnmute: () => music.start(),
+    });
+    if (!muted) music.start();
+    await startScreen.hide();
+
+    const requestedDoc = window.location.hash.slice(1);
+    if (['passport', 'pass', 'cases', 'contact'].includes(requestedDoc)) {
+      document.querySelector('.tab[data-tab="' + requestedDoc + '"]')?.focus({ preventScroll: true });
+      bus.emit('tab:select', { key: requestedDoc });
+    } else {
+      document.querySelector('.book__tabs .tab')?.focus({ preventScroll: true });
+    }
+
+    window.setTimeout(() => {
+      bus.emit('receipt:print', {
+        header: 'МИНИСТЕРСТВО ВЪЕЗДА',
+        text: 'ИНСПЕКТОР ' + CONTENT.owner.givenName.toUpperCase() + ': Рабочее место готово к проверке.',
+        meta: 'АРСТОТЦКА · КПП №1',
+      });
+    }, 600);
+  });
+
+  document.addEventListener('pointerover', (event) => {
+    if (event.pointerType === 'touch' || !audio.ready) return;
+    const target = event.target instanceof Element
+      ? event.target.closest('.tab, .chip, .btn:not(:disabled), .case-tab, .dup-btn:not(:disabled), .doc__close, .clip--b, .mute')
+      : null;
+    if (!target || target.contains(event.relatedTarget)) return;
+    audio.play('hover', { gain: 0.28 });
+  });
+
+  window.addEventListener('keydown', (event) => {
+    if (event.target.matches('input, textarea, select, button, a, [contenteditable="true"]')) return;
+    if (document.querySelector('dialog.doc[open]')) return;
+    if (event.key === '1') bus.emit('tab:select', { key: 'passport' });
+    if (event.key === '2') bus.emit('tab:select', { key: 'pass' });
+    if (event.key === '3') bus.emit('tab:select', { key: 'cases' });
+    if (event.key === '4') bus.emit('tab:select', { key: 'contact' });
+    if (event.key === '0') bus.emit('tab:reset');
+  });
+});

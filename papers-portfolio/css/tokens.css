@@ -1,0 +1,43 @@
+:root {
+  /* «Арстотцка»: оригинальная палитра в духе игры */
+  --desk-0:  #1d221c;
+  --desk-1:  #272d25;
+  --desk-2:  #323a2f;
+  --swamp:   #4a5a3a;
+  --swamp-d: #35422a;
+  --olive:   #c2c79f;
+  --olive-d: #a3a883;
+  --paper:   #d8cf9b;
+  --paper-d: #bfb583;
+  --paper-dd:#9c9367;
+  --frame:   #3b3f3a;
+  --frame-l: #5a5f58;
+  --frame-d: #222522;
+  --ink:     #25271f;
+  --ink-s:   #4d4c38;
+  --led:     #ff2b1c;
+  --led-off: #3d0d09;
+  --pink:    #e9a3b3;
+  --pink-d:  #c27388;
+  --pink-ink:#4f1b2a;
+  --ok:      #2f8f3d;
+  --no:      #a3201a;
+  --stamp-blue:#2f4d80;
+  --metal:   #aeb4b8;
+  --metal-d: #6c7276;
+  --gold:    #c9a233;
+  --pcb:     #131b1a;
+  --blue-led:#3da5ff;
+  --ezic:    #8e0f0f;
+
+  --f: 83ms;
+
+  --font-display: 'Press Start 2P', 'Pixelify Sans', monospace;
+  --font-ui:      'Pixelify Sans', 'Press Start 2P', monospace;
+  --font-term:    'VT323', monospace;
+  --fs-s: calc(var(--u) * 6);
+  --fs-m: calc(var(--u) * 8);
+  --fs-l: calc(var(--u) * 16);
+
+  --u: 2px;
+}
