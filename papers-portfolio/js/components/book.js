@@ -4,7 +4,6 @@
  */
 
 import { $, el, stepAnim } from '../core/dom.js';
-import { drawSprite, ARSTOTZKA_CREST } from '../core/sprites.js';
 import { bus } from '../core/bus.js';
 import { CONTENT } from '../config/content.js';
 
@@ -29,16 +28,19 @@ export function initBook(audio) {
   /* Render Cover (Left Page) */
   if (leftPage) {
     leftPage.replaceChildren();
-    const emblemCanvas = drawSprite(ARSTOTZKA_CREST, { '#': '--paper' });
-    emblemCanvas.style.width = 'calc(32 * var(--u))';
-    emblemCanvas.style.height = 'calc(26 * var(--u))';
-
     const cover = el('div', { class: 'cover' },
-      el('div', { class: 'cover__emblem' }, emblemCanvas),
+      el('div', { class: 'cover__emblem' }, el('img', { src: 'assets/img/eagle.svg', alt: '', width: '96', height: '78' })),
       el('div', { class: 'cover__frame pxframe' },
         el('div', { class: 'cover__l1' }, CONTENT.cover.l1),
         el('div', { class: 'cover__l2' }, CONTENT.cover.l2),
         el('div', { class: 'cover__sub' }, CONTENT.cover.sub)
+      ),
+      el('section', { class: 'shift-log', 'aria-label': 'Журнал смены' },
+        el('h2', { class: 'shift-log__title' }, 'ЖУРНАЛ СМЕНЫ'),
+        el('p', { class: 'shift-log__count', 'data-shift-count': '', 'aria-live': 'polite' }, 'Просмотрено 0 из 4 документов'),
+        el('ol', { class: 'shift-log__items' }, ...CONTENT.tabs.map(tab =>
+          el('li', { 'data-shift-entry': tab.key }, el('span', { 'aria-hidden': 'true' }, '□'), tab.label)
+        ))
       )
     );
     leftPage.append(cover);
@@ -69,7 +71,7 @@ export function initBook(audio) {
     rightPage.replaceChildren();
 
     const title = el('h2', { class: 'page__title' }, 'СОДЕРЖАНИЕ');
-    const note = el('p', { class: 'page__note' }, 'СПРАВОЧНИК ИНСПЕКТОРА // ВЫБЕРИТЕ РАЗДЕЛ');
+    const note = el('p', { class: 'page__note' }, 'СПРАВОЧНИК ИНСПЕКТОРА · ВЫБЕРИТЕ РАЗДЕЛ');
     const tocList = el('ul', { class: 'toc' });
 
     CONTENT.tabs.forEach((tab, index) => {
@@ -129,8 +131,10 @@ export function initBook(audio) {
     if (key === 'cases') return CONTENT.cases.map((item) => [`№ ${item.no}`, item.title]);
     const channel = CONTENT.contact.endpoint || CONTENT.contact.email || CONTENT.contact.telegram;
     return [
-      ['КАНАЛ', channel ? 'НАСТРОЕН' : 'НЕ НАСТРОЕН'],
-      ['ЦЕЛИ', CONTENT.contact.purposes.join(' · ')],
+      ['ПОЛУЧАТЕЛЬ', CONTENT.owner.givenName],
+      ['КАНАЛ', channel ? 'Telegram' : 'Не настроен'],
+      ['БЛАНК', '22-03 · Личное обращение'],
+      ['ПОРЯДОК ПОДАЧИ', 'Одно обращение на один контакт'],
     ];
   }
 
@@ -155,7 +159,7 @@ export function initBook(audio) {
         class: 'btn btn--primary',
         type: 'button',
         'data-open-doc': tabKey,
-      }, `ПРЕДЪЯВИТЬ: ${tabData.label}`)
+      }, tabKey === 'contact' ? 'ЗАПОЛНИТЬ БЛАНК' : `ПРЕДЪЯВИТЬ: ${tabData.label}`)
     );
 
     section.querySelector('[data-open-doc]').addEventListener('click', () => {

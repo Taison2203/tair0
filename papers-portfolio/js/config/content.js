@@ -6,7 +6,7 @@ export const CONTENT = {
     { key: 'passport', label: 'ПАСПОРТ', blurb: 'Личные данные кандидата. Предъявите документ.' },
     { key: 'pass',     label: 'ДОПУСК',  blurb: 'Рабочий допуск: подтверждённые компетенции.' },
     { key: 'cases',    label: 'ДЕЛА',    blurb: 'Личные дела: реализованные проекты.' },
-    { key: 'contact',  label: 'СВЯЗЬ',   blurb: 'Бланк запроса. Заполняйте разборчиво.' },
+    { key: 'contact',  label: 'СВЯЗЬ',   blurb: 'Личное обращение. Заполните бланк и поставьте печать.' },
   ],
   cover: { l1: 'ПОРТФОЛИО', l2: 'ИНСПЕКТОРА', sub: 'СПРАВОЧНИК ДЛЯ РЕКРУТЕРОВ' },
   passport: {
@@ -17,7 +17,8 @@ export const CONTENT = {
     documentCity: 'Павлтон',
     city: 'Павлодар',
     major: 'Информационные системы',
-    photo: 'assets/img/photo.jpg',
+    photo: 'assets/img/inspector.png',
+    pixelArt: true,
     stampTexts: ['ПРОВЕРЕНО', 'СВЕРЕНО', 'ОТДЕЛ ИС'],
   },
   workPass: [
@@ -31,7 +32,7 @@ export const CONTENT = {
     { no: '0002', title: 'Разработка искусственного интеллекта',           tags: [],         summary: '', links: [] },
     { no: '0003', title: 'Игровые механики Roblox',                         tags: ['Roblox'], summary: '', links: [] },
   ],
-  contact: { email: '', telegram: '', endpoint: '', purposes: ['Стажировка', 'Проект', 'Вопрос'] },
+  contact: { email: '', telegram: '@tair0_bot', endpoint: '/api/contact', purposes: ['Стажировка', 'Проект', 'Вопрос', 'Отзыв'] },
   receipts: {
     penalty:   'НАРУШЕНИЕ ПОРЯДКА: выдано предупреждение',
     duplicate: 'ОТКАЗАНО: Несанкционированное копирование для соседа по парте запрещено',

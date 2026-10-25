@@ -22,8 +22,8 @@ html {
 }
 
 body {
-  -webkit-font-smoothing: none;
-  text-rendering: optimizeSpeed;
+  -webkit-font-smoothing: auto;
+  text-rendering: optimizeLegibility;
   font-kerning: none;
   font-variant-ligatures: none;
   overscroll-behavior: none;
@@ -45,6 +45,11 @@ h1, h2, h3, h4 {
   line-height: 1.5;
   letter-spacing: calc(var(--u) * 1);
 }
+
+[hidden] { display: none !important; }
+
+button { line-height: 1.5; }
+img { max-width: 100%; }
 
 button, input, select, textarea {
   font-family: inherit;

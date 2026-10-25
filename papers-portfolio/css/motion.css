@@ -1,0 +1,65 @@
+/* Material movement: paper, ink, a warm bulb and a few motes in its beam. */
+.start__emblem { width: 240px; height: 195px; filter: drop-shadow(0 8px 0 rgb(0 0 0 / 12%)); }
+.start__title { animation: start-copy-in 500ms 180ms steps(8) both; }
+.start__sub { animation: start-copy-in 500ms 300ms steps(8) both; }
+.start__actions { animation: start-copy-in 500ms 420ms steps(8) both; }
+.start__hint { animation: start-copy-in 500ms 500ms steps(8) both; }
+.desk-lamp__fixture { position: relative; width: 144px; height: 102px; flex-shrink: 0; }
+.desk-lamp__fixture img { width: 100%; height: 100%; transition: filter 180ms; }
+.desk-lamp__fixture::before, .desk-lamp__fixture::after { content: ''; position: absolute; pointer-events: none; opacity: var(--lamp-power); }
+.desk-lamp__fixture::before { inset: 12% 24% 35% -10%; background: radial-gradient(ellipse, rgb(255 219 130 / 24%), transparent 68%); }
+.desk-lamp__fixture::after { left: 17%; top: 42%; width: 42%; height: 6%; background: #ffe4a1; box-shadow: 0 3px 10px 3px rgb(255 211 115 / 55%), 0 10px 28px 10px rgb(250 207 119 / 18%); }
+#desk[data-lamp='on'] .desk-lamp img { filter: brightness(1.15) drop-shadow(0 4px 8px rgb(241 206 129 / 14%)); }
+.desk-light { background: radial-gradient(ellipse at 79% 14%, rgb(244 213 150 / 29%), rgb(216 190 124 / 12%) 42%, transparent 76%); }
+.desk-dust { position: absolute; top: 12%; right: 8%; width: 64%; height: 72%; overflow: hidden; }
+.desk-dust i { position: absolute; width: 2px; height: 2px; left: calc(12% + var(--mote) * 10%); top: calc(8% + var(--mote) * 9%); background: #e7d9ac; opacity: 0; animation: dust-drift calc(13s + var(--mote) * 1s) calc(var(--mote) * -2.3s) linear infinite; }
+body:not([data-phase='shift']) .desk-dust, #desk[data-lamp='off'] .desk-dust { display: none; }
+#desk[data-visibility='hidden'] .desk-dust i { animation-play-state: paused; }
+/* Animate the paper surfaces, keeping their fixed mobile navigation unaffected. */
+.is-revealed .page--left { animation: book-arrive 650ms cubic-bezier(.16,.7,.25,1) both; }
+.is-revealed .page--right { animation: book-arrive 650ms 80ms cubic-bezier(.16,.7,.25,1) both; }
+.is-revealed .desk-file { animation: prop-arrive 550ms 130ms cubic-bezier(.16,.7,.25,1) backwards; }
+.is-revealed .dispatch { animation: prop-arrive 550ms 220ms cubic-bezier(.16,.7,.25,1) backwards; }
+.is-revealed .clip--b { animation: prop-arrive 500ms 320ms cubic-bezier(.16,.7,.25,1) backwards; }
+.is-revealed .scanner { animation: prop-arrive 500ms 400ms cubic-bezier(.16,.7,.25,1) backwards; }
+.is-revealed .desk-lamp { animation: prop-arrive 500ms 460ms cubic-bezier(.16,.7,.25,1) backwards; }
+dialog.doc.is-entering { animation: paper-arrive 430ms cubic-bezier(.16,.75,.25,1) both; }
+dialog.doc.is-leaving { animation: paper-depart 270ms cubic-bezier(.6,0,.8,.3) both; }
+.news-reader[open] .dispatch { animation: paper-arrive 360ms cubic-bezier(.16,.75,.25,1) both; }
+.ezic-terminal:not([hidden]) { animation: secret-unfold 350ms steps(7) both; }
+.doc::backdrop { transition: background 240ms; }
+.doc[open]::backdrop { background: rgb(6 12 8 / 15%); }
+.btn, .doc__close, .passport__verify, .dup-btn, .scanner, .clip--b, .news-button, .news-refresh, .inspection__next { transition: background-color 140ms, border-color 140ms, box-shadow 140ms, filter 140ms; }
+@media (hover: hover) and (pointer: fine) {
+  .scanner:hover .scanner__device img { animation: scanner-feed 650ms steps(8); }
+  .clip--b:hover { box-shadow: 4px 6px 0 rgb(0 0 0 / 30%); }
+  .desk-lamp:hover .desk-lamp__fixture { animation: lamp-touch 300ms steps(5); }
+  .passport__verify:hover { background: var(--swamp); }
+  .dup-btn:hover { background: var(--frame-l); }
+}
+.btn:active, .doc__close:active, .passport__verify:active, .dup-btn:active, .inspection__next:active { filter: brightness(.82); }
+.shift-log__items .is-checked span { display: inline-block; animation: log-check 350ms steps(5) both; }
+@keyframes start-copy-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@keyframes book-arrive { from { opacity: 0; clip-path: inset(0 0 100% 0); } to { opacity: 1; clip-path: inset(0); } }
+@keyframes prop-arrive { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+@keyframes paper-arrive { from { opacity: 0; transform: translateY(70px) rotate(1.5deg); } to { opacity: 1; transform: none; } }
+@keyframes paper-depart { from { opacity: 1; transform: none; } to { opacity: 0; transform: translateY(90px) rotate(-2deg); } }
+@keyframes dust-drift { 0% { opacity: 0; transform: translate(0, 20px); } 20%, 75% { opacity: .22; } 100% { opacity: 0; transform: translate(-38px, -45px); } }
+@keyframes scanner-feed { 30% { transform: translateY(-4px); filter: brightness(1.25); } 70% { transform: translateY(2px); } }
+@keyframes lamp-touch { 50% { transform: rotate(-2deg); } }
+@keyframes log-check { 0% { opacity: 0; transform: scale(1.8); } 100% { opacity: 1; transform: none; } }
+@keyframes secret-unfold { from { clip-path: inset(50% 0); opacity: 0; } to { clip-path: inset(0); opacity: 1; } }
+@media (min-width: 600px) and (max-width: 999px) { .desk-lamp__fixture { width: 48px; height: 36px; } }
+@media (max-width: 599px) {
+  .start__emblem { width: 180px; height: 146px; }
+  .desk-lamp__fixture { width: 64px; height: 46px; }
+  .desk-dust { right: 0; width: 85%; }
+}
+@media (max-height: 650px) {
+  #start-screen { gap: 12px; padding-top: 18px; padding-bottom: 18px; }
+  .start__emblem { width: 140px; height: 114px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .desk-dust { display: none; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}

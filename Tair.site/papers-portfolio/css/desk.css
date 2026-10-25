@@ -572,7 +572,7 @@
 }
 
 /* A labelled scanner unit makes the ESP32 hardware understandable. */
-.esp32 {
+.scanner {
   position: absolute;
   right: 3%;
   bottom: 6%;
@@ -588,7 +588,7 @@
   box-shadow: 4px 4px 0 var(--frame-d);
 }
 
-.esp32__device {
+.scanner__device {
   flex: 0 0 auto;
   display: grid;
   place-items: center;
@@ -598,22 +598,22 @@
   border: 1px solid var(--frame-l);
 }
 
-.esp32__device canvas { display: block; image-rendering: pixelated; }
+.scanner__device canvas { display: block; image-rendering: pixelated; }
 
-.esp32__copy {
+.scanner__copy {
   display: flex;
   flex-direction: column;
   gap: 4px;
   min-width: 0;
 }
 
-.esp32__label {
+.scanner__label {
   font-family: var(--font-ui);
   font-size: 11px;
   line-height: 1.35;
 }
 
-.esp32__status {
+.scanner__status {
   display: flex;
   align-items: center;
   gap: 5px;
@@ -622,7 +622,7 @@
   font-size: 15px;
 }
 
-.esp32__status i {
+.scanner__status i {
   width: 7px;
   height: 7px;
   flex: 0 0 auto;
@@ -630,7 +630,7 @@
   border: 1px solid var(--olive);
 }
 
-.esp32__code {
+.scanner__code {
   color: var(--paper-dd);
   font-family: var(--font-term);
   font-size: 13px;
@@ -784,7 +784,7 @@
   .desk-file { display: none; }
   .clock { display: none; }
   .clip--a { display: none; }
-  .esp32 {
+  .scanner {
     position: fixed;
     right: calc(var(--u) * 2);
     top: calc(var(--u) * 2);
@@ -794,11 +794,11 @@
     padding: 5px;
     z-index: 20;
   }
-  .esp32__device { width: 48px; height: 36px; }
-  .esp32__device canvas { max-width: 44px; max-height: 32px; }
-  .esp32__label { font-size: 9px; }
-  .esp32__status { font-size: 12px; }
-  .esp32__code { font-size: 11px; }
+  .scanner__device { width: 48px; height: 36px; }
+  .scanner__device canvas { max-width: 44px; max-height: 32px; }
+  .scanner__label { font-size: 9px; }
+  .scanner__status { font-size: 12px; }
+  .scanner__code { font-size: 11px; }
   .dup-btn {
     position: fixed;
     left: calc(var(--u) * 2);
@@ -831,7 +831,7 @@
   .dispatch { display: none; }
   .desk-file { display: none; }
   .clock { transform: scale(0.8); transform-origin: top left; }
-  .esp32 { transform: scale(0.8); transform-origin: bottom right; }
+  .scanner { transform: scale(0.8); transform-origin: bottom right; }
 }
 
 @media (min-width: 1000px) and (max-width: 1199px) {

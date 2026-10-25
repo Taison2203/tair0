@@ -1,21 +1,12 @@
 /**
- * desk.js — Desk texture generation, clock, ESP32 decoration, mute button.
+ * desk.js — Desk textures, clock, document scanner, mute button.
  */
 
 import { $, css, mulberry32 } from '../core/dom.js';
-import { drawSprite, makeTile, SPEAKER_ON, SPEAKER_OFF, DIGITS, ESP32_BOARD, PAPERCLIP } from '../core/sprites.js';
+import { drawSprite, makeTile, SPEAKER_ON, SPEAKER_OFF, DIGITS } from '../core/sprites.js';
 import { bus } from '../core/bus.js';
 
 const SPEAKER_PAL = { '#': '--paper' };
-const CLIP_PAL = { '#': '--metal' };
-const ESP_PAL = {
-  'G': '--gold',
-  'M': '--metal',
-  'B': '--frame',
-  'b': '--frame-d',
-  'L': '--blue-led',
-  'm': '--metal-d',
-};
 
 /**
  * Generate the desk texture and set as CSS variable.
@@ -197,28 +188,17 @@ export function initClock() {
 }
 
 /**
- * Create ESP32 sprite.
+ * A document-fed scanner rather than an unrelated circuit board.
  */
-export function createESP32() {
-  const container = $('.esp32');
+export function createScanner() {
+  const container = $('.scanner');
   if (!container) return;
-  const device = container.querySelector('.esp32__device');
+  const device = container.querySelector('.scanner__device');
   if (!device) return;
-  const canvas = drawSprite(ESP32_BOARD, ESP_PAL);
-  const boardWidth = Math.max(...ESP32_BOARD.map((row) => row.length));
-  canvas.style.width = `calc(${boardWidth} * var(--u))`;
-  canvas.style.height = `calc(${ESP32_BOARD.length} * var(--u))`;
-  device.replaceChildren(canvas);
-}
-
-/**
- * Create paperclip sprites.
- */
-export function createClips() {
-  document.querySelectorAll('.clip--a').forEach((clip) => {
-    const canvas = drawSprite(PAPERCLIP, CLIP_PAL);
-    clip.append(canvas);
-  });
+  const image = new Image(64, 48);
+  image.src = 'assets/img/scanner.svg';
+  image.alt = '';
+  device.replaceChildren(image);
 }
 
 /**

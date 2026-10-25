@@ -35,7 +35,8 @@ export function initPenalty({ audio, isShiftActive = () => false } = {}) {
 
   desk.addEventListener('click', (event) => {
     const target = event.target instanceof Element ? event.target : null;
-    if (!target || target.closest('button, a, input, textarea, select, dialog, [contenteditable="true"]') || !isShiftActive()) return;
+    // Only empty desk clicks violate the playful rule. Reading or selecting text must not.
+    if (target !== desk || !isShiftActive()) return;
     const now = Date.now();
     if (now < cooldownUntil) return;
     deadClicks = deadClicks.filter((stamp) => now - stamp <= 8000);
@@ -47,7 +48,7 @@ export function initPenalty({ audio, isShiftActive = () => false } = {}) {
     bus.emit('receipt:print', {
       header: CONTENT.receipts.penalty,
       text: CONTENT.receipts.penalty,
-      meta: 'НАРУШЕНИЕ ПРОТОКОЛА // ПРЕДУПРЕЖДЕНИЕ ВЫДАНО',
+      meta: 'НАРУШЕНИЕ ПРОТОКОЛА · ПРЕДУПРЕЖДЕНИЕ ВЫДАНО',
     });
   });
 }
@@ -70,7 +71,7 @@ export function initEzic(audio) {
     bus.emit('receipt:print', {
       header: CONTENT.receipts.penalty,
       text: CONTENT.receipts.duplicate,
-      meta: 'ЗАПРОС НА КОПИЮ // ОТКЛОНЕНО',
+      meta: 'ЗАПРОС НА КОПИЮ · ОТКЛОНЕНО',
     });
     window.setTimeout(() => {
       duplicateReady = true;
@@ -102,7 +103,7 @@ export function initEzic(audio) {
     bus.emit('receipt:print', {
       header: 'ПРИКАЗ ЗВЕЗДЫ EZIC',
       text: 'ПОРЯДОК СЛЕДИТ ЗА ТОБОЙ. СЛАВА АРСТОТЦКЕ.',
-      meta: 'ТАЙНАЯ ПЕРЕДАЧА // ' + cipher,
+      meta: 'ТАЙНАЯ ПЕРЕДАЧА · ' + cipher,
     });
 
     secretClip?.classList.remove('is-shifting');
@@ -123,6 +124,7 @@ export function initEzic(audio) {
 
   let keyBuffer = '';
   window.addEventListener('keydown', (event) => {
+    if (document.body.dataset.phase !== 'shift') return;
     if (event.target.matches('input, textarea, select, [contenteditable="true"]')) return;
     if (event.key === 'Escape' && terminal && !terminal.hidden) {
       terminal.hidden = true;

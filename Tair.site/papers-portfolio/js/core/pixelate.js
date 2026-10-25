@@ -17,9 +17,26 @@ const BAYER_4 = [
  * @param {string} src — path to photo (or '' for procedural silhouette)
  * @param {number} w — target width in logical pixels
  * @param {number} h — target height in logical pixels
- * @returns {Promise<HTMLCanvasElement>}
+ * @param {boolean} pixelArt — display supplied pixel art without a second dithering pass
+ * @returns {Promise<HTMLCanvasElement|HTMLImageElement>}
  */
-export async function makePortrait(src, w = 40, h = 52) {
+export async function makePortrait(src, w = 40, h = 52, pixelArt = false) {
+  // Supplied pixel art already has its own palette and pixel grid. Keep both intact.
+  if (src && pixelArt) {
+    const image = new Image();
+    image.className = 'px';
+    image.alt = 'Пиксельный портрет инспектора Таира';
+    image.width = w;
+    image.height = h;
+    try {
+      await new Promise((resolve, reject) => {
+        image.onload = resolve;
+        image.onerror = reject;
+        image.src = src;
+      });
+      return image;
+    } catch { /* use the procedural portrait when the asset is missing */ }
+  }
   const colors = [
     css('--desk-1'),
     css('--swamp'),

@@ -3,14 +3,15 @@
 #receipts {
   position: fixed;
   bottom: max(calc(var(--u) * 2), env(safe-area-inset-bottom));
-  left: calc(var(--u) * 2);
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   z-index: 400;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   pointer-events: none;
-  width: min(calc(var(--u) * 64), calc(100vw - var(--u) * 4));
-  max-height: 45vh;
+  width: min(400px, calc(100vw - 24px));
+  max-height: 60svh;
   padding: calc(var(--u) * 2) calc(var(--u) * 2) calc(var(--u) * 4);
   overflow: visible;
   background: transparent;
@@ -19,9 +20,9 @@
 }
 
 #receipts[popover] {
-  inset: auto auto max(calc(var(--u) * 2), env(safe-area-inset-bottom)) calc(var(--u) * 2);
+  inset: auto auto max(24px, env(safe-area-inset-bottom)) 50%;
   margin: 0;
-  transform: none;
+  transform: translateX(-50%);
 }
 
 #receipts[popover]:not(:popover-open) {
@@ -110,7 +111,9 @@
 .receipt__header {
   display: block;
   font-family: var(--font-display);
-  font-size: var(--fs-s);
+  font-size: 10px;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
   color: var(--pink-ink);
   margin-bottom: calc(var(--u) * 2);
   padding-bottom: calc(var(--u) * 1);
@@ -121,16 +124,17 @@
   display: block;
   font-family: var(--font-ui);
   font-size: calc(var(--u) * 5);
-  color: var(--pink-d);
+  color: var(--pink-ink);
   margin-bottom: calc(var(--u) * 3);
 }
 
 .receipt__text {
   display: block;
   font-family: var(--font-ui);
-  font-size: var(--fs-s);
+  font-size: 13px;
   color: var(--pink-ink);
-  line-height: 2;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
   min-height: calc(var(--u) * 12);
   border-right: calc(var(--u) * 1) solid transparent;
 }

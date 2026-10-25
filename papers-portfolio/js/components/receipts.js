@@ -55,16 +55,25 @@ export function initReceipts(audio) {
   }
 
   async function present(record) {
+    // Keep the two training papers and decision stamps unobstructed. The final
+    // shift receipt is delivered when the inspector returns to the desk.
+    while (document.querySelector('#doc-inspection[open]')) {
+      await new Promise(resolve => {
+        const off = bus.on('doc:closed', ({ detail }) => {
+          if (detail.key === 'inspection') { off(); resolve(); }
+        });
+      });
+    }
     sequence += 1;
     const now = new Date();
     const date = new Intl.DateTimeFormat('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(now);
     const time = new Intl.DateTimeFormat('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' }).format(now);
     const id = String(sequence).padStart(4, '0');
     const header = record.header || 'ПРЕДУПРЕЖДЕНИЕ АРСТОТЦКИ';
-    const meta = (record.meta || 'ПРОТОКОЛ М.О.А.') + ' // ' + date + ' ' + time + ' // № ' + id;
+    const meta = (record.meta || 'ПРОТОКОЛ М.О.А.') + ' · ' + date + ' ' + time + ' · № ' + id;
     const element = el('button', {
       class: 'receipt', type: 'button',
-      'aria-label': header + '. Нажмите, чтобы убрать уведомление.',
+      'aria-label': header + '. ' + String(record.text || '') + '. Нажмите, чтобы убрать уведомление.',
     },
       el('span', { class: 'receipt__header' }, header),
       el('span', { class: 'receipt__meta' }, meta),
@@ -139,7 +148,12 @@ export function initReceipts(audio) {
   bus.on('receipt:print', (event) => {
     if (event.detail) void printReceipt(event.detail);
   });
-  bus.on('doc:opened', bumpToTop);
+  bus.on('doc:opened', ({ detail }) => {
+    if (detail.key === 'inspection') {
+      hideContainer();
+      if (current) void dismissReceipt(current);
+    } else bumpToTop();
+  });
 
   return { printReceipt, dismissReceipt };
 }

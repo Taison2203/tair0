@@ -6,7 +6,7 @@ import { Music } from './audio/music.js';
 import { initScale } from './core/scale.js';
 import {
   makeDeskTexture, makeGrainTexture, makeRingTexture, initClock,
-  createESP32, createClips, initMuteButton,
+  createScanner, initMuteButton,
 } from './components/desk.js';
 import { initStartScreen } from './components/startScreen.js';
 import { initBook } from './components/book.js';
@@ -17,14 +17,15 @@ import { initEzic, initPenalty } from './components/ezic.js';
 import { bus } from './core/bus.js';
 import { CONTENT } from './config/content.js';
 import { makePortrait } from './core/pixelate.js';
+import { initShift } from './components/shift.js';
+import { initAtmosphere } from './components/atmosphere.js';
 
 async function loadRequiredFonts() {
   if (!document.fonts?.load) return;
   const sample = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюя';
   await Promise.all([
     document.fonts.load('8px "Press Start 2P"', sample),
-    document.fonts.load('16px "Pixelify Sans"', sample),
-    document.fonts.load('16px "VT323"', sample),
+    document.fonts.load('16px "PT Mono"', sample),
   ].map((promise) => promise.catch(() => [])));
 }
 
@@ -40,8 +41,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   makeGrainTexture();
   makeRingTexture();
   initClock();
-  createESP32();
-  createClips();
+  createScanner();
+  initAtmosphere(audio);
 
   const footer = document.querySelector('[data-footer-copy]');
   if (footer) footer.textContent = CONTENT.footer;
@@ -55,7 +56,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   try {
     await loadRequiredFonts();
     const deskPhoto = document.querySelector('[data-desk-photo]');
-    if (deskPhoto) deskPhoto.replaceChildren(await makePortrait(CONTENT.passport.photo, 32, 42));
+    if (deskPhoto) deskPhoto.replaceChildren(await makePortrait(CONTENT.passport.photo, 32, 42, CONTENT.passport.pixelArt));
     const dossierValues = [
       ['[data-dossier-name]', CONTENT.owner.givenName],
       ['[data-dossier-age]', String(CONTENT.passport.issueYear - CONTENT.passport.birthYear)],
@@ -70,6 +71,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     initReceipts(audio);
     initNews();
     await initDocuments(audio);
+    initShift(audio);
     initEzic(audio);
     initPenalty({ audio, isShiftActive: () => document.body.dataset.phase === 'shift' });
 
@@ -93,9 +95,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
     if (!muted) music.start();
     await startScreen.hide();
+    document.querySelector('#desk')?.removeAttribute('inert');
+    document.querySelector('#desk')?.classList.add('is-revealed');
+    window.setTimeout(() => document.querySelector('#desk')?.classList.remove('is-revealed'), 1200);
+    bus.emit('shift:started');
 
     const requestedDoc = window.location.hash.slice(1);
-    if (['passport', 'pass', 'cases', 'contact'].includes(requestedDoc)) {
+    if (requestedDoc === 'inspection') {
+      bus.emit('doc:open', { key: 'inspection' });
+    } else if (['passport', 'pass', 'cases', 'contact'].includes(requestedDoc)) {
       document.querySelector('.tab[data-tab="' + requestedDoc + '"]')?.focus({ preventScroll: true });
       bus.emit('tab:select', { key: requestedDoc });
     } else {
@@ -103,6 +111,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     window.setTimeout(() => {
+      if (document.querySelector('dialog[open]')) return;
       bus.emit('receipt:print', {
         header: 'МИНИСТЕРСТВО ВЪЕЗДА',
         text: 'ИНСПЕКТОР ' + CONTENT.owner.givenName.toUpperCase() + ': Рабочее место готово к проверке.',
@@ -121,6 +130,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   window.addEventListener('keydown', (event) => {
+    if (document.body.dataset.phase !== 'shift') return;
     if (event.target.matches('input, textarea, select, button, a, [contenteditable="true"]')) return;
     if (document.querySelector('dialog.doc[open]')) return;
     if (event.key === '1') bus.emit('tab:select', { key: 'passport' });

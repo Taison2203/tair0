@@ -11,10 +11,10 @@
   <meta property="og:title" content="Таир — Портфолио инспектора">
   <meta property="og:description" content="Справочник инспектора: паспорт, рабочий допуск, личные дела и связь.">
 
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="assets/img/favicon.png">
+  <link rel="apple-touch-icon" href="assets/img/favicon.png">
+  <link rel="preload" href="assets/fonts/pt-mono.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="preload" href="assets/fonts/press-start-2p.ttf" as="font" type="font/ttf" crossorigin>
 
   <!-- CSS Design System -->
   <link rel="stylesheet" href="css/tokens.css">
@@ -24,14 +24,20 @@
   <link rel="stylesheet" href="css/book.css">
   <link rel="stylesheet" href="css/documents.css">
   <link rel="stylesheet" href="css/receipts.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/atmosphere.css">
+  <link rel="stylesheet" href="css/contact.css">
+  <link rel="stylesheet" href="css/inspection.css">
+  <link rel="stylesheet" href="css/motion.css">
 </head>
 <body>
   <!-- START OVERLAY -->
   <section id="start-screen" aria-label="Экран входа на пост">
-    <h1 class="start__title">ПОРТФОЛИО ИНСПЕКТОРА</h1>
-    <p class="start__sub">СПРАВОЧНИК МИНИСТЕРСТВА ВЪЕЗДА // КПП АРСТОТЦКА</p>
+    <img class="start__emblem" src="assets/img/eagle.svg" alt="Пиксельный герб: орёл с расправленными крыльями" width="240" height="195">
+    <h1 class="start__title">ЛИЧНОЕ ДЕЛО ТАИРА <span class="start__number">№ 2203</span></h1>
+    <p class="start__sub">СПРАВОЧНИК МИНИСТЕРСТВА ВЪЕЗДА · КПП АРСТОТЦКА</p>
     
-    <div class="progress" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Синтез аудио">
+    <div class="progress" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Подготовка поста">
       <div class="progress__block"></div>
       <div class="progress__block"></div>
       <div class="progress__block"></div>
@@ -48,10 +54,16 @@
       <button class="btn btn--primary" id="btn-start" disabled>НАЧАТЬ СМЕНУ</button>
       <button class="btn btn--secondary" id="btn-mute" disabled>БЕЗ ЗВУКА</button>
     </div>
+    <p class="start__hint">ПОРТФОЛИО ИНСПЕКТОРА · ПАВЛТОН · 1982</p>
   </section>
 
   <!-- INSPECTOR'S DESK -->
-  <div id="desk">
+  <div id="desk" inert>
+    <div class="desk-light" aria-hidden="true"></div>
+    <button class="desk-lamp" type="button" aria-label="Выключить настольную лампу" aria-pressed="true">
+      <div class="desk-lamp__fixture" aria-hidden="true"><img src="assets/img/lamp.svg" width="144" height="104" alt=""></div>
+      <span>ЛАМПА ПОСТА <small data-lamp-status>ВКЛ.</small></span>
+    </button>
     <!-- Mute sound toggle -->
     <button class="mute" aria-label="Выключить звук" aria-pressed="false" hidden></button>
 
@@ -94,26 +106,41 @@
     </div>
 
     <!-- Канцелярия и тайная записка -->
-    <div class="clip clip--a" aria-hidden="true"></div>
     <button class="clip clip--b" type="button" aria-label="Открыть секретную записку EZIC">
       <span class="secret-note__tag">НАЙДЕННАЯ ЗАПИСКА</span>
       <strong class="secret-note__title">Прочитать</strong>
       <span class="secret-note__hint">КОНТАКТ EZIC · НАЖМИТЕ</span>
     </button>
 
+    <button class="news-button" type="button" data-news-open aria-haspopup="dialog" aria-controls="news-reader" aria-expanded="false">
+      <span class="news-button__icon" aria-hidden="true">▤</span>
+      <span><strong>ВЕСТИ СМЕНЫ</strong><small data-news-preview>Казахстан и мир · читать газету</small></span>
+      <span class="news-button__arrow" aria-hidden="true">↗</span>
+    </button>
+    <dialog id="news-reader" class="news-reader" aria-labelledby="news-title"></dialog>
     <aside class="dispatch" aria-label="Газетный лист новостей смены">
       <header class="dispatch__masthead">
         <div>
           <span class="dispatch__kicker">АРХИВ КОНТРОЛЬНОГО ПОСТА</span>
-          <h2 class="dispatch__heading">ВЕСТИ СМЕНЫ</h2>
+          <h2 class="dispatch__heading" id="news-title">ВЕСТИ СМЕНЫ</h2>
         </div>
-        <button class="dispatch__refresh" type="button" data-news-refresh aria-label="Обновить новости">↻</button>
+        <div class="dispatch__actions">
+          <button class="dispatch__refresh" type="button" data-news-refresh aria-label="Обновить новости">↻</button>
+          <button class="dispatch__close" type="button" data-news-close aria-label="Закрыть газету">×</button>
+        </div>
       </header>
-      <p class="dispatch__edition">Официальные новости · выпуск 01</p>
+      <p class="dispatch__edition">Реальные новости · Казахстан и мир</p>
+      <div class="dispatch__feed-head">
+        <span>ПОСЛЕДНИЕ СООБЩЕНИЯ</span>
+        <time data-news-updated>Загрузка…</time>
+      </div>
+      <ol class="dispatch__items" data-news-items aria-live="polite" aria-busy="true"></ol>
+      <p class="dispatch__status" data-news-status role="status">Подключаем архив новостей…</p>
+      <h3 class="dispatch__archive-title">ИЗ АРХИВА</h3>
       <section class="dispatch__lead" aria-label="Сводка по ситуации в Иркутске">
         <span class="dispatch__category">ЗДОРОВЬЕ · ИРКУТСК</span>
         <h3>Чуму не подтвердили</h3>
-        <p>ВОЗ: чуму не выявили. Причина пневмонии неизвестна; связанных случаев нет.</p>
+        <p>По сводке ВОЗ, власти не выявили чуму. Причина пневмонии остаётся неизвестной.</p>
         <a href="https://www.who.int/india/home/emergencies/disease-outbreak-news/item/2026-DON620" target="_blank" rel="noopener noreferrer">Сводка ВОЗ ↗</a>
         <time datetime="2026-10-10">10 октября 2026</time>
       </section>
@@ -121,12 +148,6 @@
         <span class="dispatch__category">КАЗАХСТАН · ДИПЛОМАТИЯ</span>
         <a href="https://www.gov.kz/memleket/entities/mfa-baku/press/news/details/1089048" target="_blank" rel="noopener noreferrer">Анонс визита Алиева · 20–21.10 ↗</a>
       </section>
-      <div class="dispatch__feed-head">
-        <span>ПОСЛЕДНИЕ СООБЩЕНИЯ</span>
-        <time data-news-updated>Загрузка…</time>
-      </div>
-      <ol class="dispatch__items" data-news-items aria-live="polite" aria-busy="true"></ol>
-      <p class="dispatch__status" data-news-status role="status">Подключаем архив новостей…</p>
       <footer class="dispatch__footer">Автообновление · 15 минут</footer>
     </aside>
 
@@ -144,15 +165,15 @@
       <div class="desk-file__barcode" aria-hidden="true"></div>
     </aside>
 
-    <!-- Сканер документов -->
-    <aside class="esp32" aria-label="Сканер документов на плате ESP32">
-      <div class="esp32__device" aria-hidden="true"></div>
-      <div class="esp32__copy">
-        <strong class="esp32__label">СКАНЕР ДОКУМЕНТОВ</strong>
-        <span class="esp32__status"><i aria-hidden="true"></i> ГОТОВ К СВЕРКЕ</span>
-        <small class="esp32__code">RFID · ESP32</small>
+    <!-- Optional, session-only inspection game. -->
+    <button class="scanner" type="button" aria-label="Открыть тренажёр инспектора" aria-haspopup="dialog" aria-controls="doc-inspection">
+      <div class="scanner__device" aria-hidden="true"></div>
+      <div class="scanner__copy">
+        <strong class="scanner__label">ТРЕНАЖЁР ИНСПЕКТОРА</strong>
+        <span class="scanner__status">3 ПОСЕТИТЕЛЯ · 2 ДОКУМЕНТА</span>
+        <small class="scanner__code">НАЙТИ РАСХОЖДЕНИЯ</small>
       </div>
-    </aside>
+    </button>
 
     <!-- Duplicate Button -->
     <button class="dup-btn" id="btn-duplicate" aria-label="Печать копии документов">
@@ -186,7 +207,32 @@
         </div>
         <div class="passport__barcode" aria-hidden="true"></div>
         <div class="passport__stamps" aria-hidden="true"></div>
+        <button class="passport__verify" type="button" data-verify-passport>ПОПРОБОВАТЬ РАБОТУ ИНСПЕКТОРА</button>
+        <p class="passport__verification">Сравните документы трёх посетителей в учебной смене.</p>
       </article>
+    </dialog>
+
+    <dialog id="doc-inspection" class="doc doc--inspection" aria-labelledby="inspection-title">
+      <button class="doc__close" aria-label="Закрыть тренажёр">[X] ВЕРНУТЬ</button>
+      <section class="inspection">
+        <header class="inspection__header">
+          <p>УЧЕБНЫЙ ПОСТ · 23.11.1982</p>
+          <h2 id="inspection-title">ДОКУМЕНТЫ К ПРОВЕРКЕ</h2>
+          <p data-inspection-progress>Посетитель 1 из 3</p>
+        </header>
+        <p class="inspection__rules">Сверьте имя, номер и дату рождения. Разрешение должно действовать на 23.11.1982. Нажмите на строку, чтобы сравнить её в обоих документах.</p>
+        <div class="inspection__papers" data-inspection-papers></div>
+        <div class="inspection__decision" data-inspection-decision>
+          <span class="inspection__ink" data-inspection-ink hidden aria-hidden="true"></span>
+          <p class="inspection__feedback" data-inspection-feedback role="status" tabindex="-1">Документы на столе. Ваше решение?</p>
+        </div>
+        <div class="inspection__actions" data-inspection-actions>
+          <button class="inspection__stamp inspection__stamp--deny" type="button" data-verdict="deny">ОТКАЗАТЬ</button>
+          <button class="inspection__stamp inspection__stamp--approve" type="button" data-verdict="approve">ПРОПУСТИТЬ</button>
+        </div>
+        <button class="inspection__next" type="button" data-inspection-next hidden>СЛЕДУЮЩИЙ ПОСЕТИТЕЛЬ →</button>
+        <p class="inspection__footnote">Учебная игра · вымышленные посетители · можно закрыть и продолжить.</p>
+      </section>
     </dialog>
 
     <!-- 2. WORK PASS DIALOG -->
@@ -219,33 +265,51 @@
     <!-- 4. CONTACT FORM DIALOG -->
     <dialog id="doc-contact" class="doc doc--form" aria-labelledby="contact-title">
       <button class="doc__close" aria-label="Закрыть бланк">[X] ЗАКРЫТЬ</button>
+      <div class="contact-desk">
       <form class="request pxframe" novalidate>
-        <h2 id="contact-title" class="request__title">БЛАНК ЗАПРОСА В ОТДЕЛ СВЯЗИ</h2>
-        <p class="request__notice" data-contact-note>ПУБЛИЧНЫЙ КАНАЛ СВЯЗИ НЕ УКАЗАН. БЛАНК ПОДГОТОВИТ ЧЕРНОВИК ДЛЯ ОТПРАВКИ.</p>
+        <div class="request__agency"><span>МИНИСТЕРСТВО ВЪЕЗДА</span><span>БЛАНК 22-03</span></div>
+        <h2 id="contact-title" class="request__title">ЛИЧНОЕ ОБРАЩЕНИЕ</h2>
+        <p class="request__notice">Заполняйте разборчиво. Один контакт — одно обращение.</p>
         
         <label>ЦЕЛЬ ОБРАЩЕНИЯ:
           <select name="purpose"></select>
         </label>
         
-        <label>ВАШЕ ИМЯ ИЛИ ОРГАНИЗАЦИЯ:
+        <div class="request__identity">
+        <label>ИМЯ / ОРГАНИЗАЦИЯ:
           <input type="text" name="name" placeholder="Рекрутер / Компания" required maxlength="80" autocomplete="off">
         </label>
 
-        <label>КОНТАКТ ДЛЯ СВЯЗИ (ПОЧТА / TG):
+        <label>TELEGRAM ИЛИ EMAIL:
           <input type="text" name="contact" placeholder="@пользователь или адрес почты" required maxlength="200" autocomplete="email">
         </label>
+        </div>
 
         <label>СУТЬ ПРЕДЛОЖЕНИЯ / ВОПРОС:
           <textarea name="message" rows="3" minlength="10" maxlength="2000" placeholder="Опишите предложение о работе, проект или вопрос..." required></textarea>
         </label>
 
         <!-- Honeypot -->
-        <input type="text" name="hp" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
 
         <div class="request__status" role="status" aria-live="polite"></div>
-        <button type="submit" class="btn btn--primary">СКОПИРОВАТЬ ЧЕРНОВИК</button>
-        <div class="request__stamp" aria-hidden="true"></div>
+        <p class="request__privacy">Контакт и текст обращения будут переданы Таиру в Telegram.</p>
+        <div class="request__ink-area"><span>ДЛЯ ОТМЕТКИ ВЕДОМСТВА</span><div class="request__stamp" aria-hidden="true"></div></div>
+        <button type="submit" class="stamp-control" aria-label="Отправить обращение" disabled>
+          <span class="stamp-control__handle" aria-hidden="true"></span>
+          <span class="stamp-control__base">ОТПРАВИТЬ</span>
+        </button>
+        <p class="request__footnote">Нажмите на печать, чтобы подать бланк.</p>
       </form>
+      <section class="submission-result pxframe" hidden aria-live="polite" aria-labelledby="submission-title">
+        <div class="submission-result__seal" aria-hidden="true">ПРИНЯТО</div>
+        <p class="submission-result__agency">ОТДЕЛ СВЯЗИ · КПП № 1</p>
+        <h3 id="submission-title" tabindex="-1">ВЫ УЖЕ ОСТАВИЛИ ОБРАЩЕНИЕ</h3>
+        <p data-submission-message>Ваш бланк передан Таиру. Ожидайте ответа по указанному контакту.</p>
+        <dl><dt>НОМЕР БЛАНКА</dt><dd data-submission-id>—</dd><dt>СТАТУС</dt><dd data-submission-status>НА РАССМОТРЕНИИ</dd></dl>
+        <p class="submission-result__note">Повторная подача этого бланка не предусмотрена.</p>
+      </section>
+      </div>
     </dialog>
 
     <!-- RECEIPTS (CITATIONS) CONTAINER -->

@@ -1,3 +1,19 @@
+@font-face {
+  font-family: 'PT Mono';
+  src: url('../assets/fonts/pt-mono.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Press Start 2P';
+  src: url('../assets/fonts/press-start-2p.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
 :root {
   /* «Арстотцка»: оригинальная палитра в духе игры */
   --desk-0:  #1d221c;
@@ -32,9 +48,9 @@
 
   --f: 83ms;
 
-  --font-display: 'Press Start 2P', 'Pixelify Sans', monospace;
-  --font-ui:      'Pixelify Sans', 'Press Start 2P', monospace;
-  --font-term:    'VT323', monospace;
+  --font-display: 'Press Start 2P', monospace;
+  --font-ui:      'PT Mono', monospace;
+  --font-term:    'PT Mono', monospace;
   --fs-s: calc(var(--u) * 6);
   --fs-m: calc(var(--u) * 8);
   --fs-l: calc(var(--u) * 16);

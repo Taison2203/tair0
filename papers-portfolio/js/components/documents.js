@@ -11,8 +11,9 @@ import {
 import { makePortrait } from '../core/pixelate.js';
 import { bus } from '../core/bus.js';
 import { CONTENT } from '../config/content.js';
+import { initContact } from './contact.js';
 
-const VALID_DOCS = new Set(['passport', 'pass', 'cases', 'contact']);
+const VALID_DOCS = new Set(['passport', 'pass', 'cases', 'contact', 'inspection']);
 const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 function makeBarcode(width = 120, height = 14, seed = 2026) {
@@ -64,21 +65,22 @@ async function makeStamp(text, colorVar = '--ok', angle = -8, options = {}) {
     context.clearRect((random() * width) | 0, (random() * height) | 0, 1, 1);
   }
 
-  const size = Math.ceil(Math.hypot(width, height));
-  const outputSize = Math.max(1, Math.ceil(size * scale));
+  const radians = angle * Math.PI / 180;
+  const outputWidth = Math.ceil((Math.abs(width * Math.cos(radians)) + Math.abs(height * Math.sin(radians))) * scale) + 2;
+  const outputHeight = Math.ceil((Math.abs(width * Math.sin(radians)) + Math.abs(height * Math.cos(radians))) * scale) + 2;
   const stamp = Object.assign(document.createElement('canvas'), {
-    width: outputSize,
-    height: outputSize,
+    width: outputWidth,
+    height: outputHeight,
   });
   const stampContext = stamp.getContext('2d');
   stampContext.imageSmoothingEnabled = false;
-  stampContext.translate(outputSize / 2, outputSize / 2);
+  stampContext.translate(outputWidth / 2, outputHeight / 2);
   stampContext.rotate((angle * Math.PI) / 180);
   stampContext.scale(scale, scale);
   stampContext.drawImage(source, -width / 2, -height / 2);
   stamp.className = 'px stamp';
-  stamp.style.width = 'calc(' + outputSize + ' * var(--u))';
-  stamp.style.height = 'calc(' + outputSize + ' * var(--u))';
+  stamp.style.width = 'calc(' + outputWidth + ' * var(--u))';
+  stamp.style.height = 'calc(' + outputHeight + ' * var(--u))';
   stamp.setAttribute('role', 'img');
   stamp.setAttribute('aria-label', 'Печать: ' + text);
   return stamp;
@@ -102,7 +104,7 @@ export async function initDocuments(audio) {
   }
 
   function openDoc(key) {
-    if (!VALID_DOCS.has(key)) return Promise.resolve();
+    if (!VALID_DOCS.has(key) || document.body.dataset.phase !== 'shift') return Promise.resolve();
     const task = openQueue.then(() => openDocNow(key));
     openQueue = task.catch(() => {});
     return task;
@@ -134,6 +136,7 @@ export async function initDocuments(audio) {
       audio.play('paper', { gain: 0.6 });
       await stepAnim(dialog, 'is-leaving', reducedMotion() ? 20 : 300);
       dialog.close();
+      bus.emit('doc:closed', { key: dialog.id.replace(/^doc-/, '') });
       dialog.classList.remove('is-leaving', 'is-entering');
       const closedKey = dialog.id.replace(/^doc-/, '');
       if (!fromHistory) clearDocumentHash(closedKey);
@@ -170,7 +173,7 @@ export async function initDocuments(audio) {
 
     const photo = passport.querySelector('.passport__photo');
     if (photo) {
-      photo.replaceChildren(await makePortrait(CONTENT.passport.photo, 40, 52));
+      photo.replaceChildren(await makePortrait(CONTENT.passport.photo, 40, 52, CONTENT.passport.pixelArt));
     }
 
     const number = passport.querySelector('[data-passport-number]');
@@ -202,10 +205,10 @@ export async function initDocuments(audio) {
     if (stamps) {
       stamps.replaceChildren();
       const first = await makeStamp(CONTENT.passport.stampTexts[0] || 'ПРОВЕРЕНО', '--ok', -7, {
-        seed: 3018, scale: 0.15,
+        seed: 3018, scale: 0.6,
       });
       const second = await makeStamp(CONTENT.passport.stampTexts[1] || 'СВЕРЕНО', '--stamp-blue', 8, {
-        seed: 3019, scale: 0.14,
+        seed: 3019, scale: 0.6,
       });
       stamps.append(first, second);
     }
@@ -297,7 +300,7 @@ export async function initDocuments(audio) {
         ? el('p', { class: 'case-panel__summary' }, item.summary)
         : el('div', { class: 'case-panel__body' },
             el('div', { class: 'case-panel__classified', 'aria-hidden': 'true' }, '██████████████████████████████████████'),
-            el('div', { class: 'case-panel__classified-label' }, '[ СВЕДЕНИЯ ЗАСЕКРЕЧЕНЫ 5-М ОТДЕЛОМ ]')
+            el('div', { class: 'case-panel__classified-label' }, 'СВЕДЕНИЯ ЗАСЕКРЕЧЕНЫ 5-М ОТДЕЛОМ')
           );
 
       const links = item.links
@@ -356,211 +359,8 @@ export async function initDocuments(audio) {
     renderCase(activeIndex);
   }
 
-  function setupContact() {
-    const form = $('#doc-contact form.request');
-    if (!form) return;
-    const purpose = form.querySelector('select[name="purpose"]');
-    purpose?.replaceChildren(...CONTENT.contact.purposes.map((value) => el('option', { value }, value)));
-
-    const status = form.querySelector('.request__status');
-    const stampContainer = form.querySelector('.request__stamp');
-    const endpoint = CONTENT.contact.endpoint.trim();
-    const contactNote = form.querySelector('[data-contact-note]');
-    const submitButton = form.querySelector('button[type="submit"]');
-    const defaultButtonText = submitButton?.textContent || 'ОТПРАВИТЬ ЗАПРОС';
-    if (contactNote && endpoint) {
-      contactNote.textContent = 'ЗАПРОС БУДЕТ ПЕРЕДАН ЧЕРЕЗ НАСТРОЕННЫЙ КАНАЛ СВЯЗИ.';
-    }
-
-    function setStatus(message, kind = '') {
-      if (!status) return;
-      status.className = 'request__status' + (kind ? ' is-' + kind : '');
-      status.textContent = message;
-    }
-
-    function setInvalid(field, invalid) {
-      field?.classList.toggle('is-invalid', invalid);
-      if (invalid) field?.setAttribute('aria-invalid', 'true');
-      else field?.removeAttribute('aria-invalid');
-    }
-
-    async function landStamp(text, color, seed) {
-      if (!stampContainer) return;
-      const stamp = await makeStamp(text, color, -10, {
-        fontPx: 16, seed, wear: 0.08, scale: 0.92,
-      });
-      stampContainer.replaceChildren(stamp);
-      window.setTimeout(() => audio.play(text === 'ПРИНЯТО' ? 'approve' : 'buzzer'), reducedMotion() ? 0 : 159);
-      if (reducedMotion()) return;
-      await stepAnim(stamp, 'is-hit', 450);
-      await stepAnim(form, 'is-settling', 400);
-      desk?.classList.add('is-shaking');
-      window.setTimeout(() => desk?.classList.remove('is-shaking'), 260);
-    }
-
-    function enableNewRequest() {
-      if (!submitButton) return;
-      form.querySelectorAll('input:not(.hp), textarea:not(.request__draft), select')
-        .forEach((field) => { field.disabled = true; });
-      submitButton.type = 'button';
-      submitButton.textContent = 'НОВЫЙ БЛАНК';
-      submitButton.classList.add('request__new');
-      submitButton.addEventListener('click', () => {
-        form.reset();
-        stampContainer?.replaceChildren();
-        form.querySelector('.request__draft')?.remove();
-        form.querySelector('.request__telegram')?.remove();
-        form.querySelectorAll('input:not(.hp), textarea, select')
-          .forEach((field) => { field.disabled = false; });
-        form.querySelectorAll('.is-invalid').forEach((field) => setInvalid(field, false));
-        form.classList.remove('is-submitted');
-        setStatus('');
-        submitButton.type = 'submit';
-        submitButton.textContent = defaultButtonText;
-        submitButton.classList.remove('request__new');
-        form.querySelector('input[name="name"]')?.focus();
-      }, { once: true });
-    }
-
-    form.addEventListener('input', (event) => {
-      if (event.target.matches('input, textarea')) setInvalid(event.target, false);
-    });
-
-    form.addEventListener('submit', async (event) => {
-      event.preventDefault();
-      if (submitButton?.disabled || submitButton?.type !== 'submit') return;
-
-      const name = form.querySelector('input[name="name"]');
-      const contact = form.querySelector('input[name="contact"]');
-      const message = form.querySelector('textarea[name="message"]');
-      const honeypot = form.querySelector('input[name="hp"]');
-      if (honeypot?.value) {
-        setStatus('ЗАПРОС ПРИНЯТ.');
-        return;
-      }
-
-      const nameValue = name?.value.trim() || '';
-      const contactValue = contact?.value.trim() || '';
-      const messageValue = message?.value.trim() || '';
-      const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactValue);
-      const isTelegram = /^@?[A-Za-z0-9_]{5,32}$/.test(contactValue)
-        || /^https?:\/\/t\.me\/[A-Za-z0-9_]{5,32}\/?$/i.test(contactValue);
-      const issues = [
-        [name, !nameValue, 'УКАЖИТЕ ИМЯ ИЛИ ОРГАНИЗАЦИЮ.'],
-        [contact, !isEmail && !isTelegram, 'УКАЖИТЕ КОРРЕКТНЫЙ АДРЕС ПОЧТЫ ИЛИ TELEGRAM.'],
-        [message, messageValue.length < 10, 'СООБЩЕНИЕ ДОЛЖНО СОДЕРЖАТЬ НЕ МЕНЕЕ 10 СИМВОЛОВ.'],
-      ];
-      issues.forEach(([field, invalid]) => setInvalid(field, invalid));
-      const firstIssue = issues.find(([, invalid]) => invalid);
-      if (firstIssue) {
-        audio.play('buzzer');
-        form.classList.remove('is-shaking');
-        if (!reducedMotion()) {
-          void form.offsetWidth;
-          form.classList.add('is-shaking');
-          window.setTimeout(() => form.classList.remove('is-shaking'), 300);
-        }
-        setStatus(issues.find(([, invalid]) => invalid)?.[2] || 'ПРОВЕРЬТЕ ПОЛЯ ФОРМЫ.', 'error');
-        firstIssue[0]?.focus();
-        return;
-      }
-
-      const payload = {
-        purpose: purpose?.value || '',
-        name: nameValue,
-        contact: contactValue,
-        message: messageValue,
-      };
-      if (name) name.value = nameValue;
-      if (contact) contact.value = contactValue;
-      if (message) message.value = messageValue;
-      if (submitButton) submitButton.disabled = true;
-      setStatus(endpoint ? 'ПЕРЕДАЧА ЗАПРОСА…' : 'ПОДГОТОВКА ЗАПРОСА…');
-
-      try {
-        if (endpoint) {
-          const response = await fetch(endpoint, {
-            method: 'POST',
-            headers: { Accept: 'application/json' },
-            body: new FormData(form),
-          });
-          if (!response.ok) throw new Error('HTTP ' + response.status);
-          await landStamp('ПРИНЯТО', '--ok', Date.now() & 0xffff);
-          setStatus('ЗАПРОС ПЕРЕДАН ПО НАСТРОЕННОМУ КАНАЛУ.', 'success');
-          form.classList.add('is-submitted');
-          enableNewRequest();
-          bus.emit('receipt:print', {
-            header: 'ЗАПРОС ПЕРЕДАН',
-            text: 'Запрос от ' + nameValue + ' принят настроенным каналом связи.',
-            meta: 'СТАТУС: ПРИНЯТО',
-          });
-          return;
-        }
-
-        const draft = [
-          'Тема: ' + payload.purpose,
-          'Имя: ' + payload.name,
-          'Контакт: ' + payload.contact,
-          '',
-          payload.message,
-        ].join('\n');
-        const draftField = el('textarea', {
-          class: 'request__draft', readonly: '', rows: '5',
-          'aria-label': 'Черновик запроса для копирования',
-        });
-        draftField.value = draft;
-        form.querySelector('.request__draft')?.remove();
-        form.insertBefore(draftField, submitButton);
-        draftField.hidden = false;
-
-        if (CONTENT.contact.email) {
-          await landStamp('ГОТОВО', '--stamp-blue', Date.now() & 0xffff);
-          const mailto = 'mailto:' + encodeURI(CONTENT.contact.email)
-            + '?subject=' + encodeURIComponent(payload.purpose)
-            + '&body=' + encodeURIComponent(draft);
-          window.location.href = mailto;
-          setStatus('ЧЕРНОВИК ОТКРЫТ В ПОЧТОВОМ ПРИЛОЖЕНИИ.', 'success');
-          form.classList.add('is-submitted');
-          enableNewRequest();
-          return;
-        }
-
-        if (CONTENT.contact.telegram) {
-          try { await navigator.clipboard.writeText(draft); } catch { /* visible draft remains selectable */ }
-          setStatus('ЧЕРНОВИК ПОДГОТОВЛЕН. ОТПРАВЬТЕ ЕГО ЧЕРЕЗ TELEGRAM.', '');
-          const telegramLink = CONTENT.contact.telegram.startsWith('http')
-            ? CONTENT.contact.telegram : 'https://t.me/' + CONTENT.contact.telegram.replace(/^@/, '');
-          if (!form.querySelector('.request__telegram')) {
-            form.append(el('a', {
-              class: 'request__telegram', href: telegramLink,
-              target: '_blank', rel: 'noopener noreferrer',
-            }, 'ОТКРЫТЬ TELEGRAM'));
-          }
-          return;
-        }
-
-        try {
-          await navigator.clipboard.writeText(draft);
-          setStatus('ЧЕРНОВИК СКОПИРОВАН. ФОРМА НЕ ОТПРАВЛЯЕТ ДАННЫЕ.', '');
-        } catch {
-          setStatus('ДЕМО-РЕЖИМ: СКОПИРУЙТЕ ЧЕРНОВИК НИЖЕ. ОТПРАВКА НЕ НАСТРОЕНА.', '');
-          draftField.focus();
-          draftField.select();
-        }
-        console.info('[contact] demo mode: request draft prepared; no message was sent.');
-      } catch (error) {
-        console.error('[contact] request could not be sent:', error);
-        setStatus('КАНАЛ СВЯЗИ НЕДОСТУПЕН. ПОПРОБУЙТЕ ПОЗЖЕ.', 'error');
-        await landStamp('ОТКЛОНЕНО', '--no', Date.now() & 0xffff);
-        form.classList.remove('is-submitted');
-      } finally {
-        if (submitButton) submitButton.disabled = false;
-      }
-    });
-  }
-
   await Promise.all([setupPassport(), setupWorkPass(), setupCases()]);
-  setupContact();
+  initContact({ audio, makeStamp });
 
   bus.on('doc:open', (event) => {
     const key = event.detail?.key;
@@ -574,7 +374,8 @@ export async function initDocuments(audio) {
 
   window.addEventListener('hashchange', () => {
     const key = window.location.hash.slice(1);
-    if (VALID_DOCS.has(key)) bus.emit('tab:select', { key });
+    if (key === 'inspection') openDoc(key);
+    else if (VALID_DOCS.has(key)) bus.emit('tab:select', { key });
     else {
       bus.emit('tab:reset');
       if (openDialog) closeDoc(openDialog, { fromHistory: true });
