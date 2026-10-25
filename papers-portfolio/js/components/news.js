@@ -1,6 +1,7 @@
 /** Poll the local, source-filtered news endpoint without blocking the handbook. */
 
 import { el } from '../core/dom.js';
+import { apiFetch } from '../core/api.js';
 
 const REFRESH_MS = 15 * 60 * 1000;
 
@@ -99,7 +100,7 @@ export function initNews() {
 
     activeRequest = (async () => {
       try {
-        const response = await fetch('/api/news' + (force ? '?refresh=1' : ''), {
+        const response = await apiFetch('/api/news' + (force ? '?refresh=1' : ''), {
           headers: { Accept: 'application/json' },
           cache: 'no-store',
           signal: AbortSignal.timeout(12000),

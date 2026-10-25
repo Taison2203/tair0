@@ -2,6 +2,7 @@
 import { el, sleep, stepAnim } from '../core/dom.js';
 import { bus } from '../core/bus.js';
 import { CONTENT } from '../config/content.js';
+import { apiFetch } from '../core/api.js';
 
 const STORAGE_KEY = 'inspector.feedback.v1';
 const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -48,7 +49,7 @@ export function initContact({ audio, makeStamp }) {
   async function syncState() {
     if (busy) return;
     try {
-      const response = await fetch('/api/contact/state', { cache: 'no-store', signal: AbortSignal.timeout(8000) });
+      const response = await apiFetch('/api/contact/state', { cache: 'no-store', signal: AbortSignal.timeout(8000) });
       if (!response.ok) throw new Error('state unavailable');
       const data = await response.json();
       if (data.status === 'received' || data.status === 'pending') {
@@ -114,7 +115,7 @@ export function initContact({ audio, makeStamp }) {
     submit.disabled = true;
     showStatus('Регистрируем бланк и передаём в отдел связи…');
     try {
-      const response = await fetch(CONTENT.contact.endpoint, {
+      const response = await apiFetch(CONTENT.contact.endpoint, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, contact, message, purpose: fields.purpose, website: fields.website || '' }),
         signal: AbortSignal.timeout(20000),
