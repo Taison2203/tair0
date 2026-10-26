@@ -56,7 +56,7 @@ export function initContact({ audio, makeStamp }) {
     result.querySelector('[data-submission-status]').textContent = pending ? 'ДОСТАВКА УТОЧНЯЕТСЯ' : 'НА РАССМОТРЕНИИ';
     result.querySelector('[data-submission-message]').textContent = pending
       ? 'Бланк зарегистрирован, состояние доставки уточняется. Повторная отправка временно заблокирована.'
-      : 'Ваш бланк передан Таиру. Ожидайте ответа по указанному контакту.';
+      : 'Бланк передан Таиру. Копия и решение о переписке придут в чат с @tair0_bot.';
     result.querySelector('.submission-result__seal').textContent = pending ? 'ПРОВЕРКА' : 'ПРИНЯТО';
     if (dialog.open) result.querySelector('#submission-title').focus({ preventScroll: true });
   }
@@ -159,7 +159,7 @@ export function initContact({ audio, makeStamp }) {
       form.querySelectorAll('input,textarea,select').forEach(field => field.disabled = true);
       showStatus('Бланк № ' + data.receiptId + ' передан Таиру.');
       if (dialog.open) {
-        await ink('ОДОБРЕНО', '--ok');
+        await ink('ПРИНЯТО', '--ok');
         if (!reduced()) {
           await sleep(1200);
           await stepAnim(form, 'is-filed', 650);
