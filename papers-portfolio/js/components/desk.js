@@ -133,6 +133,7 @@ export function initClock() {
   const digitEls = container.querySelectorAll('.clock__digit');
   const colonDots = container.querySelectorAll('.clock__colon-dot');
   const calendar = document.querySelector('.clock__calendar');
+  const compactCalendar = document.querySelector('[data-current-date]');
   const monthFormat = new Intl.DateTimeFormat('ru-RU', { month: 'long' });
   const weekdayFormat = new Intl.DateTimeFormat('ru-RU', { weekday: 'long' });
   const dateFormat = new Intl.DateTimeFormat('ru-RU', { dateStyle: 'full' });
@@ -168,6 +169,11 @@ export function initClock() {
       calendar.querySelector('[data-calendar-month]').textContent = monthFormat.format(now);
       calendar.querySelector('[data-calendar-year]').textContent = String(now.getFullYear());
       calendar.querySelector('[data-calendar-weekday]').textContent = weekdayFormat.format(now);
+      if (compactCalendar) {
+        compactCalendar.dateTime = dateKey;
+        compactCalendar.textContent = `Сегодня · ${dateFormat.format(now)}`;
+        compactCalendar.setAttribute('aria-label', `Сегодня: ${dateFormat.format(now)}`);
+      }
     }
 
     if (minute !== lastMinute) {

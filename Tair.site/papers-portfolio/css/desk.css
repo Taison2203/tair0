@@ -239,6 +239,10 @@
 .clock__calendar-body strong { font-size: 26px; line-height: 1; font-weight: 400; }
 .clock__calendar-body > span { display: grid; gap: 2px; text-align: left; }
 .clock__calendar-weekday { display: block; margin-top: 4px; padding-top: 3px; border-top: 1px dotted var(--paper-dd); font-size: 9px; }
+.compact-calendar { display: none; }
+@media (max-width: 1199px) {
+  .compact-calendar { display: block; margin-bottom: 5px; color: var(--paper); font: 10px/1.6 var(--font-ui); }
+}
 
 /* A readable newspaper replaces the empty inspector summary. */
 .dispatch {
