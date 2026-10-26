@@ -1,8 +1,8 @@
 /** Poll the local, source-filtered news endpoint without blocking the handbook. */
 
-import { el } from '../core/dom.js?v=access-1';
-import { apiFetch } from '../core/api.js?v=access-1';
-import { getLocale } from '../core/i18n.js?v=access-1';
+import { el } from '../core/dom.js?v=sfx-2';
+import { apiFetch } from '../core/api.js?v=sfx-2';
+import { getLocale } from '../core/i18n.js?v=sfx-2';
 
 const REFRESH_MS = 15 * 60 * 1000;
 
@@ -38,7 +38,7 @@ function renderItems(list, items) {
   list.setAttribute('aria-busy', 'false');
 }
 
-export function initNews() {
+export function initNews(audio) {
   const list = document.querySelector('[data-news-items]');
   const refreshButton = document.querySelector('[data-news-refresh]');
   const status = document.querySelector('[data-news-status]');
@@ -62,10 +62,11 @@ export function initNews() {
   openButton?.addEventListener('click', () => {
     if (!reader || reader.open || !compact.matches) return;
     reader.showModal();
+    audio?.play('paper');
     openButton.setAttribute('aria-expanded', 'true');
   });
   document.querySelector('[data-news-close]')?.addEventListener('click', () => reader?.close());
-  reader?.addEventListener('close', () => openButton?.setAttribute('aria-expanded', 'false'));
+  reader?.addEventListener('close', () => { openButton?.setAttribute('aria-expanded', 'false'); audio?.play('documentClose'); });
   reader?.addEventListener('click', (event) => {
     if (event.target !== reader) return;
     const bounds = reader.getBoundingClientRect();
@@ -93,6 +94,7 @@ export function initNews() {
 
   async function update({ force = false } = {}) {
     if (activeRequest) return activeRequest;
+    if (force) audio?.play('transmit');
     refreshButton.disabled = true;
     refreshButton.setAttribute('aria-busy', 'true');
     list.setAttribute('aria-busy', 'true');
@@ -116,6 +118,7 @@ export function initNews() {
           try { localStorage.setItem('post-news-v1', JSON.stringify({ items: [...context, ...items], checkedAt: data.checkedAt })); } catch { /* storage may be unavailable */ }
         }
         lastUpdate = Date.now();
+        if (force) audio?.play(data.live ? 'newsArrived' : 'warning');
         status.textContent = data.live
           ? items.length
             ? 'Проверено · сообщения выше'
@@ -125,6 +128,7 @@ export function initNews() {
             : 'Лента недоступна. Датированные материалы из архива доступны ниже.';
         status.hidden = data.live && items.length > 0;
       } catch {
+        if (force) audio?.play('warning', { gain: .7 });
         list.setAttribute('aria-busy', 'false');
         status.hidden = false;
         status.textContent = list.children.length

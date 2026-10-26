@@ -1,5 +1,5 @@
 /** Best-effort controls. Web pages cannot block OS screenshots or external cameras. */
-import { bus } from '../core/bus.js?v=access-1';
+import { bus } from '../core/bus.js?v=sfx-2';
 
 export function isCaptureShortcut(event) {
   const key=String(event.key||'').toLowerCase();
@@ -39,7 +39,7 @@ export function initCaptureProtection(audio) {
     previousFocus=document.activeElement;
     // A synchronous top-layer cover also obscures already-open document dialogs.
     shield.showModal();
-    if(audio.ready)audio.play('buzzer',{gain:.45});
+    if(audio.ready)audio.play('warning',{gain:.65});
   }
   function dismiss() {
     if(!shield.open)return;

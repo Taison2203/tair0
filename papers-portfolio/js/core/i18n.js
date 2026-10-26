@@ -1,4 +1,4 @@
-import { ENGLISH } from '../config/english.js?v=access-1';
+import { ENGLISH } from '../config/english.js?v=sfx-2';
 
 const STORAGE_KEY = 'inspector.language.v1';
 let language = 'ru';

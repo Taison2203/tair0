@@ -1,5 +1,5 @@
 /** Warm desk light. Rare mild dips, never a flashing full-screen overlay. */
-import { bus } from '../core/bus.js?v=access-1';
+import { bus } from '../core/bus.js?v=sfx-2';
 
 export function initAtmosphere(audio) {
   const desk = document.querySelector('#desk');
@@ -32,6 +32,7 @@ export function initAtmosphere(audio) {
     timer = setTimeout(() => {
       if (document.hidden || !enabled || reduced.matches) return;
       desk.style.setProperty('--lamp-power', '.48');
+      audio.play('lampFlicker');
       pulse = setTimeout(() => {
         desk.style.setProperty('--lamp-power', '1');
         schedule();
@@ -47,7 +48,7 @@ export function initAtmosphere(audio) {
   }
   lamp.addEventListener('click', () => {
     enabled = !enabled;
-    audio.play('tick', { gain: .35 });
+    audio.play(enabled ? 'lampOn' : 'lampOff');
     render();
   });
   document.addEventListener('visibilitychange', schedule);

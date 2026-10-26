@@ -1,26 +1,27 @@
 /** Application entry point: load type, prepare documents, then allow the shift to start. */
 
-import { AudioEngine } from './audio/engine.js?v=access-1';
-import { SFX } from './audio/sfx.js?v=access-1';
-import { Music } from './audio/music.js?v=access-1';
-import { initScale } from './core/scale.js?v=access-1';
+import { AudioEngine } from './audio/engine.js?v=sfx-2';
+import { initSoundArchive } from './components/soundArchive.js?v=sfx-2';
+import { SFX } from './audio/sfx.js?v=sfx-2';
+import { Music } from './audio/music.js?v=sfx-2';
+import { initScale } from './core/scale.js?v=sfx-2';
 import {
   makeDeskTexture, makeGrainTexture, makeRingTexture, initClock,
   createScanner, initMuteButton,
-} from './components/desk.js?v=access-1';
-import { initStartScreen } from './components/startScreen.js?v=access-1';
-import { initBook } from './components/book.js?v=photo02-replaced-1';
-import { initDocuments } from './components/documents.js?v=photo02-replaced-1';
-import { initReceipts } from './components/receipts.js?v=access-1';
-import { initNews } from './components/news.js?v=access-1';
-import { initEzic, initPenalty } from './components/ezic.js?v=access-1';
-import { bus } from './core/bus.js?v=access-1';
-import { CONTENT } from './config/content.js?v=access-1';
-import { makePortrait } from './core/pixelate.js?v=access-1';
-import { initShift } from './components/shift.js?v=access-1';
-import { initAtmosphere } from './components/atmosphere.js?v=access-1';
-import { chooseLanguage } from './core/i18n.js?v=access-1';
-import { initCaptureProtection } from './components/captureProtection.js?v=access-1';
+} from './components/desk.js?v=sfx-2';
+import { initStartScreen } from './components/startScreen.js?v=sfx-2';
+import { initBook } from './components/book.js?v=sfx-2';
+import { initDocuments } from './components/documents.js?v=sfx-2';
+import { initReceipts } from './components/receipts.js?v=sfx-2';
+import { initNews } from './components/news.js?v=sfx-2';
+import { initEzic, initPenalty } from './components/ezic.js?v=sfx-2';
+import { bus } from './core/bus.js?v=sfx-2';
+import { CONTENT } from './config/content.js?v=sfx-2';
+import { makePortrait } from './core/pixelate.js?v=sfx-2';
+import { initShift } from './components/shift.js?v=sfx-2';
+import { initAtmosphere } from './components/atmosphere.js?v=sfx-2';
+import { chooseLanguage } from './core/i18n.js?v=sfx-2';
+import { initCaptureProtection } from './components/captureProtection.js?v=sfx-2';
 
 async function loadRequiredFonts() {
   if (!document.fonts?.load) return;
@@ -72,7 +73,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (field) field.textContent = value;
     });
     initBook(audio);
-    initNews();
+    initNews(audio);
+    initSoundArchive(audio);
     await initDocuments(audio);
     initShift(audio);
     initEzic(audio);
@@ -96,7 +98,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       onMute: () => music.stop(),
       onUnmute: () => music.start(),
     });
-    if (!muted) music.start();
+    if (!muted) { music.start(); audio.play('shiftStart'); }
     await startScreen.hide();
     document.querySelector('#desk')?.removeAttribute('inert');
     document.querySelector('#desk')?.classList.add('is-revealed');
@@ -129,7 +131,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       ? event.target.closest('.tab, .chip, .btn:not(:disabled), .case-tab, .dup-btn:not(:disabled), .doc__close, .clip--b, .mute')
       : null;
     if (!target || target.contains(event.relatedTarget)) return;
-    audio.play('hover', { gain: 0.28 });
+    audio.play('hover', { gain: .7 });
   });
 
   window.addEventListener('keydown', (event) => {

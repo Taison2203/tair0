@@ -1,0 +1,191 @@
+/* A filing-room sound catalogue; uses the existing paper, ink and type system. */
+.site-footer__tools {
+  pointer-events: auto;
+}
+.sound-archive {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  width: min(780px, calc(100vw - 32px));
+  max-width: none;
+  max-height: min(850px, calc(100svh - 32px));
+  padding: 0;
+  overflow: auto;
+  background: var(--paper);
+  color: var(--ink);
+  border: 3px solid var(--frame);
+  box-shadow: 7px 7px 0 #1118;
+  font-family: var(--font-ui);
+  font-size: 14px;
+}
+.sound-archive::backdrop {
+  background: #121710cc;
+}
+.sound-archive__close {
+  display: block;
+  position: sticky;
+  z-index: 1;
+  top: 0;
+  margin-left: auto;
+  padding: 13px 16px;
+  min-height: 44px;
+  background: var(--frame);
+  color: var(--paper);
+  font-family: var(--font-display);
+  font-size: 10px;
+  cursor: pointer;
+}
+.sound-archive__sheet {
+  padding: 4px 28px 28px;
+}
+.sound-archive__eyebrow {
+  margin: 8px 0 20px;
+  font-size: 11px;
+  color: var(--ink-s);
+}
+.sound-archive h2 {
+  font: 16px/1.8 var(--font-display);
+  margin: 0 0 14px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--ink-s);
+  overflow-wrap: anywhere;
+}
+.sound-archive__intro {
+  line-height: 1.7;
+  margin-bottom: 24px;
+}
+.sound-archive__mix {
+  border: 1px solid var(--ink-s);
+  padding: 16px;
+  margin: 0;
+  min-width: 0;
+}
+.sound-archive__mix legend {
+  padding: 0 8px;
+  font-size: 12px;
+}
+.sound-archive__slider {
+  display: grid;
+  grid-template-columns: 90px minmax(0, 1fr) 48px;
+  gap: 12px;
+  align-items: center;
+  min-height: 44px;
+}
+.sound-archive__slider input {
+  width: 100%;
+  min-height: 36px;
+  accent-color: var(--swamp);
+  cursor: pointer;
+}
+.sound-archive__slider output {
+  text-align: right;
+}
+.sound-archive__feedback {
+  min-height: 64px;
+  padding: 10px 0;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.sound-archive__status {
+  margin: 0;
+  line-height: 1.6;
+  font-size: 12px;
+  color: var(--ink-s);
+}
+.sound-archive__enable {
+  font-size: 10px;
+}
+.sound-archive__catalogue section + section {
+  margin-top: 24px;
+}
+.sound-archive h3 {
+  margin: 0 0 10px;
+  font: 11px/1.8 var(--font-display);
+  letter-spacing: 0.02em;
+}
+.sound-archive__items {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-top: 1px solid var(--paper-dd);
+}
+.sound-archive__sample {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) 14px;
+  gap: 8px;
+  align-items: center;
+  min-height: 48px;
+  padding: 10px 8px;
+  border-bottom: 1px solid var(--paper-dd);
+  font: inherit;
+  text-align: left;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+.sound-archive__sample:nth-child(odd) {
+  margin-right: 12px;
+}
+.sound-archive__number {
+  font-size: 11px;
+  color: var(--ink-s);
+}
+.sound-archive__play {
+  font-size: 10px;
+}
+.sound-archive__sample.is-playing {
+  background: var(--swamp);
+  color: var(--paper);
+}
+.sound-archive__sample.is-playing .sound-archive__number {
+  color: inherit;
+}
+.sound-archive__sample:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.sound-archive button:focus-visible,
+.sound-archive input:focus-visible {
+  outline: 2px solid var(--no);
+  outline-offset: 2px;
+}
+@media (hover: hover) {
+  .sound-archive__sample:hover:not(:disabled) {
+    background: var(--swamp);
+    color: var(--paper);
+  }
+}
+@media (max-width: 540px) {
+  .sound-archive__sheet {
+    padding: 0 16px 24px;
+  }
+  .sound-archive h2 {
+    font-size: 13px;
+  }
+  .sound-archive__slider {
+    grid-template-columns: 72px minmax(0, 1fr) 38px;
+    gap: 6px;
+  }
+  .sound-archive__items {
+    grid-template-columns: 1fr;
+  }
+  .sound-archive__sample:nth-child(odd) {
+    margin-right: 0;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .sound-archive[open] {
+    animation: sound-sheet-in 0.24s ease-out;
+  }
+  @keyframes sound-sheet-in {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}

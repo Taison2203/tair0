@@ -1,7 +1,7 @@
 /** Watermarked previews. Browser controls are deterrents, not screenshot protection. */
-import { el } from '../core/dom.js?v=access-1';
-import { bus } from '../core/bus.js?v=access-1';
-import { t } from '../core/i18n.js?v=access-1';
+import { el } from '../core/dom.js?v=sfx-2';
+import { bus } from '../core/bus.js?v=sfx-2';
+import { t } from '../core/i18n.js?v=sfx-2';
 
 const PHOTOS = [
   ['Портрет', 'Портрет инспектора на оливковом фоне'],
@@ -94,12 +94,13 @@ export function initGallery(audio) {
     dialog.querySelector('[data-gallery-counter]').textContent = photo.id + ' / 08 · ЛИЧНЫЙ АРХИВ';
     dialog.querySelector('[data-gallery-caption]').textContent = photo.title;
   }
-  function open(next) {
+  function open(next, sliding = false) {
+    const direction = next < index ? -.25 : .25;
     index = (next + PHOTOS.length) % PHOTOS.length;
     enlarged = false;
     album.scrollTop = 0;
     renderImage();
-    audio.play('paper', { gain: .45 });
+    audio.play(sliding ? 'photoSlide' : 'photoPick', { pan: sliding ? direction : 0 });
   }
   function back() {
     view.hidden = true;
@@ -110,9 +111,9 @@ export function initGallery(audio) {
     audio.play('paper', { gain: .4 });
   }
   dialog.querySelector('[data-gallery-back]').addEventListener('click', back);
-  dialog.querySelector('[data-gallery-prev]').addEventListener('click', () => open(index - 1));
-  dialog.querySelector('[data-gallery-next]').addEventListener('click', () => open(index + 1));
-  zoomButton.addEventListener('click', () => { enlarged = !enlarged; renderImage(); });
+  dialog.querySelector('[data-gallery-prev]').addEventListener('click', () => open(index - 1, true));
+  dialog.querySelector('[data-gallery-next]').addEventListener('click', () => open(index + 1, true));
+  zoomButton.addEventListener('click', () => { enlarged = !enlarged; audio.play('zoom', { rate: enlarged ? 1 : .85 }); renderImage(); });
   dialog.addEventListener('keydown', event => {
     if ((event.ctrlKey || event.metaKey) && ['s', 'p', 'c', 'x'].includes(event.key.toLowerCase())) {
       event.preventDefault();
@@ -121,7 +122,7 @@ export function initGallery(audio) {
     if (view.hidden || enlarged || event.altKey || event.ctrlKey || event.metaKey) return;
     if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
     event.preventDefault();
-    open(index + (event.key === 'ArrowLeft' ? -1 : 1));
+    open(index + (event.key === 'ArrowLeft' ? -1 : 1), true);
   });
   bus.on('doc:opened', ({ detail }) => {
     if (detail.key !== 'gallery') return;

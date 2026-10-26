@@ -2,10 +2,10 @@
  * desk.js — Desk textures, clock, document scanner, mute button.
  */
 
-import { $, css, mulberry32 } from '../core/dom.js?v=access-1';
-import { drawSprite, makeTile, SPEAKER_ON, SPEAKER_OFF, DIGITS } from '../core/sprites.js?v=access-1';
-import { bus } from '../core/bus.js?v=access-1';
-import { getLocale } from '../core/i18n.js?v=access-1';
+import { $, css, mulberry32 } from '../core/dom.js?v=sfx-2';
+import { drawSprite, makeTile, SPEAKER_ON, SPEAKER_OFF, DIGITS } from '../core/sprites.js?v=sfx-2';
+import { bus } from '../core/bus.js?v=sfx-2';
+import { getLocale } from '../core/i18n.js?v=sfx-2';
 
 const SPEAKER_PAL = { '#': '--paper' };
 
@@ -235,6 +235,7 @@ export function initMuteButton(audio, { onMute = () => {}, onUnmute = () => {} }
     return;
   }
 
+  btn.hidden = false;
   let muted = audio.muted;
   const iconOn = drawSprite(SPEAKER_ON, SPEAKER_PAL);
   const iconOff = drawSprite(SPEAKER_OFF, SPEAKER_PAL);
@@ -248,12 +249,15 @@ export function initMuteButton(audio, { onMute = () => {}, onUnmute = () => {} }
 
   btn.addEventListener('click', () => {
     if (!audio.ready) return;
-    audio.play('tick');
+    if (!muted) audio.play('soundOff');
     muted = !muted;
     audio.setMuted(muted);
     updateIcon();
     if (muted) onMute();
-    else onUnmute();
+    else {
+      onUnmute();
+      audio.ctx.resume().then(() => { if (!audio.muted) audio.play('soundOn'); });
+    }
     bus.emit('mute:toggle', { muted });
   });
 

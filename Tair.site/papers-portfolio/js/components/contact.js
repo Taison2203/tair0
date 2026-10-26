@@ -1,8 +1,8 @@
 /** Official form: real server acknowledgment precedes the approval stamp and filing animation. */
-import { el, sleep, stepAnim } from '../core/dom.js?v=access-1';
-import { bus } from '../core/bus.js?v=access-1';
-import { CONTENT } from '../config/content.js?v=access-1';
-import { apiFetch } from '../core/api.js?v=access-1';
+import { el, sleep, stepAnim } from '../core/dom.js?v=sfx-2';
+import { bus } from '../core/bus.js?v=sfx-2';
+import { CONTENT } from '../config/content.js?v=sfx-2';
+import { apiFetch } from '../core/api.js?v=sfx-2';
 
 const STORAGE_KEY = 'inspector.feedback.v1';
 const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -74,7 +74,9 @@ export function initContact({ audio, makeStamp }) {
       } else if (localReceipt?.receiptId) {
         showFiled(localReceipt, localReceipt.status === 'pending');
       } else {
+        const previouslyLinked = telegramLinked;
         telegramLinked = Boolean(data.telegram?.linked);
+        if (telegramLinked && !previouslyLinked && dialog.open) audio.play('linkVerified');
         binding?.classList.toggle('is-linked', telegramLinked);
         form.querySelector('[data-telegram-status]').textContent = telegramLinked ? 'КОНТАКТ ПОДТВЕРЖДЁН · ' + data.telegram.display : 'СВЕРКА КОНТАКТА';
         form.elements.contact.value = telegramLinked ? data.telegram.display : '';
@@ -96,7 +98,7 @@ export function initContact({ audio, makeStamp }) {
       submit.classList.add('is-pressing');
       await sleep(150);
     }
-    audio.play(color === '--ok' ? 'approve' : 'buzzer');
+    audio.play(color === '--ok' ? 'approve' : 'deny');
     await stepAnim(stamp, 'is-hit', reduced() ? 0 : 280);
     if (!reduced()) {
       await stepAnim(form, 'is-shaking', 250);
@@ -105,9 +107,14 @@ export function initContact({ audio, makeStamp }) {
   }
 
   form.addEventListener('input', event => {
+    if (!event.isComposing && event.target.matches('input:not([readonly]), textarea')) {
+      audio.play(event.inputType?.startsWith('delete') ? 'backspace' : 'key', { gain: .5 });
+    }
     event.target.classList.remove('is-invalid');
     event.target.removeAttribute('aria-invalid');
   });
+
+  purpose.addEventListener('change', () => audio.play('tick'));
 
   form.addEventListener('submit', async event => {
     event.preventDefault();
@@ -133,6 +140,7 @@ export function initContact({ audio, makeStamp }) {
       return;
     }
     busy = true;
+    audio.play('transmit');
     submit.disabled = true;
     showStatus('Регистрируем бланк и передаём в отдел связи…');
     try {
@@ -162,6 +170,7 @@ export function initContact({ audio, makeStamp }) {
         await ink('ПРИНЯТО', '--ok');
         if (!reduced()) {
           await sleep(1200);
+          audio.play('fileFiled');
           await stepAnim(form, 'is-filed', 650);
         }
       }

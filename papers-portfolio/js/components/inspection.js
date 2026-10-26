@@ -1,6 +1,6 @@
 /** A small, optional inspection shift. Fictional papers never change the owner's dossier. */
-import { bus } from '../core/bus.js?v=access-1';
-import { el } from '../core/dom.js?v=access-1';
+import { bus } from '../core/bus.js?v=sfx-2';
+import { el } from '../core/dom.js?v=sfx-2';
 
 const VISITORS = [
   {
@@ -99,7 +99,7 @@ export function initInspection(audio) {
       button.classList.toggle('is-compared', selected);
       button.setAttribute('aria-pressed', String(selected));
     });
-    audio.play('tick', { gain: .4 });
+    audio.play('compare');
   });
 
   actions.addEventListener('click', event => {
@@ -124,12 +124,13 @@ export function initInspection(audio) {
     feedback.textContent = (correct ? 'ВЕРНО. ' : 'ОШИБКА ИНСПЕКТОРА. ') + visitor.explanation;
     next.hidden = false;
     updateDesk();
-    audio.play(correct ? 'approve' : 'stamp');
+    audio.play(correct ? (allowed ? 'approve' : 'deny') : 'buzzer');
     feedback.focus({ preventScroll: true });
   });
 
   function finishShift() {
     finished = true;
+    audio.play('shiftComplete');
     section.classList.remove('has-verdict');
     section.removeAttribute('data-result');
     dialog.querySelector('.inspection__rules').hidden = true;
@@ -152,7 +153,7 @@ export function initInspection(audio) {
   }
 
   next.addEventListener('click', () => {
-    audio.play('paper', { gain: .6 });
+    if (finished || index < visitors.length - 1) audio.play('paperFeed');
     if (finished) {
       visitors = shuffledVisitors();
       index = 0;

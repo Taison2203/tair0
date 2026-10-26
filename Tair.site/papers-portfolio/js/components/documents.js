@@ -3,17 +3,17 @@
  * User-facing facts are read from config/content.js; missing facts stay redacted.
  */
 
-import { $, el, stepAnim, css, mulberry32 } from '../core/dom.js?v=access-1';
+import { $, el, stepAnim, css, mulberry32 } from '../core/dom.js?v=sfx-2';
 import {
   drawSprite, ICON_NETWORK, ICON_DATABASE, ICON_HARDWARE, ICON_ANALYTICS,
   CASE_LASER, CASE_AI, CASE_ROBLOX,
-} from '../core/sprites.js?v=access-1';
-import { makePortrait } from '../core/pixelate.js?v=access-1';
-import { bus } from '../core/bus.js?v=access-1';
-import { CONTENT } from '../config/content.js?v=access-1';
-import { t } from '../core/i18n.js?v=access-1';
-import { initContact } from './contact.js?v=access-1';
-import { initGallery } from './gallery.js?v=photo02-replaced-1';
+} from '../core/sprites.js?v=sfx-2';
+import { makePortrait } from '../core/pixelate.js?v=sfx-2';
+import { bus } from '../core/bus.js?v=sfx-2';
+import { CONTENT } from '../config/content.js?v=sfx-2';
+import { t } from '../core/i18n.js?v=sfx-2';
+import { initContact } from './contact.js?v=sfx-2';
+import { initGallery } from './gallery.js?v=sfx-2';
 
 const VALID_DOCS = new Set(['passport', 'pass', 'cases', 'contact', 'gallery', 'inspection']);
 const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -122,12 +122,12 @@ export async function initDocuments(audio) {
     returnFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     openDialog = dialog;
     desk?.classList.add('is-dim');
-    audio.play('paper', { gain: 0.8 });
+    audio.play(({ passport: 'passportOpen', cases: 'fileOpen', gallery: 'albumOpen', inspection: 'scannerOn' })[key] || 'documentOpen');
     if (!dialog.open) dialog.showModal();
     bus.emit('doc:opened', { key });
     await stepAnim(dialog, 'is-entering', reducedMotion() ? 20 : 520);
     dialog.classList.remove('is-entering');
-    audio.play('stamp');
+    audio.play('documentSet', { gain: .65 });
     writeDocumentHash(key);
   }
 
@@ -136,7 +136,7 @@ export async function initDocuments(audio) {
     if (closeTasks.has(dialog)) return closeTasks.get(dialog);
 
     const task = (async () => {
-      audio.play('paper', { gain: 0.6 });
+      audio.play('documentClose');
       await stepAnim(dialog, 'is-leaving', reducedMotion() ? 20 : 300);
       dialog.close();
       bus.emit('doc:closed', { key: dialog.id.replace(/^doc-/, '') });

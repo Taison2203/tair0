@@ -1,8 +1,8 @@
 /** Duplicate penalties, dead-click citations and the EZIC cipher sequence. */
 
-import { $ } from '../core/dom.js?v=access-1';
-import { bus } from '../core/bus.js?v=access-1';
-import { CONTENT } from '../config/content.js?v=access-1';
+import { $ } from '../core/dom.js?v=sfx-2';
+import { bus } from '../core/bus.js?v=sfx-2';
+import { CONTENT } from '../config/content.js?v=sfx-2';
 
 function normalizeKey(key) {
   return String(key || '').toUpperCase().replace(/[^A-Z]/g, '');
@@ -67,7 +67,7 @@ export function initEzic(audio) {
     if (!duplicateReady) return;
     duplicateReady = false;
     duplicateButton.disabled = true;
-    audio.play('buzzer', { gain: 0.9 });
+    audio.play('warning', { gain: .85 });
     bus.emit('receipt:print', {
       header: CONTENT.receipts.penalty,
       text: CONTENT.receipts.duplicate,
@@ -84,7 +84,8 @@ export function initEzic(audio) {
     if (triggering || now - lastTrigger < 5000) return;
     triggering = true;
     lastTrigger = now;
-    audio.play('ezic');
+    audio.play('noteUnfold');
+    window.setTimeout(() => { if (terminal && !terminal.hidden) audio.play('ezic'); }, 180);
 
     if (flash) {
       flash.classList.remove('is-on');
@@ -116,7 +117,7 @@ export function initEzic(audio) {
   }
 
   terminal?.addEventListener('click', () => {
-    audio.play('tick');
+    audio.play('noteFold');
     terminal.hidden = true;
   });
 
@@ -127,6 +128,7 @@ export function initEzic(audio) {
     if (document.body.dataset.phase !== 'shift') return;
     if (event.target.matches('input, textarea, select, [contenteditable="true"]')) return;
     if (event.key === 'Escape' && terminal && !terminal.hidden) {
+      audio.play('noteFold');
       terminal.hidden = true;
       return;
     }

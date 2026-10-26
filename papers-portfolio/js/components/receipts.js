@@ -1,8 +1,8 @@
 /** One-at-a-time citation queue with dialog-safe popover layering. */
 
-import { $, el, sleep, stepAnim } from '../core/dom.js?v=access-1';
-import { bus } from '../core/bus.js?v=access-1';
-import { t, getLocale } from '../core/i18n.js?v=access-1';
+import { $, el, sleep, stepAnim } from '../core/dom.js?v=sfx-2';
+import { bus } from '../core/bus.js?v=sfx-2';
+import { t, getLocale } from '../core/i18n.js?v=sfx-2';
 
 export function initReceipts(audio) {
   const container = $('#receipts');
@@ -50,7 +50,7 @@ export function initReceipts(audio) {
     if (!receipt || receipt.closing) return receipt?.closed || Promise.resolve();
     receipt.closing = true;
     window.clearTimeout(receipt.dismissTimer);
-    audio.play('paper', { gain: 0.7 });
+    audio.play('receiptTear', { gain: .7 });
     const task = stepAnim(receipt.element, 'is-leaving', matchMedia('(prefers-reduced-motion: reduce)').matches ? 20 : 350)
       .then(() => {
         receipt.element.remove();
@@ -102,7 +102,7 @@ export function initReceipts(audio) {
     showContainer();
     container.append(element);
     element.addEventListener('click', () => dismissReceipt(receipt, record.onDismiss));
-    audio.play('paper', { gain: 0.85 });
+    audio.play('receiptPrint', { gain: .85 });
     await stepAnim(element, 'is-entering', matchMedia('(prefers-reduced-motion: reduce)').matches ? 20 : 500);
     element.classList.remove('is-entering');
 
@@ -116,7 +116,7 @@ export function initReceipts(audio) {
       if (!fast) await sleep(38);
     }
     textEl.classList.remove('is-typing');
-    if (!receipt.closing) audio.play('ding');
+    if (!receipt.closing) audio.play('ding', { gain: .65 });
 
     if (!fast && !receipt.closing) {
       receipt.dismissTimer = window.setTimeout(() => dismissReceipt(receipt, record.onDismiss), 4500);
