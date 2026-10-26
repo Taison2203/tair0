@@ -1,5 +1,5 @@
 /** Best-effort controls. Web pages cannot block OS screenshots or external cameras. */
-import { bus } from '../core/bus.js?v=sfx-2';
+import { bus } from '../core/bus.js?v=footer-1';
 
 export function isCaptureShortcut(event) {
   const key=String(event.key||'').toLowerCase();
@@ -35,17 +35,21 @@ export function initCaptureProtection(audio) {
     if(shield.open)return;
     hideCurtain();
     shield.dataset.reason=reason;
+    shield.querySelector('.capture-shield__code').textContent = reason==='rules'
+      ? 'РАСПОРЯЖЕНИЕ № 2203' : 'ОШИБКА 2203-404';
     lastShown=Date.now();
     previousFocus=document.activeElement;
     // A synchronous top-layer cover also obscures already-open document dialogs.
     shield.showModal();
-    if(audio.ready)audio.play('warning',{gain:.65});
+    if(audio.ready)audio.play(reason==='rules'?'documentOpen':'warning',{gain:.65});
   }
   function dismiss() {
     if(!shield.open)return;
+    const readingRules = shield.dataset.reason==='rules';
     shield.close();
     hideCurtain();
     if(previousFocus?.isConnected)previousFocus.focus({preventScroll:true});
+    if(readingRules)return;
     bus.emit('receipt:print',{
       header:'ПРЕДПИСАНИЕ МИНИСТЕРСТВА ВЪЕЗДА',
       meta:'РЕЖИМ ПРОСМОТРА · 2203-404',

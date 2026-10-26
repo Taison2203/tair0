@@ -1,7 +1,4 @@
 /* A filing-room sound catalogue; uses the existing paper, ink and type system. */
-.site-footer__tools {
-  pointer-events: auto;
-}
 .sound-archive {
   position: fixed;
   inset: 0;

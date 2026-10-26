@@ -2,7 +2,7 @@
  * startScreen.js — Full-screen start overlay with progress bar and start buttons.
  */
 
-import { $, stepAnim } from '../core/dom.js?v=sfx-2';
+import { $, stepAnim } from '../core/dom.js?v=footer-1';
 
 export function initStartScreen() {
   const screen = $('#start-screen');

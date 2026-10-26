@@ -1,6 +1,6 @@
 /** A paper catalogue for auditioning the checkpoint's original sound effects. */
-import { el } from '../core/dom.js?v=sfx-2';
-import { t } from '../core/i18n.js?v=sfx-2';
+import { el } from '../core/dom.js?v=footer-1';
+import { t } from '../core/i18n.js?v=footer-1';
 
 export function initSoundArchive(audio) {
   const opener = document.querySelector('[data-sound-archive]');

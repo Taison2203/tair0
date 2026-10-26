@@ -22,7 +22,7 @@
   <link rel="stylesheet" href="css/tokens.css">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/animations.css">
-  <link rel="stylesheet" href="css/desk.css?v=calendar-3">
+  <link rel="stylesheet" href="css/desk.css?v=footer-1">
   <link rel="stylesheet" href="css/book.css">
   <link rel="stylesheet" href="css/documents.css">
   <link rel="stylesheet" href="css/receipts.css">
@@ -32,8 +32,8 @@
   <link rel="stylesheet" href="css/inspection.css">
   <link rel="stylesheet" href="css/motion.css">
   <link rel="stylesheet" href="css/gallery.css?v=protected-1">
-  <link rel="stylesheet" href="css/access.css?v=access-1">
-  <link rel="stylesheet" href="css/sound-archive.css?v=sfx-2">
+  <link rel="stylesheet" href="css/access.css?v=footer-1">
+  <link rel="stylesheet" href="css/sound-archive.css?v=footer-1">
 </head>
 <body>
   <section id="language-screen" class="language-screen" aria-labelledby="language-title" data-no-translate>
@@ -369,7 +369,11 @@
   <footer class="site-footer">
     <time class="compact-calendar" data-current-date aria-label="Сегодня"></time>
     <span data-footer-copy>Фанатское портфолио по мотивам Papers, Please. Не связано с создателями игры.</span>
-    <nav class="site-footer__tools" aria-label="Настройки просмотра"><button type="button" data-language-reset aria-label="Сменить язык" data-no-translate>Русский / English</button><button type="button" data-viewing-rules>Правила просмотра</button><button type="button" data-sound-archive>Звуки поста</button></nav>
+    <nav class="site-footer__tools" aria-label="Настройки просмотра">
+      <button type="button" data-language-reset aria-label="Сменить язык" title="Выбрать язык / Choose language" data-no-translate>Язык / Language</button>
+      <button type="button" data-viewing-rules aria-haspopup="dialog" aria-controls="capture-shield" title="Прочитать правила просмотра материалов">Правила архива</button>
+      <button type="button" data-sound-archive aria-haspopup="dialog" title="Прослушать эффекты и настроить громкость">Звуки поста</button>
+    </nav>
     </footer>
   </div>
 
@@ -397,6 +401,6 @@
     </main>
   </noscript>
 
-  <script type="module" src="js/main.js?v=sfx-2"></script>
+  <script type="module" src="js/main.js?v=footer-1"></script>
 </body>
 </html>

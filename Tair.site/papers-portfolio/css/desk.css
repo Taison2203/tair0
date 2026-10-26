@@ -709,7 +709,7 @@
   font-size: calc(var(--u) * 5);
   color: var(--desk-2);
   padding: calc(var(--u) * 2);
-  pointer-events: none;
+  pointer-events: auto;
 }
 
 /* === FLASH === */

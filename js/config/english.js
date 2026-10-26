@@ -206,4 +206,9 @@ export const ENGLISH = {
   "Шифр EZIC": "EZIC cipher",
   'Прослушать запись': 'Play recording',
   '[X] ВЕРНУТЬСЯ': '[X] RETURN',
+  'Правила архива': 'Archive rules',
+  'РАСПОРЯЖЕНИЕ № 2203': 'DIRECTIVE NO. 2203',
+  'Открыть выбор языка сайта': 'Choose the site language',
+  'Прочитать правила просмотра материалов': 'Read the rules for viewing archive materials',
+  'Прослушать эффекты и настроить громкость': 'Listen to sound effects and adjust the volume',
 };
