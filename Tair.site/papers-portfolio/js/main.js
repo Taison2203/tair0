@@ -9,8 +9,8 @@ import {
   createScanner, initMuteButton,
 } from './components/desk.js?v=access-1';
 import { initStartScreen } from './components/startScreen.js?v=access-1';
-import { initBook } from './components/book.js?v=access-1';
-import { initDocuments } from './components/documents.js?v=access-1';
+import { initBook } from './components/book.js?v=skin-approved-1';
+import { initDocuments } from './components/documents.js?v=skin-approved-1';
 import { initReceipts } from './components/receipts.js?v=access-1';
 import { initNews } from './components/news.js?v=access-1';
 import { initEzic, initPenalty } from './components/ezic.js?v=access-1';
