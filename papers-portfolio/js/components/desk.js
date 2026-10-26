@@ -132,8 +132,13 @@ export function initClock() {
 
   const digitEls = container.querySelectorAll('.clock__digit');
   const colonDots = container.querySelectorAll('.clock__colon-dot');
+  const calendar = document.querySelector('.clock__calendar');
+  const monthFormat = new Intl.DateTimeFormat('ru-RU', { month: 'long' });
+  const weekdayFormat = new Intl.DateTimeFormat('ru-RU', { weekday: 'long' });
+  const dateFormat = new Intl.DateTimeFormat('ru-RU', { dateStyle: 'full' });
   let colonVisible = true;
   let lastMinute = -1;
+  let lastDate = '';
 
   function renderDigit(el, n) {
     const pattern = DIGITS[n];
@@ -153,6 +158,17 @@ export function initClock() {
     const h = now.getHours();
     const m = now.getMinutes();
     const minute = h * 60 + m;
+    // Use the same local date as the clock, including after midnight or sleep.
+    const dateKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    if (calendar && dateKey !== lastDate) {
+      lastDate = dateKey;
+      calendar.dateTime = dateKey;
+      calendar.setAttribute('aria-label', `Сегодня: ${dateFormat.format(now)}`);
+      calendar.querySelector('[data-calendar-day]').textContent = String(now.getDate()).padStart(2, '0');
+      calendar.querySelector('[data-calendar-month]').textContent = monthFormat.format(now);
+      calendar.querySelector('[data-calendar-year]').textContent = String(now.getFullYear());
+      calendar.querySelector('[data-calendar-weekday]').textContent = weekdayFormat.format(now);
+    }
 
     if (minute !== lastMinute) {
       lastMinute = minute;
@@ -185,6 +201,7 @@ export function initClock() {
 
   update();
   setInterval(tick, 500);
+  document.addEventListener('visibilitychange', tick);
 }
 
 /**

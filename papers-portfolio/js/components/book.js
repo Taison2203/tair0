@@ -6,7 +6,7 @@
 import { $, el, stepAnim } from '../core/dom.js';
 import { bus } from '../core/bus.js';
 import { CONTENT } from '../config/content.js';
-import { protectedPhoto } from './gallery.js?v=protected-1';
+import { protectedPhoto } from './gallery.js?v=footer-2';
 
 export function initBook(audio) {
   const bookEl = $('.book');

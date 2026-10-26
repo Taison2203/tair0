@@ -7,10 +7,10 @@ import { initScale } from './core/scale.js';
 import {
   makeDeskTexture, makeGrainTexture, makeRingTexture, initClock,
   createScanner, initMuteButton,
-} from './components/desk.js';
+} from './components/desk.js?v=calendar-2';
 import { initStartScreen } from './components/startScreen.js';
-import { initBook } from './components/book.js?v=protected-1';
-import { initDocuments } from './components/documents.js?v=protected-1';
+import { initBook } from './components/book.js?v=calendar-2';
+import { initDocuments } from './components/documents.js?v=calendar-2';
 import { initReceipts } from './components/receipts.js';
 import { initNews } from './components/news.js';
 import { initEzic, initPenalty } from './components/ezic.js';

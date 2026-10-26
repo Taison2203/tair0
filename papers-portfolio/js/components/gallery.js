@@ -34,7 +34,7 @@ function paintPreview(canvas, photo) {
     c.fillText('Фото временно недоступно', 30, 256);
   };
   canvas.dataset.photo = photo.id;
-  source.src = 'assets/img/gallery/preview-' + photo.id + '.png';
+  source.src = 'assets/img/gallery/preview-' + photo.id + '.png?v=footer-2';
 }
 
 export function protectedPhoto(id, label = '') {

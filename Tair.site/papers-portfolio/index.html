@@ -20,7 +20,7 @@
   <link rel="stylesheet" href="css/tokens.css">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/animations.css">
-  <link rel="stylesheet" href="css/desk.css">
+  <link rel="stylesheet" href="css/desk.css?v=calendar-2">
   <link rel="stylesheet" href="css/book.css">
   <link rel="stylesheet" href="css/documents.css">
   <link rel="stylesheet" href="css/receipts.css">
@@ -104,6 +104,14 @@
           <div class="clock__dot is-off"></div><div class="clock__dot is-off"></div><div class="clock__dot is-off"></div>
         </div>
       </div>
+      <time class="clock__calendar" aria-label="Сегодня">
+        <span class="clock__calendar-heading" aria-hidden="true">СЕГОДНЯ</span>
+        <span class="clock__calendar-body" aria-hidden="true">
+          <strong data-calendar-day>—</strong>
+          <span><span data-calendar-month>—</span><span data-calendar-year>—</span></span>
+        </span>
+        <span class="clock__calendar-weekday" data-calendar-weekday aria-hidden="true">—</span>
+      </time>
     </div>
 
     <!-- Канцелярия и тайная записка -->
@@ -356,6 +364,6 @@
     </main>
   </noscript>
 
-  <script type="module" src="js/main.js?v=protected-1"></script>
+  <script type="module" src="js/main.js?v=calendar-2"></script>
 </body>
 </html>

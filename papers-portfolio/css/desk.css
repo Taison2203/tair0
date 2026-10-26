@@ -215,6 +215,31 @@
   background: var(--led);
 }
 
+/* A tear-off calendar follows the real local date, separate from the 1982 story. */
+.clock__calendar {
+  display: block;
+  margin-top: 7px;
+  padding: 0 6px 4px;
+  color: var(--ink);
+  background: #e5ddbb;
+  box-shadow: 0 2px 0 var(--paper-dd);
+  text-align: center;
+  font: 10px/1.2 var(--font-ui);
+}
+.clock__calendar-heading {
+  display: block;
+  margin: 0 -6px 4px;
+  padding: 3px 5px;
+  background: var(--no);
+  color: #f3e7c8;
+  font-size: 8px;
+  letter-spacing: 2px;
+}
+.clock__calendar-body { display: flex; align-items: center; justify-content: center; gap: 7px; }
+.clock__calendar-body strong { font-size: 26px; line-height: 1; font-weight: 400; }
+.clock__calendar-body > span { display: grid; gap: 2px; text-align: left; }
+.clock__calendar-weekday { display: block; margin-top: 4px; padding-top: 3px; border-top: 1px dotted var(--paper-dd); font-size: 9px; }
+
 /* A readable newspaper replaces the empty inspector summary. */
 .dispatch {
   position: absolute;
