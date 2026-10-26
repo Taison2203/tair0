@@ -269,7 +269,8 @@
       <form class="request pxframe" novalidate>
         <div class="request__agency"><span>МИНИСТЕРСТВО ВЪЕЗДА</span><span>БЛАНК 22-03</span></div>
         <h2 id="contact-title" class="request__title">ЛИЧНОЕ ОБРАЩЕНИЕ</h2>
-        <p class="request__notice">Заполняйте разборчиво. Один контакт — одно обращение.</p>
+        <p class="request__notice">Подтвердите Telegram, заполните бланк и поставьте печать. Ответы придут в чат с ботом.</p>
+        <div class="telegram-binding"><strong data-telegram-status>СВЕРКА КОНТАКТА</strong><p>Откройте бота, нажмите «Старт» и подтвердите привязку. Затем вернитесь сюда.</p><a data-telegram-link target="_blank" rel="noopener noreferrer" aria-disabled="true">Готовим пропуск…</a></div>
         
         <label>ЦЕЛЬ ОБРАЩЕНИЯ:
           <select name="purpose"></select>
@@ -280,8 +281,8 @@
           <input type="text" name="name" placeholder="Рекрутер / Компания" required maxlength="80" autocomplete="off">
         </label>
 
-        <label>TELEGRAM ИЛИ EMAIL:
-          <input type="text" name="contact" placeholder="@пользователь или адрес почты" required maxlength="200" autocomplete="email">
+        <label>ПОДТВЕРЖДЁННЫЙ TELEGRAM:
+          <input type="text" name="contact" placeholder="Подтвердите контакт через бота" readonly required maxlength="200" autocomplete="off">
         </label>
         </div>
 
@@ -293,7 +294,7 @@
         <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
 
         <div class="request__status" role="status" aria-live="polite"></div>
-        <p class="request__privacy">Контакт и текст обращения будут переданы Таиру в Telegram.</p>
+        <p class="request__privacy">Имя, Telegram и текст будут переданы Таиру. Копия бланка и ответы придут вам через @tair0_bot. Переписка открывается после одобрения Таиром.</p>
         <div class="request__ink-area"><span>ДЛЯ ОТМЕТКИ ВЕДОМСТВА</span><div class="request__stamp" aria-hidden="true"></div></div>
         <button type="submit" class="stamp-control" aria-label="Отправить обращение" disabled>
           <span class="stamp-control__handle" aria-hidden="true"></span>

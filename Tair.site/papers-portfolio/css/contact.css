@@ -48,3 +48,8 @@
   .request.is-filed { animation: none; }
   .stamp-control.is-pressing { transform: none; }
 }
+.telegram-binding { margin: 12px 0; padding: 12px; border: 1px dashed var(--ink-s); font: 11px/1.7 var(--font-ui); }
+.telegram-binding strong { display: block; color: var(--swamp-d); }
+.telegram-binding a { display: inline-block; margin-top: 8px; padding: 10px 12px; background: var(--swamp-d); color: var(--paper); text-decoration: none; }
+.telegram-binding a[aria-disabled='true'] { opacity: .6; pointer-events: none; }
+.telegram-binding.is-linked p, .telegram-binding.is-linked a { display: none; }

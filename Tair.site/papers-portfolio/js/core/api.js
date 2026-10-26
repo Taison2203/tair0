@@ -14,6 +14,8 @@ function visitor() {
 }
 export function apiFetch(path, options = {}) {
   const headers = new Headers(options.headers);
-  if (hosted && path.startsWith('/api/contact')) headers.set('X-Visitor-ID', visitor());
-  return fetch(origin + path, { ...options, headers, credentials: hosted ? 'omit' : 'same-origin' });
+  const contact = path.startsWith('/api/contact') || path.startsWith('/api/telegram');
+  if (contact) headers.set('X-Visitor-ID', visitor());
+  const base = contact ? 'https://tair-portfolio-api.spicytitan257.chatgpt.site' : origin;
+  return fetch(base + path, { ...options, headers, credentials: base ? 'omit' : 'same-origin' });
 }

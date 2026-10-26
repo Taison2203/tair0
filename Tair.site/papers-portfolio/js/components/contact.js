@@ -20,6 +20,21 @@ export function initContact({ audio, makeStamp }) {
   let busy = false;
   let filed = false;
   let ready = false;
+  let telegramLinked = false;
+  let syncing = false;
+  let linkExpires = 0;
+  const binding = form.querySelector('.telegram-binding');
+  const telegramLink = form.querySelector('[data-telegram-link]');
+  async function prepareLink() {
+    if (!telegramLink || Date.now() < linkExpires) return;
+    const r = await apiFetch('/api/telegram/link', { method: 'POST' });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.message || 'Не удалось получить пропуск.');
+    telegramLink.href = data.url;
+    telegramLink.textContent = 'ПОДТВЕРДИТЬ В TELEGRAM →';
+    telegramLink.setAttribute('aria-disabled', 'false');
+    linkExpires = Date.now() + (data.expiresIn - 10) * 1000;
+  }
   let localReceipt = null;
   try { localReceipt = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); } catch { /* cookies and server remain authoritative */ }
 
@@ -47,7 +62,8 @@ export function initContact({ audio, makeStamp }) {
   }
 
   async function syncState() {
-    if (busy) return;
+    if (busy || syncing || filed) return;
+    syncing = true;
     try {
       const response = await apiFetch('/api/contact/state', { cache: 'no-store', signal: AbortSignal.timeout(8000) });
       if (!response.ok) throw new Error('state unavailable');
@@ -58,14 +74,19 @@ export function initContact({ audio, makeStamp }) {
       } else if (localReceipt?.receiptId) {
         showFiled(localReceipt, localReceipt.status === 'pending');
       } else {
-        ready = data.deliveryReady;
+        telegramLinked = Boolean(data.telegram?.linked);
+        binding?.classList.toggle('is-linked', telegramLinked);
+        form.querySelector('[data-telegram-status]').textContent = telegramLinked ? 'КОНТАКТ ПОДТВЕРЖДЁН · ' + data.telegram.display : 'СВЕРКА КОНТАКТА';
+        form.elements.contact.value = telegramLinked ? data.telegram.display : '';
+        ready = data.deliveryReady && telegramLinked;
+        if (!telegramLinked) await prepareLink();
         submit.disabled = !ready;
-        showStatus(ready ? '' : 'Приёмная временно недоступна. Попробуйте позже.');
+        showStatus(ready ? '' : data.deliveryReady ? 'Подтвердите контакт в Telegram. После этого отправка станет доступна.' : 'Приёмная временно недоступна. Попробуйте позже.');
       }
     } catch {
       if (localReceipt?.receiptId) showFiled(localReceipt, localReceipt.status === 'pending');
       else { ready = false; submit.disabled = true; showStatus('Нет связи с приёмной. Откройте бланк немного позже.', true); }
-    }
+    } finally { syncing = false; }
   }
 
   async function ink(text, color) {
@@ -98,7 +119,7 @@ export function initContact({ audio, makeStamp }) {
     const email = /^[^\s@]+@[^\s@]+\.[A-Za-z]{2,63}$/.test(contact);
     const telegram = /^(?:@|https?:\/\/t\.me\/)?[A-Za-z][A-Za-z0-9_]{4,31}\/?$/.test(contact);
     const issues = [[form.elements.name, !name, 'Укажите имя или организацию.'],
-      [form.elements.contact, !email && !telegram, 'Укажите Telegram @username или email.'],
+      [form.elements.contact, !telegramLinked, 'Подтвердите контакт через Telegram-бота.'],
       [form.elements.message, message.length < 10, 'Текст обращения — не менее 10 символов.']];
     issues.forEach(([field, invalid]) => {
       field.classList.toggle('is-invalid', invalid);
@@ -162,4 +183,6 @@ export function initContact({ audio, makeStamp }) {
   bus.on('doc:opened', event => { if (event.detail.key === 'contact' && !filed && !busy) void syncState(); });
   if (localReceipt?.receiptId) showFiled(localReceipt, localReceipt.status === 'pending');
   void syncState();
+  window.addEventListener('focus', () => { if (dialog.open && !filed) void syncState(); });
+  setInterval(() => { if (dialog.open && !document.hidden && !filed && !busy && !telegramLinked) void syncState(); }, 3000);
 }
