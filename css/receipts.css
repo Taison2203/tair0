@@ -1,0 +1,167 @@
+/* === RECEIPTS === */
+
+#receipts {
+  position: fixed;
+  bottom: max(calc(var(--u) * 2), env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  z-index: 400;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+  width: min(400px, calc(100vw - 24px));
+  max-height: 60svh;
+  padding: calc(var(--u) * 2) calc(var(--u) * 2) calc(var(--u) * 4);
+  overflow: visible;
+  background: transparent;
+  border: 0;
+  color: inherit;
+}
+
+#receipts[popover] {
+  inset: auto auto max(24px, env(safe-area-inset-bottom)) 50%;
+  margin: 0;
+  transform: translateX(-50%);
+}
+
+#receipts[popover]:not(:popover-open) {
+  display: none;
+}
+
+#receipts[popover].is-visible {
+  display: flex;
+}
+
+.receipt {
+  background: var(--pink);
+  color: var(--pink-ink);
+  padding: calc(var(--u) * 4) calc(var(--u) * 6);
+  width: 100%;
+  max-width: calc(100vw - 4 * var(--u));
+  border: 0;
+  text-align: left;
+  font-family: var(--font-ui);
+  font-size: inherit;
+  line-height: inherit;
+  appearance: none;
+  pointer-events: auto;
+  cursor: pointer;
+  position: relative;
+  margin-bottom: calc(var(--u) * -2);
+  flex: 0 0 auto;
+  box-shadow:
+    calc(var(--u) * 2) calc(var(--u) * -2) 0 var(--pink-d);
+}
+
+/* Torn bottom edge via clip-path with hard stops */
+.receipt::after {
+  content: '';
+  position: absolute;
+  bottom: calc(var(--u) * -3);
+  left: 0;
+  right: 0;
+  height: calc(var(--u) * 3);
+  background: var(--pink);
+  pointer-events: none;
+  clip-path: polygon(
+    0 0,
+    calc(var(--u) * 4) 0,    calc(var(--u) * 5) 100%,
+    calc(var(--u) * 8) 0,    calc(var(--u) * 10) 100%,
+    calc(var(--u) * 14) 0,   calc(var(--u) * 16) 100%,
+    calc(var(--u) * 20) 0,   calc(var(--u) * 22) 100%,
+    calc(var(--u) * 26) 0,   calc(var(--u) * 28) 100%,
+    calc(var(--u) * 32) 0,   calc(var(--u) * 34) 100%,
+    calc(var(--u) * 38) 0,   calc(var(--u) * 40) 100%,
+    calc(var(--u) * 44) 0,   calc(var(--u) * 46) 100%,
+    calc(var(--u) * 50) 0,   calc(var(--u) * 52) 100%,
+    calc(var(--u) * 56) 0,   calc(var(--u) * 58) 100%,
+    calc(var(--u) * 62) 0,   calc(var(--u) * 64) 100%,
+    calc(var(--u) * 68) 0,   calc(var(--u) * 70) 100%,
+    calc(var(--u) * 74) 0,   calc(var(--u) * 76) 100%,
+    calc(var(--u) * 80) 0,   calc(var(--u) * 82) 100%,
+    calc(var(--u) * 86) 0,   calc(var(--u) * 88) 100%,
+    calc(var(--u) * 92) 0,   calc(var(--u) * 94) 100%,
+    calc(var(--u) * 98) 0,   calc(var(--u) * 100) 100%,
+    calc(var(--u) * 104) 0,  calc(var(--u) * 106) 100%,
+    calc(var(--u) * 110) 0,  calc(var(--u) * 112) 100%,
+    calc(var(--u) * 116) 0,  calc(var(--u) * 118) 100%,
+    calc(var(--u) * 120) 0,
+    100% 0
+  );
+}
+
+/* Perforation line at top */
+.receipt::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--u);
+  background: repeating-linear-gradient(
+    90deg,
+    var(--pink-d) 0,
+    var(--pink-d) calc(var(--u) * 2),
+    transparent calc(var(--u) * 2),
+    transparent calc(var(--u) * 4)
+  );
+}
+
+.receipt__header {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 10px;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+  color: var(--pink-ink);
+  margin-bottom: calc(var(--u) * 2);
+  padding-bottom: calc(var(--u) * 1);
+  border-bottom: var(--u) solid var(--pink-d);
+}
+
+.receipt__meta {
+  display: block;
+  font-family: var(--font-ui);
+  font-size: calc(var(--u) * 5);
+  color: var(--pink-ink);
+  margin-bottom: calc(var(--u) * 3);
+}
+
+.receipt__text {
+  display: block;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  color: var(--pink-ink);
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+  min-height: calc(var(--u) * 12);
+  border-right: calc(var(--u) * 1) solid transparent;
+}
+
+.receipt__text.is-typing {
+  border-right-color: var(--pink-ink);
+  animation: type-cursor 0.6s steps(1, end) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .receipt__text.is-typing {
+    animation: none;
+    border-right-color: transparent;
+  }
+}
+
+@media (max-width: 599px) {
+  #receipts {
+    bottom: calc(var(--u) * 18 + env(safe-area-inset-bottom));
+    left: 50%;
+    transform: translateX(-50%);
+    align-items: center;
+    width: min(calc(var(--u) * 124), calc(100vw - var(--u) * 4));
+  }
+
+  #receipts[popover] {
+    inset: auto auto calc(var(--u) * 18 + env(safe-area-inset-bottom)) 50%;
+    transform: translateX(-50%);
+  }
+}
