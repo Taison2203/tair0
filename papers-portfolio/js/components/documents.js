@@ -13,7 +13,7 @@ import { bus } from '../core/bus.js?v=access-1';
 import { CONTENT } from '../config/content.js?v=access-1';
 import { t } from '../core/i18n.js?v=access-1';
 import { initContact } from './contact.js?v=access-1';
-import { initGallery } from './gallery.js?v=skin-approved-1';
+import { initGallery } from './gallery.js?v=photo02-replaced-1';
 
 const VALID_DOCS = new Set(['passport', 'pass', 'cases', 'contact', 'gallery', 'inspection']);
 const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;

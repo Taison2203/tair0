@@ -5,7 +5,7 @@ import { t } from '../core/i18n.js?v=access-1';
 
 const PHOTOS = [
   ['Портрет', 'Портрет инспектора на оливковом фоне'],
-  ['За столом', 'Инспектор в белой футболке за столом с двумя десертами'],
+  ['В чёрных очках', 'Портрет инспектора на оливковом фоне'],
   ['В соломенной шляпе', 'Инспектор в соломенной шляпе с красными завязками'],
   ['В светлой куртке', 'Инспектор в светлой куртке с цепочкой на серо-синем фоне'],
   ['В розовых очках', 'Инспектор в розовых очках и бордовом пиджаке держит предмет в обёртке'],
@@ -23,7 +23,10 @@ function paintPreview(canvas, photo) {
     const c = canvas.getContext('2d');
     c.imageSmoothingEnabled = false;
     c.clearRect(0, 0, 384, 512);
-    c.drawImage(source, 0, 0, 384, 512);
+    const scale = Math.min(384 / source.naturalWidth, 512 / source.naturalHeight);
+    const width = Math.round(source.naturalWidth * scale);
+    const height = Math.round(source.naturalHeight * scale);
+    c.drawImage(source, Math.floor((384 - width) / 2), Math.floor((512 - height) / 2), width, height);
     // The public PNG already contains a flattened watermark. No clean original
     // is supplied to the renderer; browser restrictions are only an extra deterrent.
   };
@@ -35,7 +38,7 @@ function paintPreview(canvas, photo) {
     c.fillText(t('Фото временно недоступно'), 30, 256);
   };
   canvas.dataset.photo = photo.id;
-  source.src = 'assets/img/gallery/preview-' + photo.id + '.png?v=skin-approved-1';
+  source.src = 'assets/img/gallery/preview-' + photo.id + '.png?v=photo02-replaced-1';
 }
 
 export function protectedPhoto(id, label = '') {
