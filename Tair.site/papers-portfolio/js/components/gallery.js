@@ -1,4 +1,4 @@
-/** Eight independent portraits. Original crops remain available alongside pixel editions. */
+/** Watermarked previews. Browser controls are deterrents, not screenshot protection. */
 import { el } from '../core/dom.js';
 import { bus } from '../core/bus.js';
 
@@ -13,6 +13,39 @@ const PHOTOS = [
   ['В камуфляже', 'Инспектор в камуфляжной кепке и рубашке на зелёном фоне'],
 ].map(([title, alt], index) => ({ title, alt, id: String(index + 1).padStart(2, '0') }));
 
+function paintPreview(canvas, photo) {
+  canvas.setAttribute('aria-label', photo.alt + '. Превью с водяным знаком Таира');
+  const source = new Image();
+  source.onload = () => {
+    // Ignore a late response after the viewer has moved to another photograph.
+    if (canvas.dataset.photo !== photo.id) return;
+    const c = canvas.getContext('2d');
+    c.imageSmoothingEnabled = false;
+    c.clearRect(0, 0, 384, 512);
+    c.drawImage(source, 0, 0, 384, 512);
+    // The public PNG already contains a flattened watermark. No clean original
+    // is supplied to the renderer; browser restrictions are only an extra deterrent.
+  };
+  source.onerror = () => {
+    if (canvas.dataset.photo !== photo.id) return;
+    const c = canvas.getContext('2d');
+    c.fillStyle = '#252820'; c.fillRect(0, 0, 384, 512);
+    c.fillStyle = '#d8cf9b'; c.font = '14px monospace';
+    c.fillText('Фото временно недоступно', 30, 256);
+  };
+  canvas.dataset.photo = photo.id;
+  source.src = 'assets/img/gallery/preview-' + photo.id + '.png';
+}
+
+export function protectedPhoto(id, label = '') {
+  const photo = PHOTOS.find(photo => photo.id === id);
+  const canvas = el('canvas', { class: 'protected-photo', width: '384', height: '512', role: 'img', draggable: 'false' });
+  for (const type of ['contextmenu', 'dragstart', 'copy', 'cut']) canvas.addEventListener(type, event => event.preventDefault());
+  if (label) canvas.setAttribute('aria-label', label);
+  paintPreview(canvas, photo);
+  return canvas;
+}
+
 export function initGallery(audio) {
   const dialog = document.querySelector('#doc-gallery');
   if (!dialog) return;
@@ -20,20 +53,19 @@ export function initGallery(audio) {
   const sheet = dialog.querySelector('[data-gallery-sheet]');
   const view = dialog.querySelector('[data-gallery-view]');
   const grid = dialog.querySelector('.gallery__grid');
-  const image = dialog.querySelector('[data-gallery-image]');
+  const image = protectedPhoto('01');
+  image.setAttribute('data-gallery-image', '');
+  dialog.querySelector('[data-gallery-image]').replaceWith(image);
   const stage = dialog.querySelector('.gallery-view__stage');
-  const originalButton = dialog.querySelector('[data-gallery-original]');
   const zoomButton = dialog.querySelector('[data-gallery-zoom]');
-  const download = dialog.querySelector('[data-gallery-download]');
   let index = 0;
-  let original = false;
   let enlarged = false;
   let savedScroll = 0;
   const cards = [];
 
   PHOTOS.forEach((photo, i) => {
     const button = el('button', { class: 'gallery-photo', type: 'button', 'aria-label': 'Открыть фото ' + photo.id + ': ' + photo.title },
-      el('span', { class: 'gallery-photo__image' }, el('img', { src: 'assets/img/gallery/' + photo.id + '.png', alt: photo.alt, width: '384', height: '512', loading: 'lazy', decoding: 'async' })),
+      el('span', { class: 'gallery-photo__image' }, protectedPhoto(photo.id)),
       el('span', { class: 'gallery-photo__caption' }, el('span', { class: 'gallery-photo__number' }, photo.id), el('span', {}, photo.title)),
     );
     button.addEventListener('click', () => {
@@ -49,19 +81,14 @@ export function initGallery(audio) {
 
   function renderImage() {
     const photo = PHOTOS[index];
-    image.src = 'assets/img/gallery/' + (original ? 'originals/' : '') + photo.id + '.png';
-    image.alt = photo.alt + (original ? '. Исходный кадр' : '. Пиксельная версия');
+    paintPreview(image, photo);
     stage.classList.toggle('is-enlarged', enlarged);
     stage.scrollTop = 0;
     stage.scrollLeft = 0;
-    originalButton.setAttribute('aria-pressed', String(original));
-    originalButton.textContent = original ? 'Показать пиксельную версию' : 'Показать исходник';
     zoomButton.setAttribute('aria-pressed', String(enlarged));
     zoomButton.textContent = enlarged ? 'Уместить в окне' : 'Увеличить ×2';
-    dialog.querySelector('[data-gallery-counter]').textContent = photo.id + ' / 08 · ' + (original ? 'ИСХОДНИК' : 'ПИКСЕЛЬНАЯ ВЕРСИЯ');
+    dialog.querySelector('[data-gallery-counter]').textContent = photo.id + ' / 08 · ЛИЧНЫЙ АРХИВ';
     dialog.querySelector('[data-gallery-caption]').textContent = photo.title;
-    download.href = image.src;
-    download.download = 'inspector-' + photo.id + (original ? '-original' : '-pixel') + '.png';
   }
   function open(next) {
     index = (next + PHOTOS.length) % PHOTOS.length;
@@ -81,9 +108,12 @@ export function initGallery(audio) {
   dialog.querySelector('[data-gallery-back]').addEventListener('click', back);
   dialog.querySelector('[data-gallery-prev]').addEventListener('click', () => open(index - 1));
   dialog.querySelector('[data-gallery-next]').addEventListener('click', () => open(index + 1));
-  originalButton.addEventListener('click', () => { original = !original; renderImage(); audio.play('tick', { gain: .4 }); });
   zoomButton.addEventListener('click', () => { enlarged = !enlarged; renderImage(); });
   dialog.addEventListener('keydown', event => {
+    if ((event.ctrlKey || event.metaKey) && ['s', 'p', 'c', 'x'].includes(event.key.toLowerCase())) {
+      event.preventDefault();
+      return;
+    }
     if (view.hidden || enlarged || event.altKey || event.ctrlKey || event.metaKey) return;
     if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
     event.preventDefault();
@@ -93,7 +123,6 @@ export function initGallery(audio) {
     if (detail.key !== 'gallery') return;
     sheet.hidden = false;
     view.hidden = true;
-    original = false;
     enlarged = false;
     album.scrollTop = 0;
   });

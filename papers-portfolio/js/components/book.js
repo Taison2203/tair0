@@ -6,6 +6,7 @@
 import { $, el, stepAnim } from '../core/dom.js';
 import { bus } from '../core/bus.js';
 import { CONTENT } from '../config/content.js';
+import { protectedPhoto } from './gallery.js?v=protected-1';
 
 export function initBook(audio) {
   const bookEl = $('.book');
@@ -119,7 +120,7 @@ export function initBook(audio) {
   }
 
   function sectionDetails(key) {
-    if (key === 'gallery') return [['ВЛАДЕЛЕЦ', CONTENT.owner.givenName], ['ФОТОГРАФИИ', '08 отдельных снимков'], ['АРХИВ', 'Личное дело № 2203'], ['ПРОСМОТР', 'Увеличение · исходники · скачивание']];
+    if (key === 'gallery') return [['ВЛАДЕЛЕЦ', CONTENT.owner.givenName], ['ФОТОГРАФИИ', '08 отдельных снимков'], ['АРХИВ', 'Личное дело № 2203'], ['ПРОСМОТР', 'Личный архив · без выдачи копий']];
     if (key === 'passport') return [
       ['ИМЯ', CONTENT.owner.givenName],
       ['ГРАЖДАНСТВО', CONTENT.passport.citizenship],
@@ -162,7 +163,7 @@ export function initBook(audio) {
         'data-open-doc': tabKey,
       }, tabKey === 'contact' ? 'ЗАПОЛНИТЬ БЛАНК' : tabKey === 'gallery' ? 'ОТКРЫТЬ ФОТОАРХИВ' : `ПРЕДЪЯВИТЬ: ${tabData.label}`)
     );
-    if (tabKey === 'gallery') section.insertBefore(el('div', { class: 'section-gallery-preview', 'aria-hidden': 'true' }, ...['01','03','06','08'].map(id => el('img', { src: 'assets/img/gallery/' + id + '.png', alt: '', width: '96', height: '128', loading: 'lazy' }))), detailList);
+    if (tabKey === 'gallery') section.insertBefore(el('div', { class: 'section-gallery-preview', 'aria-hidden': 'true' }, ...['01','03','06','08'].map(id => protectedPhoto(id))), detailList);
 
     section.querySelector('[data-open-doc]').addEventListener('click', () => {
       bus.emit('doc:open', { key: tabKey });

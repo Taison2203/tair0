@@ -9,8 +9,8 @@ import {
   createScanner, initMuteButton,
 } from './components/desk.js';
 import { initStartScreen } from './components/startScreen.js';
-import { initBook } from './components/book.js';
-import { initDocuments } from './components/documents.js';
+import { initBook } from './components/book.js?v=protected-1';
+import { initDocuments } from './components/documents.js?v=protected-1';
 import { initReceipts } from './components/receipts.js';
 import { initNews } from './components/news.js';
 import { initEzic, initPenalty } from './components/ezic.js';

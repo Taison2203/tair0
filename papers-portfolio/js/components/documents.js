@@ -12,7 +12,7 @@ import { makePortrait } from '../core/pixelate.js';
 import { bus } from '../core/bus.js';
 import { CONTENT } from '../config/content.js';
 import { initContact } from './contact.js';
-import { initGallery } from './gallery.js';
+import { initGallery } from './gallery.js?v=protected-1';
 
 const VALID_DOCS = new Set(['passport', 'pass', 'cases', 'contact', 'gallery', 'inspection']);
 const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
