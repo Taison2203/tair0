@@ -2,6 +2,8 @@
  * dom.js — DOM helpers, animation waiters, selectors.
  */
 
+import { t } from './i18n.js?v=access-1';
+
 /** querySelector shorthand. */
 export const $ = (sel, root = document) => root.querySelector(sel);
 
@@ -62,15 +64,16 @@ export function removeAfterAnim(el, cls, fallbackMs = 900) {
  */
 export function el(tag, attrs = {}, ...children) {
   const e = document.createElement(tag);
+  const copy = value => Object.hasOwn(attrs,'data-no-translate') ? value : t(value);
   for (const [k, v] of Object.entries(attrs)) {
     if (k === 'class') e.className = v;
     else if (k === 'dataset') Object.assign(e.dataset, v);
     else if (k === 'style' && typeof v === 'object') Object.assign(e.style, v);
-    else if (k.startsWith('aria')) e.setAttribute(k.replace(/([A-Z])/g, '-$1').toLowerCase(), v);
-    else e.setAttribute(k, v);
+    else if (k.startsWith('aria')) e.setAttribute(k.replace(/([A-Z])/g, '-$1').toLowerCase(), k === 'aria-label' || k === 'ariaLabel' ? t(v) : v);
+    else e.setAttribute(k, ['alt','title','placeholder'].includes(k) ? t(v) : v);
   }
   for (const child of children) {
-    if (typeof child === 'string') e.append(document.createTextNode(child));
+    if (typeof child === 'string') e.append(document.createTextNode(copy(child)));
     else if (child) e.append(child);
   }
   return e;

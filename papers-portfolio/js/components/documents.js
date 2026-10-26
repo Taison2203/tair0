@@ -3,16 +3,17 @@
  * User-facing facts are read from config/content.js; missing facts stay redacted.
  */
 
-import { $, el, stepAnim, css, mulberry32 } from '../core/dom.js';
+import { $, el, stepAnim, css, mulberry32 } from '../core/dom.js?v=access-1';
 import {
   drawSprite, ICON_NETWORK, ICON_DATABASE, ICON_HARDWARE, ICON_ANALYTICS,
   CASE_LASER, CASE_AI, CASE_ROBLOX,
-} from '../core/sprites.js';
-import { makePortrait } from '../core/pixelate.js';
-import { bus } from '../core/bus.js';
-import { CONTENT } from '../config/content.js';
-import { initContact } from './contact.js';
-import { initGallery } from './gallery.js?v=footer-2';
+} from '../core/sprites.js?v=access-1';
+import { makePortrait } from '../core/pixelate.js?v=access-1';
+import { bus } from '../core/bus.js?v=access-1';
+import { CONTENT } from '../config/content.js?v=access-1';
+import { t } from '../core/i18n.js?v=access-1';
+import { initContact } from './contact.js?v=access-1';
+import { initGallery } from './gallery.js?v=access-1';
 
 const VALID_DOCS = new Set(['passport', 'pass', 'cases', 'contact', 'gallery', 'inspection']);
 const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -40,6 +41,7 @@ function makeDocumentNumber(seed) {
 }
 
 async function makeStamp(text, colorVar = '--ok', angle = -8, options = {}) {
+  text = t(text);
   const { fontPx = 8, seed = 1, wear = 0.04, scale = 1 } = options;
   const font = fontPx + 'px "Press Start 2P"';
   if (document.fonts?.load) {
@@ -371,7 +373,7 @@ export async function initDocuments(audio) {
   bus.on('doc:closeAll', closeAll);
 
   window.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape' && openDialog) closeDoc(openDialog);
+    if (event.key === 'Escape' && openDialog && !document.querySelector('#capture-shield[open]')) closeDoc(openDialog);
   });
 
   window.addEventListener('hashchange', () => {

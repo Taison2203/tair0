@@ -3,7 +3,7 @@
  * to produce a 4-color pixel portrait, or generate a procedural silhouette.
  */
 
-import { css } from './dom.js';
+import { css } from './dom.js?v=access-1';
 
 const BAYER_4 = [
   [ 0,  8,  2, 10],

@@ -2,9 +2,10 @@
  * desk.js — Desk textures, clock, document scanner, mute button.
  */
 
-import { $, css, mulberry32 } from '../core/dom.js';
-import { drawSprite, makeTile, SPEAKER_ON, SPEAKER_OFF, DIGITS } from '../core/sprites.js';
-import { bus } from '../core/bus.js';
+import { $, css, mulberry32 } from '../core/dom.js?v=access-1';
+import { drawSprite, makeTile, SPEAKER_ON, SPEAKER_OFF, DIGITS } from '../core/sprites.js?v=access-1';
+import { bus } from '../core/bus.js?v=access-1';
+import { getLocale } from '../core/i18n.js?v=access-1';
 
 const SPEAKER_PAL = { '#': '--paper' };
 
@@ -134,9 +135,9 @@ export function initClock() {
   const colonDots = container.querySelectorAll('.clock__colon-dot');
   const calendar = document.querySelector('.clock__calendar');
   const compactCalendar = document.querySelector('[data-current-date]');
-  const monthFormat = new Intl.DateTimeFormat('ru-RU', { month: 'long' });
-  const weekdayFormat = new Intl.DateTimeFormat('ru-RU', { weekday: 'long' });
-  const dateFormat = new Intl.DateTimeFormat('ru-RU', { dateStyle: 'full' });
+  const monthFormat = new Intl.DateTimeFormat(getLocale(), { month: 'long' });
+  const weekdayFormat = new Intl.DateTimeFormat(getLocale(), { weekday: 'long' });
+  const dateFormat = new Intl.DateTimeFormat(getLocale(), { dateStyle: 'full' });
   let colonVisible = true;
   let lastMinute = -1;
   let lastDate = '';

@@ -1,6 +1,7 @@
 /** Watermarked previews. Browser controls are deterrents, not screenshot protection. */
-import { el } from '../core/dom.js';
-import { bus } from '../core/bus.js';
+import { el } from '../core/dom.js?v=access-1';
+import { bus } from '../core/bus.js?v=access-1';
+import { t } from '../core/i18n.js?v=access-1';
 
 const PHOTOS = [
   ['Портрет', 'Портрет инспектора на оливковом фоне'],
@@ -31,7 +32,7 @@ function paintPreview(canvas, photo) {
     const c = canvas.getContext('2d');
     c.fillStyle = '#252820'; c.fillRect(0, 0, 384, 512);
     c.fillStyle = '#d8cf9b'; c.font = '14px monospace';
-    c.fillText('Фото временно недоступно', 30, 256);
+    c.fillText(t('Фото временно недоступно'), 30, 256);
   };
   canvas.dataset.photo = photo.id;
   source.src = 'assets/img/gallery/preview-' + photo.id + '.png?v=footer-2';

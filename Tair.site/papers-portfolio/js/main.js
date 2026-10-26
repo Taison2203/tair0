@@ -1,24 +1,26 @@
 /** Application entry point: load type, prepare documents, then allow the shift to start. */
 
-import { AudioEngine } from './audio/engine.js';
-import { SFX } from './audio/sfx.js';
-import { Music } from './audio/music.js';
-import { initScale } from './core/scale.js';
+import { AudioEngine } from './audio/engine.js?v=access-1';
+import { SFX } from './audio/sfx.js?v=access-1';
+import { Music } from './audio/music.js?v=access-1';
+import { initScale } from './core/scale.js?v=access-1';
 import {
   makeDeskTexture, makeGrainTexture, makeRingTexture, initClock,
   createScanner, initMuteButton,
-} from './components/desk.js?v=calendar-3';
-import { initStartScreen } from './components/startScreen.js';
-import { initBook } from './components/book.js?v=calendar-3';
-import { initDocuments } from './components/documents.js?v=calendar-3';
-import { initReceipts } from './components/receipts.js';
-import { initNews } from './components/news.js';
-import { initEzic, initPenalty } from './components/ezic.js';
-import { bus } from './core/bus.js';
-import { CONTENT } from './config/content.js';
-import { makePortrait } from './core/pixelate.js';
-import { initShift } from './components/shift.js';
-import { initAtmosphere } from './components/atmosphere.js';
+} from './components/desk.js?v=access-1';
+import { initStartScreen } from './components/startScreen.js?v=access-1';
+import { initBook } from './components/book.js?v=access-1';
+import { initDocuments } from './components/documents.js?v=access-1';
+import { initReceipts } from './components/receipts.js?v=access-1';
+import { initNews } from './components/news.js?v=access-1';
+import { initEzic, initPenalty } from './components/ezic.js?v=access-1';
+import { bus } from './core/bus.js?v=access-1';
+import { CONTENT } from './config/content.js?v=access-1';
+import { makePortrait } from './core/pixelate.js?v=access-1';
+import { initShift } from './components/shift.js?v=access-1';
+import { initAtmosphere } from './components/atmosphere.js?v=access-1';
+import { chooseLanguage } from './core/i18n.js?v=access-1';
+import { initCaptureProtection } from './components/captureProtection.js?v=access-1';
 
 async function loadRequiredFonts() {
   if (!document.fonts?.load) return;
@@ -32,9 +34,11 @@ async function loadRequiredFonts() {
 document.addEventListener('DOMContentLoaded', async () => {
   document.body.dataset.phase = 'boot';
   initScale();
-
-  const startScreen = initStartScreen();
   const audio = new AudioEngine(SFX);
+  initReceipts(audio);
+  initCaptureProtection(audio);
+  await chooseLanguage();
+  const startScreen = initStartScreen();
   const music = new Music(audio);
 
   makeDeskTexture();
@@ -68,7 +72,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (field) field.textContent = value;
     });
     initBook(audio);
-    initReceipts(audio);
     initNews();
     await initDocuments(audio);
     initShift(audio);

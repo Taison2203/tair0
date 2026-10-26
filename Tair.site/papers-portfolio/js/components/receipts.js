@@ -1,7 +1,8 @@
 /** One-at-a-time citation queue with dialog-safe popover layering. */
 
-import { $, el, sleep, stepAnim } from '../core/dom.js';
-import { bus } from '../core/bus.js';
+import { $, el, sleep, stepAnim } from '../core/dom.js?v=access-1';
+import { bus } from '../core/bus.js?v=access-1';
+import { t, getLocale } from '../core/i18n.js?v=access-1';
 
 export function initReceipts(audio) {
   const container = $('#receipts');
@@ -13,7 +14,16 @@ export function initReceipts(audio) {
   let processing = false;
   let sequence = 0;
 
+  function placeContainer() {
+    // A top-layer popover outside a modal can still be inert. Keep the receipt
+    // inside the active dialog so it remains clickable and accessible.
+    const dialogs=[...document.querySelectorAll('dialog[open]')];
+    const host=dialogs[dialogs.length-1] || document.body;
+    if(container.parentElement!==host)host.append(container);
+  }
+
   function showContainer() {
+    placeContainer();
     container.classList.add('is-visible');
     if (typeof container.showPopover === 'function' && !container.matches(':popover-open')) {
       try { container.showPopover(); } catch { /* a concurrent top-layer change is harmless */ }
@@ -29,10 +39,11 @@ export function initReceipts(audio) {
 
   function bumpToTop() {
     if (!current || typeof container.showPopover !== 'function') return;
+    placeContainer();
     if (container.matches(':popover-open')) {
       try { container.hidePopover(); } catch { return; }
       try { container.showPopover(); } catch { /* leave the current receipt visible in place */ }
-    }
+    } else showContainer();
   }
 
   function dismissReceipt(receipt, callback) {
@@ -66,18 +77,18 @@ export function initReceipts(audio) {
     }
     sequence += 1;
     const now = new Date();
-    const date = new Intl.DateTimeFormat('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(now);
-    const time = new Intl.DateTimeFormat('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' }).format(now);
+    const date = new Intl.DateTimeFormat(getLocale(), { day: '2-digit', month: '2-digit', year: 'numeric' }).format(now);
+    const time = new Intl.DateTimeFormat(getLocale(), { hour: '2-digit', minute: '2-digit', second: '2-digit' }).format(now);
     const id = String(sequence).padStart(4, '0');
-    const header = record.header || 'ПРЕДУПРЕЖДЕНИЕ АРСТОТЦКИ';
-    const meta = (record.meta || 'ПРОТОКОЛ М.О.А.') + ' · ' + date + ' ' + time + ' · № ' + id;
+    const header = t(record.header || 'ПРЕДУПРЕЖДЕНИЕ АРСТОТЦКИ');
+    const meta = t(record.meta || 'ПРОТОКОЛ М.О.А.') + ' · ' + date + ' ' + time + ' · № ' + id;
     const element = el('button', {
       class: 'receipt', type: 'button',
       'aria-label': header + '. ' + String(record.text || '') + '. Нажмите, чтобы убрать уведомление.',
     },
       el('span', { class: 'receipt__header' }, header),
       el('span', { class: 'receipt__meta' }, meta),
-      el('span', { class: 'receipt__text is-typing' }, '')
+      el('span', { class: 'receipt__text is-typing', 'data-no-translate': '' }, '')
     );
     let resolveClosed;
     const receipt = {
@@ -95,7 +106,7 @@ export function initReceipts(audio) {
     await stepAnim(element, 'is-entering', matchMedia('(prefers-reduced-motion: reduce)').matches ? 20 : 500);
     element.classList.remove('is-entering');
 
-    const text = String(record.text || '');
+    const text = t(record.text || '');
     const textEl = element.querySelector('.receipt__text');
     const fast = matchMedia('(prefers-reduced-motion: reduce)').matches;
     for (let index = 0; index < text.length; index += 1) {
@@ -154,6 +165,7 @@ export function initReceipts(audio) {
       if (current) void dismissReceipt(current);
     } else bumpToTop();
   });
+  bus.on('doc:closed',()=>{if(current && !current.closing)showContainer();});
 
   return { printReceipt, dismissReceipt };
 }

@@ -1,7 +1,8 @@
 /** Poll the local, source-filtered news endpoint without blocking the handbook. */
 
-import { el } from '../core/dom.js';
-import { apiFetch } from '../core/api.js';
+import { el } from '../core/dom.js?v=access-1';
+import { apiFetch } from '../core/api.js?v=access-1';
+import { getLocale } from '../core/i18n.js?v=access-1';
 
 const REFRESH_MS = 15 * 60 * 1000;
 
@@ -19,7 +20,7 @@ function readableItems(items) {
 function formatDate(value) {
   const date = new Date(value);
   if (Number.isNaN(date.valueOf())) return '';
-  return new Intl.DateTimeFormat('ru-RU', { day: '2-digit', month: '2-digit' }).format(date);
+  return new Intl.DateTimeFormat(getLocale(), { day: '2-digit', month: '2-digit' }).format(date);
 }
 
 function renderItems(list, items) {
@@ -27,8 +28,8 @@ function renderItems(list, items) {
   list.replaceChildren(...items.map((item) => {
     const row = el('li', { class: 'dispatch__item' },
       el('span', { class: 'dispatch__category' }, item.category || item.source || 'СООБЩЕНИЕ'),
-      el('h3', {}, item.title),
-      item.summary ? el('p', {}, item.summary) : null,
+      el('h3', {'data-no-translate':'',lang:'ru'}, item.title),
+      item.summary ? el('p', {'data-no-translate':'',lang:'ru'}, item.summary) : null,
       el('time', { datetime: item.publishedAt || '' }, item.dateLabel || formatDate(item.publishedAt)),
       el('a', { href: item.href, target: '_blank', rel: 'noopener noreferrer' }, 'Открыть сообщение ↗')
     );
@@ -78,7 +79,7 @@ export function initNews() {
   let activeRequest = null;
   let lastUpdate = 0;
   function writeUpdated(value) {
-    updated.textContent = value ? formatDate(value) + ' · ' + new Intl.DateTimeFormat('ru-RU', {
+    updated.textContent = value ? formatDate(value) + ' · ' + new Intl.DateTimeFormat(getLocale(), {
       hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Qyzylorda',
     }).format(new Date(value)) : '—';
   }

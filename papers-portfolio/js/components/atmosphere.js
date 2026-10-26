@@ -1,5 +1,5 @@
 /** Warm desk light. Rare mild dips, never a flashing full-screen overlay. */
-import { bus } from '../core/bus.js';
+import { bus } from '../core/bus.js?v=access-1';
 
 export function initAtmosphere(audio) {
   const desk = document.querySelector('#desk');

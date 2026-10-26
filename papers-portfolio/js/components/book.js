@@ -3,10 +3,11 @@
  * Handles cover, table of contents, side tabs, page-turn transitions, and bookmark ribbon.
  */
 
-import { $, el, stepAnim } from '../core/dom.js';
-import { bus } from '../core/bus.js';
-import { CONTENT } from '../config/content.js';
-import { protectedPhoto } from './gallery.js?v=footer-2';
+import { $, el, stepAnim } from '../core/dom.js?v=access-1';
+import { bus } from '../core/bus.js?v=access-1';
+import { CONTENT } from '../config/content.js?v=access-1';
+import { getLanguage } from '../core/i18n.js?v=access-1';
+import { protectedPhoto } from './gallery.js?v=access-1';
 
 export function initBook(audio) {
   const bookEl = $('.book');
@@ -32,8 +33,8 @@ export function initBook(audio) {
     const cover = el('div', { class: 'cover' },
       el('div', { class: 'cover__emblem' }, el('img', { src: 'assets/img/eagle.svg', alt: '', width: '96', height: '78' })),
       el('div', { class: 'cover__frame pxframe' },
-        el('div', { class: 'cover__l1' }, CONTENT.cover.l1),
-        el('div', { class: 'cover__l2' }, CONTENT.cover.l2),
+        el('div', { class: 'cover__l1' }, getLanguage()==='en' ? 'INSPECTOR’S' : CONTENT.cover.l1),
+        el('div', { class: 'cover__l2' }, getLanguage()==='en' ? 'PORTFOLIO' : CONTENT.cover.l2),
         el('div', { class: 'cover__sub' }, CONTENT.cover.sub)
       ),
       el('section', { class: 'shift-log', 'aria-label': 'Журнал смены' },
