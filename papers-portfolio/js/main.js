@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const dossierValues = [
       ['[data-dossier-name]', CONTENT.owner.givenName],
       ['[data-dossier-age]', String(CONTENT.passport.issueYear - CONTENT.passport.birthYear)],
-      ['[data-dossier-city]', CONTENT.passport.city.toUpperCase()],
+      ['[data-dossier-city]', CONTENT.passport.documentCity.toUpperCase()],
       ['[data-dossier-major]', CONTENT.passport.major.toUpperCase()],
     ];
     dossierValues.forEach(([selector, value]) => {
