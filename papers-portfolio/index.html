@@ -29,6 +29,7 @@
   <link rel="stylesheet" href="css/contact.css">
   <link rel="stylesheet" href="css/inspection.css">
   <link rel="stylesheet" href="css/motion.css">
+  <link rel="stylesheet" href="css/gallery.css">
 </head>
 <body>
   <!-- START OVERLAY -->
@@ -233,6 +234,26 @@
         <button class="inspection__next" type="button" data-inspection-next hidden>СЛЕДУЮЩИЙ ПОСЕТИТЕЛЬ →</button>
         <p class="inspection__footnote">Учебная игра · вымышленные посетители · можно закрыть и продолжить.</p>
       </section>
+    </dialog>
+
+    <dialog id="doc-gallery" class="doc doc--gallery" aria-labelledby="gallery-title">
+      <button class="doc__close" aria-label="Закрыть галерею">[X] ВЕРНУТЬ</button>
+      <article class="gallery">
+        <header class="gallery__header"><div><p>ЛИЧНОЕ ДЕЛО № 2203 · ФОТОПРИЛОЖЕНИЕ</p><h2 id="gallery-title">ГАЛЕРЕЯ ИНСПЕКТОРА</h2></div><span class="gallery__seal" aria-hidden="true">08<br>КАДРОВ</span></header>
+        <section data-gallery-sheet aria-label="Восемь фотографий инспектора">
+          <p class="gallery__intro">Восемь образов. Один инспектор. Выберите снимок, чтобы рассмотреть его ближе.</p>
+          <div class="gallery__grid"></div>
+          <p class="gallery__note">Исходники сохранены. В просмотре можно сравнить версии и скачать отдельное фото.</p>
+        </section>
+        <section class="gallery-view" data-gallery-view hidden aria-label="Просмотр фотографии">
+          <div class="gallery-view__toolbar"><button type="button" data-gallery-back>← КО ВСЕМ ФОТО</button><span data-gallery-counter role="status" aria-live="polite"></span></div>
+          <div class="gallery-view__stage" tabindex="0" aria-label="Фотография. При увеличении область можно прокручивать."><img data-gallery-image alt="" width="384" height="512"></div>
+          <h3 class="gallery-view__title" data-gallery-caption></h3>
+          <div class="gallery-view__tools"><button type="button" data-gallery-original aria-pressed="false">Показать исходник</button><button type="button" data-gallery-zoom aria-pressed="false">Увеличить ×2</button><a data-gallery-download download>Скачать фото ↓</a></div>
+          <div class="gallery-view__navigation"><button type="button" data-gallery-prev>← ПРЕДЫДУЩЕЕ</button><button type="button" data-gallery-next>СЛЕДУЮЩЕЕ →</button></div>
+          <p class="gallery__note">← → переключают фото · Esc закрывает архив · увеличенный снимок можно прокручивать.</p>
+        </section>
+      </article>
     </dialog>
 
     <!-- 2. WORK PASS DIALOG -->

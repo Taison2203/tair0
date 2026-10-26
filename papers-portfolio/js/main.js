@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const requestedDoc = window.location.hash.slice(1);
     if (requestedDoc === 'inspection') {
       bus.emit('doc:open', { key: 'inspection' });
-    } else if (['passport', 'pass', 'cases', 'contact'].includes(requestedDoc)) {
+    } else if (['passport', 'pass', 'cases', 'contact', 'gallery'].includes(requestedDoc)) {
       document.querySelector('.tab[data-tab="' + requestedDoc + '"]')?.focus({ preventScroll: true });
       bus.emit('tab:select', { key: requestedDoc });
     } else {
@@ -137,6 +137,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (event.key === '2') bus.emit('tab:select', { key: 'pass' });
     if (event.key === '3') bus.emit('tab:select', { key: 'cases' });
     if (event.key === '4') bus.emit('tab:select', { key: 'contact' });
+    if (event.key === '5') bus.emit('tab:select', { key: 'gallery' });
     if (event.key === '0') bus.emit('tab:reset');
   });
 });

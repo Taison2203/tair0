@@ -12,8 +12,9 @@ import { makePortrait } from '../core/pixelate.js';
 import { bus } from '../core/bus.js';
 import { CONTENT } from '../config/content.js';
 import { initContact } from './contact.js';
+import { initGallery } from './gallery.js';
 
-const VALID_DOCS = new Set(['passport', 'pass', 'cases', 'contact', 'inspection']);
+const VALID_DOCS = new Set(['passport', 'pass', 'cases', 'contact', 'gallery', 'inspection']);
 const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 function makeBarcode(width = 120, height = 14, seed = 2026) {
@@ -361,6 +362,7 @@ export async function initDocuments(audio) {
 
   await Promise.all([setupPassport(), setupWorkPass(), setupCases()]);
   initContact({ audio, makeStamp });
+  initGallery(audio);
 
   bus.on('doc:open', (event) => {
     const key = event.detail?.key;

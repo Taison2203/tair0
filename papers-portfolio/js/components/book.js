@@ -37,7 +37,7 @@ export function initBook(audio) {
       ),
       el('section', { class: 'shift-log', 'aria-label': 'Журнал смены' },
         el('h2', { class: 'shift-log__title' }, 'ЖУРНАЛ СМЕНЫ'),
-        el('p', { class: 'shift-log__count', 'data-shift-count': '', 'aria-live': 'polite' }, 'Просмотрено 0 из 4 документов'),
+        el('p', { class: 'shift-log__count', 'data-shift-count': '', 'aria-live': 'polite' }, 'Просмотрено 0 из ' + CONTENT.tabs.length + ' разделов'),
         el('ol', { class: 'shift-log__items' }, ...CONTENT.tabs.map(tab =>
           el('li', { 'data-shift-entry': tab.key }, el('span', { 'aria-hidden': 'true' }, '□'), tab.label)
         ))
@@ -119,6 +119,7 @@ export function initBook(audio) {
   }
 
   function sectionDetails(key) {
+    if (key === 'gallery') return [['ВЛАДЕЛЕЦ', CONTENT.owner.givenName], ['ФОТОГРАФИИ', '08 отдельных снимков'], ['АРХИВ', 'Личное дело № 2203'], ['ПРОСМОТР', 'Увеличение · исходники · скачивание']];
     if (key === 'passport') return [
       ['ИМЯ', CONTENT.owner.givenName],
       ['ГРАЖДАНСТВО', CONTENT.passport.citizenship],
@@ -159,8 +160,9 @@ export function initBook(audio) {
         class: 'btn btn--primary',
         type: 'button',
         'data-open-doc': tabKey,
-      }, tabKey === 'contact' ? 'ЗАПОЛНИТЬ БЛАНК' : `ПРЕДЪЯВИТЬ: ${tabData.label}`)
+      }, tabKey === 'contact' ? 'ЗАПОЛНИТЬ БЛАНК' : tabKey === 'gallery' ? 'ОТКРЫТЬ ФОТОАРХИВ' : `ПРЕДЪЯВИТЬ: ${tabData.label}`)
     );
+    if (tabKey === 'gallery') section.insertBefore(el('div', { class: 'section-gallery-preview', 'aria-hidden': 'true' }, ...['01','03','06','08'].map(id => el('img', { src: 'assets/img/gallery/' + id + '.png', alt: '', width: '96', height: '128', loading: 'lazy' }))), detailList);
 
     section.querySelector('[data-open-doc]').addEventListener('click', () => {
       bus.emit('doc:open', { key: tabKey });
