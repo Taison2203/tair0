@@ -16,7 +16,7 @@ export const CONTENT = {
     issueYear: 1982,
     citizenship: 'Арстотцка',
     documentCity: 'Павлтон',
-    city: 'Павлодар',
+    city: 'Павлтон',
     major: 'Информационные системы',
     photo: 'assets/img/inspector.png',
     pixelArt: true,

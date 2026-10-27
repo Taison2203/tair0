@@ -4,7 +4,7 @@
  * Produces a <canvas class="px"> sized with CSS calc for pixel-perfect scaling.
  */
 
-import { css } from './dom.js?v=footer-1';
+import { css } from './dom.js?v=city-2';
 
 /** Cache of resolved CSS colors so we don't call getComputedStyle per pixel. */
 const colorCache = new Map();

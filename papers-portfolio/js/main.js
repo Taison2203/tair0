@@ -1,27 +1,27 @@
 /** Application entry point: load type, prepare documents, then allow the shift to start. */
 
-import { AudioEngine } from './audio/engine.js?v=footer-1';
-import { initSoundArchive } from './components/soundArchive.js?v=footer-1';
-import { SFX } from './audio/sfx.js?v=footer-1';
-import { Music } from './audio/music.js?v=footer-1';
-import { initScale } from './core/scale.js?v=footer-1';
+import { AudioEngine } from './audio/engine.js?v=city-2';
+import { initSoundArchive } from './components/soundArchive.js?v=city-2';
+import { SFX } from './audio/sfx.js?v=city-2';
+import { Music } from './audio/music.js?v=city-2';
+import { initScale } from './core/scale.js?v=city-2';
 import {
   makeDeskTexture, makeGrainTexture, makeRingTexture, initClock,
   createScanner, initMuteButton,
-} from './components/desk.js?v=footer-1';
-import { initStartScreen } from './components/startScreen.js?v=footer-1';
-import { initBook } from './components/book.js?v=footer-1';
-import { initDocuments } from './components/documents.js?v=footer-1';
-import { initReceipts } from './components/receipts.js?v=footer-1';
-import { initNews } from './components/news.js?v=footer-1';
-import { initEzic, initPenalty } from './components/ezic.js?v=footer-1';
-import { bus } from './core/bus.js?v=footer-1';
-import { CONTENT } from './config/content.js?v=footer-1';
-import { makePortrait } from './core/pixelate.js?v=footer-1';
-import { initShift } from './components/shift.js?v=footer-1';
-import { initAtmosphere } from './components/atmosphere.js?v=footer-1';
-import { chooseLanguage } from './core/i18n.js?v=footer-1';
-import { initCaptureProtection } from './components/captureProtection.js?v=footer-1';
+} from './components/desk.js?v=city-2';
+import { initStartScreen } from './components/startScreen.js?v=city-2';
+import { initBook } from './components/book.js?v=city-2';
+import { initDocuments } from './components/documents.js?v=city-2';
+import { initReceipts } from './components/receipts.js?v=city-2';
+import { initNews } from './components/news.js?v=city-2';
+import { initEzic, initPenalty } from './components/ezic.js?v=city-2';
+import { bus } from './core/bus.js?v=city-2';
+import { CONTENT } from './config/content.js?v=city-2';
+import { makePortrait } from './core/pixelate.js?v=city-2';
+import { initShift } from './components/shift.js?v=city-2';
+import { initAtmosphere } from './components/atmosphere.js?v=city-2';
+import { chooseLanguage } from './core/i18n.js?v=city-2';
+import { initCaptureProtection } from './components/captureProtection.js?v=city-2';
 
 async function loadRequiredFonts() {
   if (!document.fonts?.load) return;

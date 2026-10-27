@@ -43,7 +43,7 @@ export const ENGLISH = {
   'ИМЯ': 'NAME', 'ВОЗРАСТ': 'AGE', 'ГОРОД': 'CITY', 'СПЕЦИАЛЬНОСТЬ': 'FIELD OF STUDY', 'ФАМИЛИЯ': 'SURNAME',
   'ГРАЖДАНСТВО': 'CITIZENSHIP', 'ГОД РОЖДЕНИЯ': 'BIRTH YEAR', 'РОСТ': 'HEIGHT',
   'ТАИР': 'TAIR', 'Таир': 'Tair', 'Таира': 'Tair', 'Таиру': 'Tair', 'Таиром': 'Tair',
-  'АРСТОТЦКА': 'ARSTOTZKA', 'Арстотцка': 'Arstotzka', 'Павлтон': 'Pavlton', 'ПАВЛТОН': 'PAVLTON', 'Павлодар': 'Pavlodar', 'ПАВЛОДАР': 'PAVLODAR',
+  'АРСТОТЦКА': 'ARSTOTZKA', 'Арстотцка': 'Arstotzka', 'Павлтон': 'Pavlton', 'ПАВЛТОН': 'PAVLTON',
   'Информационные системы': 'Information Systems', 'ИНФОРМАЦИОННЫЕ СИСТЕМЫ': 'INFORMATION SYSTEMS',
   'Пиксельный портрет инспектора Таира': 'Pixel portrait of inspector Tair', 'Фотография кандидата': 'Candidate photograph',
   'Открыть тренажёр инспектора': 'Open inspector training', 'ТРЕНАЖЁР ИНСПЕКТОРА': 'INSPECTOR TRAINING',

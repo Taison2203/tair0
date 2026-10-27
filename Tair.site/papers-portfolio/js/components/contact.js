@@ -1,8 +1,8 @@
 /** Official form: real server acknowledgment precedes the approval stamp and filing animation. */
-import { el, sleep, stepAnim } from '../core/dom.js?v=footer-1';
-import { bus } from '../core/bus.js?v=footer-1';
-import { CONTENT } from '../config/content.js?v=footer-1';
-import { apiFetch } from '../core/api.js?v=footer-1';
+import { el, sleep, stepAnim } from '../core/dom.js?v=city-2';
+import { bus } from '../core/bus.js?v=city-2';
+import { CONTENT } from '../config/content.js?v=city-2';
+import { apiFetch } from '../core/api.js?v=city-2';
 
 const STORAGE_KEY = 'inspector.feedback.v1';
 const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
