@@ -8,7 +8,7 @@ import { initScale } from './core/scale.js?v=city-2';
 import {
   makeDeskTexture, makeGrainTexture, makeRingTexture, initClock,
   createScanner, initMuteButton,
-} from './components/desk.js?v=city-2';
+} from './components/desk.js?v=speaker-1';
 import { initStartScreen } from './components/startScreen.js?v=city-2';
 import { initBook } from './components/book.js?v=city-2';
 import { initDocuments } from './components/documents.js?v=city-2';

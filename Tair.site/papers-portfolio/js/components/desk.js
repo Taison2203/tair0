@@ -239,12 +239,14 @@ export function initMuteButton(audio, { onMute = () => {}, onUnmute = () => {} }
   let muted = audio.muted;
   const iconOn = drawSprite(SPEAKER_ON, SPEAKER_PAL);
   const iconOff = drawSprite(SPEAKER_OFF, SPEAKER_PAL);
-  btn.append(iconOn);
 
   function updateIcon() {
-    btn.replaceChildren(muted ? iconOff.cloneNode(true) : iconOn.cloneNode(true));
+    // Cloning a canvas copies its attributes, but leaves its bitmap blank.
+    // Move the painted canvas itself so both speaker states remain visible.
+    btn.replaceChildren(muted ? iconOff : iconOn);
     btn.setAttribute('aria-pressed', String(muted));
     btn.setAttribute('aria-label', muted ? 'Включить звук' : 'Выключить звук');
+    btn.title = muted ? 'Включить звук' : 'Выключить звук';
   }
 
   btn.addEventListener('click', () => {

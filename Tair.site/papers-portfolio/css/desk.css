@@ -132,8 +132,8 @@
   right: calc(var(--u) * 4);
   top: calc(var(--u) * 4);
   z-index: 100;
-  width: calc(var(--u) * 20);
-  height: calc(var(--u) * 20);
+  width: max(44px, calc(var(--u) * 20));
+  height: max(44px, calc(var(--u) * 20));
   background: var(--frame);
   display: flex;
   align-items: center;
