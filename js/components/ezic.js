@@ -1,8 +1,8 @@
 /** Duplicate penalties, dead-click citations and the EZIC cipher sequence. */
 
-import { $ } from '../core/dom.js?v=city-2';
-import { bus } from '../core/bus.js?v=city-2';
-import { CONTENT } from '../config/content.js?v=city-2';
+import { $ } from '../core/dom.js?v=ezic-1';
+import { bus } from '../core/bus.js?v=ezic-1';
+import { CONTENT } from '../config/content.js?v=ezic-1';
 
 function normalizeKey(key) {
   return String(key || '').toUpperCase().replace(/[^A-Z]/g, '');
@@ -103,7 +103,7 @@ export function initEzic(audio) {
 
     bus.emit('receipt:print', {
       header: 'ПРИКАЗ ЗВЕЗДЫ EZIC',
-      text: 'ПОРЯДОК СЛЕДИТ ЗА ТОБОЙ. СЛАВА АРСТОТЦКЕ.',
+      text: 'ПОРЯДОК СЛЕДИТ ЗА ТОБОЙ. СЛАВА АРСТОТЦКЕ!',
       meta: 'ТАЙНАЯ ПЕРЕДАЧА · ' + cipher,
     });
 

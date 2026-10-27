@@ -1,6 +1,6 @@
 /** A small, optional inspection shift. Fictional papers never change the owner's dossier. */
-import { bus } from '../core/bus.js?v=city-2';
-import { el } from '../core/dom.js?v=city-2';
+import { bus } from '../core/bus.js?v=ezic-1';
+import { el } from '../core/dom.js?v=ezic-1';
 
 const VISITORS = [
   {

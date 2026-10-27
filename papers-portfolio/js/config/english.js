@@ -21,7 +21,7 @@ export const ENGLISH = {
   'НАЙДЕННАЯ ЗАПИСКА': 'RECOVERED NOTE', 'Прочитать': 'Read note', 'КОНТАКТ EZIC · НАЖМИТЕ': 'EZIC CONTACT · CLICK TO READ',
   'Открыть секретную записку EZIC': 'Open the secret EZIC note', 'Закрыть секретную записку': 'Close the secret note',
   'СЕКРЕТНАЯ ЗАПИСКА EZIC': 'SECRET EZIC NOTE', 'КЛЮЧ': 'KEY',
-  'ПРИКАЗ ЗВЕЗДЫ EZIC': 'ORDER OF THE EZIC STAR', 'ПОРЯДОК СЛЕДИТ ЗА ТОБОЙ. СЛАВА АРСТОТЦКЕ.': 'THE ORDER IS WATCHING YOU. GLORY TO ARSTOTZKA.', 'ТАЙНАЯ ПЕРЕДАЧА': 'SECRET TRANSMISSION',
+  'ПРИКАЗ ЗВЕЗДЫ EZIC': 'ORDER OF THE EZIC STAR', 'ПОРЯДОК СЛЕДИТ ЗА ТОБОЙ. СЛАВА АРСТОТЦКЕ!': 'THE ORDER IS WATCHING YOU. GLORY TO ARSTOTZKA!', 'ТАЙНАЯ ПЕРЕДАЧА': 'SECRET TRANSMISSION',
   'ВЕСТИ СМЕНЫ': 'SHIFT BULLETIN', 'Казахстан и мир · читать газету': 'Kazakhstan and the world · read the bulletin',
   'АРХИВ КОНТРОЛЬНОГО ПОСТА': 'CHECKPOINT ARCHIVE', 'Обновить новости': 'Refresh news', 'Закрыть газету': 'Close the bulletin',
   'Реальные новости · Казахстан и мир': 'Real news · Kazakhstan and the world',
