@@ -3,17 +3,17 @@
  * User-facing facts are read from config/content.js; missing facts stay redacted.
  */
 
-import { $, el, stepAnim, css, mulberry32 } from '../core/dom.js?v=ezic-1';
+import { $, el, stepAnim, css, mulberry32 } from '../core/dom.js?v=identity-1';
 import {
   drawSprite, ICON_NETWORK, ICON_DATABASE, ICON_HARDWARE, ICON_ANALYTICS,
   CASE_LASER, CASE_AI, CASE_ROBLOX,
-} from '../core/sprites.js?v=ezic-1';
-import { makePortrait } from '../core/pixelate.js?v=ezic-1';
-import { bus } from '../core/bus.js?v=ezic-1';
-import { CONTENT } from '../config/content.js?v=ezic-1';
-import { t } from '../core/i18n.js?v=ezic-1';
-import { initContact } from './contact.js?v=ezic-1';
-import { initGallery } from './gallery.js?v=ezic-1';
+} from '../core/sprites.js?v=identity-1';
+import { makePortrait } from '../core/pixelate.js?v=identity-1';
+import { bus } from '../core/bus.js?v=identity-1';
+import { CONTENT } from '../config/content.js?v=identity-1';
+import { t } from '../core/i18n.js?v=identity-1';
+import { initContact } from './contact.js?v=identity-1';
+import { initGallery } from './gallery.js?v=identity-1';
 
 const VALID_DOCS = new Set(['passport', 'pass', 'cases', 'contact', 'gallery', 'inspection']);
 const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;

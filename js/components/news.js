@@ -1,8 +1,8 @@
 /** Poll the local, source-filtered news endpoint without blocking the handbook. */
 
-import { el } from '../core/dom.js?v=ezic-1';
-import { apiFetch } from '../core/api.js?v=ezic-1';
-import { getLocale } from '../core/i18n.js?v=ezic-1';
+import { el } from '../core/dom.js?v=identity-1';
+import { apiFetch } from '../core/api.js?v=identity-1';
+import { getLocale } from '../core/i18n.js?v=identity-1';
 
 const REFRESH_MS = 15 * 60 * 1000;
 

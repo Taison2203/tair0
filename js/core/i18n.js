@@ -1,4 +1,4 @@
-import { ENGLISH } from '../config/english.js?v=ezic-1';
+import { ENGLISH } from '../config/english.js?v=identity-1';
 
 const STORAGE_KEY = 'inspector.language.v1';
 let language = 'ru';

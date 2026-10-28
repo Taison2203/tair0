@@ -3,11 +3,11 @@
  * Handles cover, table of contents, side tabs, page-turn transitions, and bookmark ribbon.
  */
 
-import { $, el, stepAnim } from '../core/dom.js?v=ezic-1';
-import { bus } from '../core/bus.js?v=ezic-1';
-import { CONTENT } from '../config/content.js?v=ezic-1';
-import { getLanguage } from '../core/i18n.js?v=ezic-1';
-import { protectedPhoto } from './gallery.js?v=ezic-1';
+import { $, el, stepAnim } from '../core/dom.js?v=identity-1';
+import { bus } from '../core/bus.js?v=identity-1';
+import { CONTENT } from '../config/content.js?v=identity-1';
+import { getLanguage } from '../core/i18n.js?v=identity-1';
+import { protectedPhoto } from './gallery.js?v=identity-1';
 
 export function initBook(audio) {
   const bookEl = $('.book');
