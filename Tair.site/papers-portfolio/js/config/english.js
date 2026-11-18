@@ -1,5 +1,16 @@
 /** UI copy only. User input, identifiers and original news headlines are not translated. */
 export const ENGLISH = {
+  'О ВЫПУСКЕ': 'ABOUT THIS ISSUE',
+  'Источники новостей': 'News sources',
+  'МИР': 'WORLD', 'КАЗИНФОРМ': 'KAZINFORM', 'АКОРДА': 'AKORDA', 'ООН': 'UN',
+  'В первую очередь — Казахстан. Затем — главные темы мира. Заголовки за последние три дня из Казинформа, Tengrinews, официальных ведомств и международных редакций.': 'Kazakhstan first, then major world stories. Headlines from the past three days from Kazinform, Tengrinews, government offices and international newsrooms.',
+  'Откройте сообщение, чтобы прочитать материал у источника. Порядок не является рейтингом популярности.': 'Open a report to read the original story. The order is not a popularity ranking.',
+  'Проверяем новости Казахстана и мира…': 'Checking Kazakhstan and world news…',
+  'Часть лент пока недоступна · показаны доступные сообщения': 'Some feeds are unavailable · showing available reports',
+  'Казахстан и главные темы мира · выпуск обновлён': 'Kazakhstan and major world stories · issue updated',
+  'Лента недоступна. Попробуйте обновить выпуск позже.': 'The feed is unavailable. Please refresh the issue later.',
+  'Лента временно недоступна. Попробуйте обновить выпуск позже.': 'The feed is temporarily unavailable. Please refresh the issue later.',
+
   'Слишком много пропусков. Повторите через 10 минут.': 'Too many passes requested. Try again in 10 minutes.', 'Приёмная временно недоступна.': 'The reception office is temporarily unavailable.', 'Обновите страницу и откройте бланк снова.': 'Refresh the page and open the form again.', 'Бланк слишком большой.': 'The form is too large.', 'Подтвердите Telegram через бота.': 'Verify Telegram through the bot.', 'У вас уже есть открытое дело. Продолжите его в боте.': 'You already have an open file. Continue it in the bot.', 'Этот контакт или браузер уже использован.': 'This contact or browser has already been used.', 'У вас уже есть открытое дело.': 'You already have an open file.', 'Состояние доставки уточняется. Повторная отправка заблокирована.': 'Delivery is being verified. Resubmission is locked.', 'Откройте форму на tair0.me.': 'Open the form on tair0.me.', 'Маршрут не найден.': 'Route not found.', 'Сервис временно недоступен. Попробуйте позже.': 'The service is temporarily unavailable. Please try later.',
   'Слишком много попыток. Повторите через 10 минут.': 'Too many attempts. Try again in 10 minutes.',
   'Проверьте имя, контакт и текст обращения (10–2000 символов).': 'Check your name, contact and message (10–2000 characters).',

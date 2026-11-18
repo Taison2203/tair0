@@ -1,8 +1,8 @@
 /** Poll the local, source-filtered news endpoint without blocking the handbook. */
 
-import { el } from '../core/dom.js?v=compact-20261119';
-import { apiFetch } from '../core/api.js?v=compact-20261119';
-import { getLocale } from '../core/i18n.js?v=compact-20261119';
+import { el } from '../core/dom.js?v=polish-20261119';
+import { apiFetch } from '../core/api.js?v=polish-20261119';
+import { getLocale } from '../core/i18n.js?v=polish-20261119';
 
 const REFRESH_MS = 15 * 60 * 1000;
 
@@ -12,7 +12,7 @@ function readableItems(items) {
     if (!item || typeof item.title !== 'string' || !Number.isFinite(Date.parse(item.publishedAt))) return false;
     try {
       const url = new URL(item.href);
-      return url.protocol === 'https:' && ['news.google.com', 'who.int', 'gov.kz', 'rospotrebnadzor.ru'].some(domain => url.hostname === domain || url.hostname.endsWith('.' + domain));
+      return url.protocol === 'https:' && ['news.google.com'].some(domain => url.hostname === domain || url.hostname.endsWith('.' + domain));
     } catch { return false; }
   }).slice(0, 8);
 }
@@ -85,8 +85,8 @@ export function initNews(audio) {
     }).format(new Date(value)) : '—';
   }
   try {
-    const saved = JSON.parse(localStorage.getItem('post-news-v1') || 'null');
-    if (saved?.items?.length && Number.isFinite(Date.parse(saved.checkedAt))) {
+    const saved = JSON.parse(localStorage.getItem('post-news-kz-v2') || 'null');
+    if (saved?.items?.length && Number.isFinite(Date.parse(saved.checkedAt)) && Date.now()-Date.parse(saved.checkedAt)<24*60*60*1000) {
       renderContext(readableItems(saved.items));
       writeUpdated(saved.checkedAt);
     }
@@ -99,7 +99,7 @@ export function initNews(audio) {
     refreshButton.setAttribute('aria-busy', 'true');
     list.setAttribute('aria-busy', 'true');
     status.hidden = false;
-    status.textContent = 'Проверяем официальные ленты…';
+    status.textContent = 'Проверяем новости Казахстана и мира…';
 
     activeRequest = (async () => {
       try {
@@ -112,28 +112,28 @@ export function initNews(audio) {
         const data = await response.json();
         const context = readableItems(data.context);
         const items = readableItems(data.items);
-        if (items.length || context.length) {
+        if (data.live || items.length || context.length) {
           renderContext([...context, ...items]);
           writeUpdated(data.checkedAt);
-          try { localStorage.setItem('post-news-v1', JSON.stringify({ items: [...context, ...items], checkedAt: data.checkedAt })); } catch { /* storage may be unavailable */ }
+          try { localStorage.setItem('post-news-kz-v2', JSON.stringify({ items: [...context, ...items], checkedAt: data.checkedAt })); } catch { /* storage may be unavailable */ }
         }
         lastUpdate = Date.now();
         if (force) audio?.play(data.live ? 'newsArrived' : 'warning');
         status.textContent = data.live
           ? items.length
-            ? 'Проверено · сообщения выше'
+            ? data.partial ? 'Часть лент пока недоступна · показаны доступные сообщения' : 'Казахстан и главные темы мира · выпуск обновлён'
             : 'Проверено · новых сообщений пока нет'
           : list.children.length
             ? 'Лента недоступна. Показан последний сохранённый выпуск.'
-            : 'Лента недоступна. Датированные материалы из архива доступны ниже.';
-        status.hidden = data.live && items.length > 0;
+            : 'Лента недоступна. Попробуйте обновить выпуск позже.';
+        status.hidden = data.live && items.length > 0 && !data.partial;
       } catch {
         if (force) audio?.play('warning', { gain: .7 });
         list.setAttribute('aria-busy', 'false');
         status.hidden = false;
         status.textContent = list.children.length
           ? 'Связь с лентой прервана. Показан последний сохранённый выпуск.'
-          : 'Лента временно недоступна. Датированные материалы из архива доступны ниже.';
+          : 'Лента временно недоступна. Попробуйте обновить выпуск позже.';
       } finally {
         list.setAttribute('aria-busy', 'false');
         refreshButton.disabled = false;

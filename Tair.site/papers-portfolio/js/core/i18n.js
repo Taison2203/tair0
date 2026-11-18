@@ -1,4 +1,4 @@
-import { ENGLISH } from '../config/english.js?v=compact-20261119';
+import { ENGLISH } from '../config/english.js?v=polish-20261119';
 
 const STORAGE_KEY = 'inspector.language.v1';
 let language = 'ru';

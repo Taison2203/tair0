@@ -8,7 +8,8 @@
 .desk-lamp__fixture img { width: 100%; height: 100%; transition: filter 180ms; }
 .desk-lamp__fixture::before, .desk-lamp__fixture::after { content: ''; position: absolute; pointer-events: none; opacity: var(--lamp-power); }
 .desk-lamp__fixture::before { inset: 12% 24% 35% -10%; background: radial-gradient(ellipse, rgb(255 219 130 / 24%), transparent 68%); }
-.desk-lamp__fixture::after { left: 17%; top: 42%; width: 42%; height: 6%; background: #ffe4a1; box-shadow: 0 3px 10px 3px rgb(255 211 115 / 55%), 0 10px 28px 10px rgb(250 207 119 / 18%); }
+/* Match the bulb in lamp.svg (x22–47, y28–32 in its 96×68 viewBox). */
+.desk-lamp__fixture::after { left: 22.9167%; top: 41.1765%; width: 26.0417%; height: 5.8824%; background: #ffe4a1; box-shadow: 0 3px 10px 3px rgb(255 211 115 / 55%), 0 10px 28px 10px rgb(250 207 119 / 18%); }
 #desk[data-lamp='on'] .desk-lamp img { filter: brightness(1.15) drop-shadow(0 4px 8px rgb(241 206 129 / 14%)); }
 .desk-light { background: radial-gradient(ellipse at 79% 14%, rgb(244 213 150 / 29%), rgb(216 190 124 / 12%) 42%, transparent 76%); }
 .desk-dust { position: absolute; top: 12%; right: 8%; width: 64%; height: 72%; overflow: hidden; }

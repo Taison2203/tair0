@@ -3,17 +3,17 @@
  * User-facing facts are read from config/content.js; missing facts stay redacted.
  */
 
-import { $, el, stepAnim, css, mulberry32 } from '../core/dom.js?v=compact-20261119';
+import { $, el, stepAnim, css, mulberry32 } from '../core/dom.js?v=polish-20261119';
 import {
   drawSprite, ICON_NETWORK, ICON_DATABASE, ICON_HARDWARE, ICON_ANALYTICS,
   CASE_LASER, CASE_AI, CASE_ROBLOX,
-} from '../core/sprites.js?v=compact-20261119';
-import { makePortrait } from '../core/pixelate.js?v=compact-20261119';
-import { bus } from '../core/bus.js?v=compact-20261119';
-import { CONTENT } from '../config/content.js?v=compact-20261119';
-import { t } from '../core/i18n.js?v=compact-20261119';
-import { initContact } from './contact.js?v=compact-20261119';
-import { initGallery } from './gallery.js?v=compact-20261119';
+} from '../core/sprites.js?v=polish-20261119';
+import { makePortrait } from '../core/pixelate.js?v=polish-20261119';
+import { bus } from '../core/bus.js?v=polish-20261119';
+import { CONTENT } from '../config/content.js?v=polish-20261119';
+import { t } from '../core/i18n.js?v=polish-20261119';
+import { initContact } from './contact.js?v=polish-20261119';
+import { initGallery } from './gallery.js?v=polish-20261119';
 
 const VALID_DOCS = new Set(['passport', 'pass', 'cases', 'contact', 'gallery', 'inspection']);
 const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -373,7 +373,8 @@ export async function initDocuments(audio) {
   bus.on('doc:closeAll', closeAll);
 
   window.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape' && openDialog && !document.querySelector('#capture-shield[open]')) closeDoc(openDialog);
+    // Escape belongs to the focused top dialog, e.g. Telegram confirmation above a gallery.
+    if (event.key === 'Escape' && openDialog && document.activeElement?.closest('dialog') === openDialog && !document.querySelector('#capture-shield[open]')) closeDoc(openDialog);
   });
 
   window.addEventListener('hashchange', () => {

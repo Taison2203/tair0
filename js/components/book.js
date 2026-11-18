@@ -3,11 +3,11 @@
  * Handles cover, table of contents, side tabs, page-turn transitions, and bookmark ribbon.
  */
 
-import { $, el, stepAnim } from '../core/dom.js?v=compact-20261119';
-import { bus } from '../core/bus.js?v=compact-20261119';
-import { CONTENT } from '../config/content.js?v=compact-20261119';
-import { getLanguage } from '../core/i18n.js?v=compact-20261119';
-import { protectedPhoto } from './gallery.js?v=compact-20261119';
+import { $, el, stepAnim } from '../core/dom.js?v=polish-20261119';
+import { bus } from '../core/bus.js?v=polish-20261119';
+import { CONTENT } from '../config/content.js?v=polish-20261119';
+import { getLanguage } from '../core/i18n.js?v=polish-20261119';
+import { protectedPhoto } from './gallery.js?v=polish-20261119';
 
 export function initBook(audio) {
   const bookEl = $('.book');
@@ -155,16 +155,18 @@ export function initBook(audio) {
       ])
     );
     const section = el('div', { class: 'section-page' },
-      el('h2', { class: 'section-page__title' }, tabData.label),
-      el('p', { class: 'section-page__blurb' }, tabData.blurb),
-      detailList,
+      el('div', { class: 'section-page__body', tabindex: '0', 'aria-label': getLanguage() === 'en' ? 'Section details' : 'Сведения раздела' },
+        el('h2', { class: 'section-page__title' }, tabData.label),
+        el('p', { class: 'section-page__blurb' }, tabData.blurb),
+        detailList
+      ),
       el('button', {
         class: 'btn btn--primary',
         type: 'button',
         'data-open-doc': tabKey,
       }, tabKey === 'contact' ? 'ЗАПОЛНИТЬ БЛАНК' : tabKey === 'gallery' ? 'ОТКРЫТЬ ФОТОАРХИВ' : `ПРЕДЪЯВИТЬ: ${tabData.label}`)
     );
-    if (tabKey === 'gallery') section.insertBefore(el('div', { class: 'section-gallery-preview', 'aria-hidden': 'true' }, ...['01','03','06','08'].map(id => protectedPhoto(id))), detailList);
+    if (tabKey === 'gallery') section.querySelector('.section-page__body').insertBefore(el('div', { class: 'section-gallery-preview', 'aria-hidden': 'true' }, ...['01','03','06','08'].map(id => protectedPhoto(id))), detailList);
 
     section.querySelector('[data-open-doc]').addEventListener('click', () => {
       bus.emit('doc:open', { key: tabKey });
