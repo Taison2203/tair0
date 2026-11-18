@@ -1,19 +1,19 @@
 /** Shared counters, explicit like state, and account confirmation through the existing bot. */
-import { apiFetch } from '../core/api.js?v=reactions-20261119b';
-import { getLanguage } from '../core/i18n.js?v=reactions-20261119b';
+import { apiFetch } from '../core/api.js?v=reactions-20261119c';
+import { getLanguage } from '../core/i18n.js?v=reactions-20261119c';
 const words=(ru,en)=>getLanguage()==='en'?en:ru;
 const states=new Map(),queued=new Set(),viewed=new Set(),disposers=new WeakMap();let batchTimer,audio,linked=false,login,loginTimer,loginDeadline=0,desiredTarget=null,returnFocus;
-function state(target){if(!states.has(target))states.set(target,{target,views:null,likes:null,liked:false,pending:false,widgets:new Set()});return states.get(target);}
+function state(target){if(!states.has(target))states.set(target,{target,views:null,likes:null,liked:false,pending:false,epoch:0,widgets:new Set()});return states.get(target);}
 function update(item){const s=state(item.target);Object.assign(s,item);for(const render of s.widgets)render();}
 async function call(path,options={}){
  let r;try{r=await apiFetch(path,{...options,signal:AbortSignal.timeout(12000)});}catch{throw Error(words('Нет связи с приёмной. Повторите позже.','Reception is unavailable. Please try later.'));}
  const data=await r.json().catch(()=>({}));if(!r.ok)throw Object.assign(Error(getLanguage()==='en'?(data.code==='RATE_LIMIT'?'Too many requests. Please wait a little.':data.code==='TELEGRAM_REQUIRED'?'Confirm Telegram to like this item.':'Could not save your reaction. Please try again.'):(data.message||'Не удалось сохранить отметку.')),{code:data.code});return data;
 }
 async function refresh(targets){
- const unique=[...new Set(targets)];
- for(let i=0;i<unique.length;i+=25){try{const data=await call('/api/social?targets='+encodeURIComponent(unique.slice(i,i+25).join(',')));const newlyLinked=data.linked&&!linked;linked=data.linked;data.items.forEach(update);if(newlyLinked)await mergeViewed();}catch{/* Keep unavailable counters as dashes; never invent zero. */}}
+ const unique=[...new Set(targets)],epochs=new Map(unique.map(target=>[target,state(target).epoch]));
+ for(let i=0;i<unique.length;i+=25){try{const data=await call('/api/social?targets='+encodeURIComponent(unique.slice(i,i+25).join(',')));const newlyLinked=data.linked&&!linked;linked=data.linked;data.items.forEach(item=>{const s=state(item.target);if(!s.pending&&s.epoch===epochs.get(item.target))update(item);});if(newlyLinked)await mergeViewed();}catch{/* Keep unavailable counters as dashes; never invent zero. */}}
 }
-async function mergeViewed(){await Promise.allSettled([...viewed].map(target=>call('/api/social/view',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({target})}).then(data=>update(data.item))));}
+async function mergeViewed(){await Promise.allSettled([...viewed].map(target=>call('/api/social/view',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({target})}).then(data=>update({target,views:data.item.views}))));}
 export function refreshReactions(){return refresh([...states.keys()]);}
 export function releaseReactions(container){for(const root of container.querySelectorAll('.social-controls'))disposers.get(root)?.();}
 function queue(target){queued.add(target);clearTimeout(batchTimer);batchTimer=setTimeout(()=>{const targets=[...queued];queued.clear();refresh(targets);},60);}
@@ -37,7 +37,7 @@ export function createReaction(target,{viewsOnly=false}={}){
  return root;
 }
 async function changeLike(s,liked,status,root){
- s.pending=true;for(const render of s.widgets)render();
+ s.pending=true;s.epoch++;for(const render of s.widgets)render();
  try{const data=await call('/api/social/like',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({target:s.target,liked})});linked=data.linked;update(data.item);audio?.play(liked?'like':'unlike',{gain:.65});
   for(const render of s.widgets)render(true);
   if(status)status.textContent=words(liked?'Отметка принята':'Лайк снят',liked?'Marked as liked':'Like removed');
@@ -50,7 +50,7 @@ export function observeView(target,element){
  const stopTimer=()=>{clearTimeout(timer);timer=null;};
  function schedule(){stopTimer();if(stopped||!visible||document.hidden||viewed.has(target))return;timer=setTimeout(async()=>{
    if(!element.isConnected||document.hidden||!visible)return;
-   try{const data=await call('/api/social/view',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({target})});viewed.add(target);update(data.item);}catch{/* Reading remains usable when counters are unavailable. */}
+   try{const data=await call('/api/social/view',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({target})});viewed.add(target);update({target,views:data.item.views});}catch{/* Reading remains usable when counters are unavailable. */}
  },1500);}
  const observer=new IntersectionObserver(entries=>{const e=entries[0];visible=e.isIntersecting&&(e.intersectionRatio>=.15||e.intersectionRect.height>=120);schedule();},{threshold:[0,.15,.5,1]});observer.observe(element);
  const visibility=()=>schedule();document.addEventListener('visibilitychange',visibility);

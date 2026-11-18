@@ -1,8 +1,8 @@
 /** One-at-a-time citation queue with dialog-safe popover layering. */
 
-import { $, el, sleep, stepAnim } from '../core/dom.js?v=reactions-20261119b';
-import { bus } from '../core/bus.js?v=reactions-20261119b';
-import { t, getLocale } from '../core/i18n.js?v=reactions-20261119b';
+import { $, el, sleep, stepAnim } from '../core/dom.js?v=reactions-20261119c';
+import { bus } from '../core/bus.js?v=reactions-20261119c';
+import { t, getLocale } from '../core/i18n.js?v=reactions-20261119c';
 
 export function initReceipts(audio) {
   const container = $('#receipts');

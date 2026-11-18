@@ -1,6 +1,6 @@
 /** Public noticeboard and a Telegram-approved owner desk. No credentials persist in storage. */
-import { getLanguage, getLocale } from '../core/i18n.js?v=reactions-20261119b';
-import { createReaction, observeView, releaseReactions } from './reactions.js?v=reactions-20261119b';
+import { getLanguage, getLocale } from '../core/i18n.js?v=reactions-20261119c';
+import { createReaction, observeView, releaseReactions } from './reactions.js?v=reactions-20261119c';
 const API='https://tair-portfolio-api.q5yhpcm78q.chatgpt.site';
 const words=(ru,en)=>getLanguage()==='en'?en:ru;
 const node=(tag,props={},...children)=>{const e=document.createElement(tag);for(const [k,v] of Object.entries(props))if(k==='class')e.className=v;else if(k==='text')e.textContent=v;else if(k==='onClick')e.addEventListener('click',v);else e.setAttribute(k,v);for(const c of children)e.append(c);return e;};

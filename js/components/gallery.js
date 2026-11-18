@@ -1,8 +1,8 @@
 /** Watermarked previews. Browser controls are deterrents, not screenshot protection. */
-import { el } from '../core/dom.js?v=reactions-20261119b';
-import { bus } from '../core/bus.js?v=reactions-20261119b';
-import { t } from '../core/i18n.js?v=reactions-20261119b';
-import { createReaction, observeView, refreshReactions, releaseReactions } from './reactions.js?v=reactions-20261119b';
+import { el } from '../core/dom.js?v=reactions-20261119c';
+import { bus } from '../core/bus.js?v=reactions-20261119c';
+import { t } from '../core/i18n.js?v=reactions-20261119c';
+import { createReaction, observeView, refreshReactions, releaseReactions } from './reactions.js?v=reactions-20261119c';
 
 const PHOTOS = [
   ['Портрет', 'Портрет инспектора на оливковом фоне'],

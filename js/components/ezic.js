@@ -1,8 +1,8 @@
 /** Duplicate penalties, dead-click citations and the EZIC cipher sequence. */
 
-import { $ } from '../core/dom.js?v=reactions-20261119b';
-import { bus } from '../core/bus.js?v=reactions-20261119b';
-import { CONTENT } from '../config/content.js?v=reactions-20261119b';
+import { $ } from '../core/dom.js?v=reactions-20261119c';
+import { bus } from '../core/bus.js?v=reactions-20261119c';
+import { CONTENT } from '../config/content.js?v=reactions-20261119c';
 
 function normalizeKey(key) {
   return String(key || '').toUpperCase().replace(/[^A-Z]/g, '');
