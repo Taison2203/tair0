@@ -1,4 +1,4 @@
-import { ENGLISH } from '../config/english.js?v=identity-1';
+import { ENGLISH } from '../config/english.js?v=desk-20261119';
 
 const STORAGE_KEY = 'inspector.language.v1';
 let language = 'ru';
@@ -88,7 +88,7 @@ function observe() {
 function setLanguage(selected) {
   language=selected==='en'?'en':'ru';
   document.documentElement.lang=language;
-  document.title=t('Таир — Портфолио инспектора | Papers, Please');
+  document.title=t('Таир — Портфолио инспектора');
   document.querySelector('[data-language-reset]')?.setAttribute('aria-label',t('Сменить язык'));
   try {localStorage.setItem(STORAGE_KEY,language);}catch{/* language still works without storage */}
   document.querySelectorAll('meta[name="description"],meta[property="og:title"],meta[property="og:description"]').forEach(node=>{node.content=t(node.content);});

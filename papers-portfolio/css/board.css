@@ -1,0 +1,45 @@
+/* A cork board, real paper notices and a functional owner's writing desk. */
+.board-invitation{grid-area:4 / 1 / 5 / -1;justify-self:center;position:relative;width:min(600px,100%);padding:20px 24px;text-align:center;background:#c8bb8b;color:#282a20;border:8px solid #574b35;box-shadow:inset 0 0 0 2px #9a8053,4px 5px 0 #121810;transition:transform .18s,filter .18s;cursor:pointer}
+.board-invitation:hover{transform:translateY(-3px);filter:brightness(1.1)}
+.board-invitation__title{display:block;font:12px/1.8 var(--font-display)}
+.board-invitation__description{display:block;margin-top:8px;font:14px/1.5 var(--font-ui)}
+.board-invitation__pin,.board-post__pin{position:absolute;top:7px;left:50%;width:8px;height:8px;background:#9b3e32;box-shadow:2px 3px 0 #5b3c2c}
+#desk>.site-footer{grid-area:5 / 1 / 6 / -1}
+.noticeboard-dialog{position:fixed;inset:0;margin:auto;width:min(1100px,calc(100vw - 24px));max-width:calc(100vw - 24px);max-height:calc(100svh - 24px);padding:0;border:0;overflow:visible;background:transparent;color:var(--paper)}
+.noticeboard-dialog::backdrop{background:rgb(12 18 12 / 85%);backdrop-filter:blur(3px)}
+.board-close{display:block;margin:0 0 8px auto;min-height:44px;padding:10px 18px;background:#3e4739;color:#eee8ce;font:11px/1.8 var(--font-display);cursor:pointer}
+.noticeboard{max-height:calc(100svh - 88px);overflow:auto;overscroll-behavior:contain;padding:32px;border:12px solid #574b35;box-shadow:inset 0 0 0 3px #997b4c,0 12px 40px #0007;background-color:#756248;background-image:radial-gradient(#c1a87555 1px,transparent 1px),radial-gradient(#382d2555 1px,transparent 1px);background-position:0 0,3px 4px;background-size:7px 7px,9px 9px;scrollbar-color:#c3af7e #574b35}
+.board-header{text-align:center;margin:0 auto 22px;width:fit-content;padding:20px 28px;background:#ded8b8;box-shadow:4px 5px 0 #0004;color:#282a20;transform:rotate(-.5deg)}
+.board-header h2{font:clamp(15px,3vw,24px)/1.8 var(--font-display);overflow-wrap:anywhere}
+.board-kicker{font:12px/1.5 var(--font-ui);margin-bottom:10px;letter-spacing:1px}
+.board-subtitle{font:16px/1.6 var(--font-ui);margin-top:10px}
+.board-tools{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+.board-tool,.board-telegram{display:inline-block;min-height:44px;padding:10px 14px;border:1px solid #c8bd94;background:#30392c;color:#f0e7c7;font:14px/1.6 var(--font-ui);text-decoration:none;cursor:pointer}
+.board-tool:hover,.board-telegram:hover{background:#46533d}.board-tool--danger{background:#69382e}
+.board-status{font:14px/1.6 var(--font-ui);padding:14px 8px;min-height:50px;color:#fff2cd;text-align:center}
+.board-posts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:30px 24px;align-items:start}
+.board-post{position:relative;min-width:0;background:#e6dfc1;color:#282a20;padding:30px 24px 24px;box-shadow:5px 7px 0 #0004;animation:notice-arrive .35s ease-out both}
+.board-post:nth-child(3n+1){transform:rotate(-.7deg)}.board-post:nth-child(3n+2){transform:rotate(.6deg);background:#d7dabc}
+.board-post.is-pinned{border-top:5px solid #a2543d}
+.board-post__meta{font:12px/1.5 var(--font-ui);color:#655c44;margin-bottom:14px}
+.board-post h3{font:bold 22px/1.4 var(--font-ui);overflow-wrap:anywhere}
+.board-post__body{font:16px/1.8 var(--font-ui);white-space:pre-wrap;overflow-wrap:anywhere;margin-top:16px}
+.board-post__tools{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+.board-attachment{display:block;margin-top:18px;color:#384631;font:14px/1.7 var(--font-ui);overflow-wrap:anywhere}
+.board-attachment img{display:block;width:100%;height:auto;max-height:500px;object-fit:contain;background:#242a22;image-rendering:auto}
+.board-attachment span{display:block;margin-top:8px;text-decoration:underline}
+.board-empty{grid-column:1/-1;background:#e5ddbd;padding:40px 24px;max-width:560px;justify-self:center;text-align:center;color:#333b2d;box-shadow:5px 7px 0 #0004}
+.board-empty>span{display:block;font-size:40px;color:#8e4a34}.board-empty h3{font:14px/1.9 var(--font-display);margin:16px 0}.board-empty p{font:16px/1.8 var(--font-ui)}
+.board-owner{padding:24px;background:#d7d0b0;color:#282a20;margin-bottom:24px;box-shadow:5px 5px 0 #0004;font:16px/1.7 var(--font-ui)}
+.board-owner h3{font:14px/1.8 var(--font-display);margin-bottom:16px}.board-owner .btn{font-size:11px;min-height:48px;margin-top:12px;line-height:1.8}
+.board-login-status{margin:16px 0;font-weight:bold}.board-telegram{margin-right:10px}
+.board-editor{display:grid;gap:16px}.board-field{display:grid;gap:8px;min-width:0;font:14px/1.6 var(--font-ui)}
+.board-field input:not([type=checkbox]),.board-field textarea{width:100%;min-width:0;background:#eee9d3;border:1px solid #7b7a60;color:#23291f;padding:12px;font:16px/1.6 var(--font-ui)}
+.board-field:has(input[type=checkbox]){display:flex;align-items:center;gap:12px}.board-field input[type=checkbox]{width:22px;height:22px;accent-color:#4f6542}
+.board-field input[type=file]{white-space:normal;overflow-wrap:anywhere}.board-help,.board-file-status{font:13px/1.7 var(--font-ui)}
+.board-confirm{margin-top:16px;padding:12px;border:2px dashed #873d2d;font:14px/1.6 var(--font-ui)}.board-confirm button{margin:8px 8px 0 0}
+.board-editor.is-filed{animation:board-stamp .45s ease-out}
+@keyframes notice-arrive{from{opacity:0;translate:0 20px}to{opacity:1;translate:0 0}}
+@keyframes board-stamp{40%{transform:translateY(3px)}70%{transform:translateY(-1px)}}
+@media(max-width:599px){.board-invitation{grid-area:4 / 1 / 5 / -1;padding:20px 10px;border-width:6px}.board-invitation__title{font-size:10px}.board-invitation__description{font-size:13px}#desk>.dup-btn{grid-row:5}#desk>.site-footer{grid-area:6 / 1 / 7 / -1}.noticeboard{padding:20px 12px;border-width:7px}.board-header{padding:16px 12px;width:100%}.board-kicker{font-size:10px}.board-posts{grid-template-columns:minmax(0,1fr);gap:24px}.board-post{padding:28px 18px 20px}.board-owner{padding:18px 12px}.board-tool{padding:10px;font-size:13px}.board-header h2{font-size:15px}.board-subtitle{font-size:14px}}
+@media(prefers-reduced-motion:reduce){.board-post,.board-editor{animation:none!important}.board-invitation{transition:none}.board-post{transform:none!important}}

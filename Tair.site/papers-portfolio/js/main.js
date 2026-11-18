@@ -1,27 +1,29 @@
 /** Application entry point: load type, prepare documents, then allow the shift to start. */
 
-import { AudioEngine } from './audio/engine.js?v=identity-1';
-import { initSoundArchive } from './components/soundArchive.js?v=identity-1';
-import { SFX } from './audio/sfx.js?v=identity-1';
-import { Music } from './audio/music.js?v=identity-1';
-import { initScale } from './core/scale.js?v=identity-1';
+import { AudioEngine } from './audio/engine.js?v=desk-20261119';
+import { initSoundArchive } from './components/soundArchive.js?v=desk-20261119';
+import { SFX } from './audio/sfx.js?v=desk-20261119';
+import { Music } from './audio/music.js?v=desk-20261119';
+import { initScale } from './core/scale.js?v=desk-20261119';
 import {
   makeDeskTexture, makeGrainTexture, makeRingTexture, initClock,
   createScanner, initMuteButton,
-} from './components/desk.js?v=identity-1';
-import { initStartScreen } from './components/startScreen.js?v=identity-1';
-import { initBook } from './components/book.js?v=identity-1';
-import { initDocuments } from './components/documents.js?v=identity-1';
-import { initReceipts } from './components/receipts.js?v=identity-1';
-import { initNews } from './components/news.js?v=identity-1';
-import { initEzic, initPenalty } from './components/ezic.js?v=identity-1';
-import { bus } from './core/bus.js?v=identity-1';
-import { CONTENT } from './config/content.js?v=identity-1';
-import { makePortrait } from './core/pixelate.js?v=identity-1';
-import { initShift } from './components/shift.js?v=identity-1';
-import { initAtmosphere } from './components/atmosphere.js?v=identity-1';
-import { chooseLanguage } from './core/i18n.js?v=identity-1';
-import { initCaptureProtection } from './components/captureProtection.js?v=identity-1';
+} from './components/desk.js?v=desk-20261119';
+import { initStartScreen } from './components/startScreen.js?v=desk-20261119';
+import { initBook } from './components/book.js?v=desk-20261119';
+import { initDocuments } from './components/documents.js?v=desk-20261119';
+import { initReceipts } from './components/receipts.js?v=desk-20261119';
+import { initNews } from './components/news.js?v=desk-20261119';
+import { initEzic, initPenalty } from './components/ezic.js?v=desk-20261119';
+import { bus } from './core/bus.js?v=desk-20261119';
+import { CONTENT } from './config/content.js?v=desk-20261119';
+import { makePortrait } from './core/pixelate.js?v=desk-20261119';
+import { initShift } from './components/shift.js?v=desk-20261119';
+import { initAtmosphere } from './components/atmosphere.js?v=desk-20261119';
+import { chooseLanguage } from './core/i18n.js?v=desk-20261119';
+import { initCaptureProtection } from './components/captureProtection.js?v=desk-20261119';
+import { initBoard } from './components/board.js?v=desk-20261119';
+import { initSecrets } from './components/secrets.js?v=desk-20261119';
 
 async function loadRequiredFonts() {
   if (!document.fonts?.load) return;
@@ -75,6 +77,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     initBook(audio);
     initNews(audio);
     initSoundArchive(audio);
+    initBoard(audio);
+    initSecrets(audio);
     await initDocuments(audio);
     initShift(audio);
     initEzic(audio);
@@ -123,6 +127,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         meta: 'АРСТОТЦКА · КПП №1',
       });
     }, 600);
+  });
+
+  document.addEventListener('visibilitychange',()=>{
+    if(document.body.dataset.phase!=='shift')return;
+    if(document.hidden)music.stop();
+    else if(audio.ready&&!audio.muted)music.start();
   });
 
   document.addEventListener('pointerover', (event) => {

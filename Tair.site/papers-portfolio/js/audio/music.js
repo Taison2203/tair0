@@ -80,6 +80,7 @@ export class Music {
     this.timer = null;
     this.voices = new Set();
     this.resources = null;
+    this.cycle = 0;
   }
 
   start() {
@@ -127,6 +128,7 @@ export class Music {
       this.playStep(this.step, this.next);
       this.next += STEP_SECONDS;
       this.step = (this.step + 1) % TOTAL_STEPS;
+      if(this.step===0)this.cycle++;
     }
   }
 
@@ -136,6 +138,8 @@ export class Music {
     const [chordName, melody] = SCORE[bar];
     const chord = CHORDS[chordName];
     const answer = bar >= 8;
+    // Every second loop opens into a quieter bridge instead of repeating verbatim.
+    const bridge=this.cycle%2===1 && bar>=8 && bar<12;
 
     if (position === 0) this.tone('triangle', chord.bass, time, 5.5 * STEP_SECONDS, .34);
     if (position === 8) this.tone('triangle', chord.bass + (answer ? 12 : 0), time, 4 * STEP_SECONDS, .27);
@@ -143,17 +147,17 @@ export class Music {
 
     if (position % 4 === 2) {
       const note = chord.arp[Math.floor(position / 4)];
-      this.tone('harmony', note, time, STEP_SECONDS * 1.5, answer ? .044 : .034);
+      this.tone('harmony', note+(bridge?12:0), time, STEP_SECONDS * (bridge?2.5:1.5), bridge?.027:answer ? .044 : .034);
     }
     for (const [at, length, note] of melody) {
-      if (at === position) this.tone('lead', note, time, STEP_SECONDS * length, answer ? .105 : .09);
+      if (at === position && (!bridge || at<9)) this.tone('lead', note, time, STEP_SECONDS * length, bridge?.065:answer ? .105 : .09);
     }
 
-    if (position === 0 || (answer && position === 8)) this.kick(time);
-    if (position === 12 || (bar >= 4 && position === 4)) {
+    if (!bridge && (position === 0 || (answer && position === 8))) this.kick(time);
+    if (!bridge && (position === 12 || (bar >= 4 && position === 4))) {
       this.noise(time, .105, 'bandpass', 1700, .075);
     }
-    if (answer && position % 4 === 2) this.noise(time, .028, 'highpass', 4700, .025);
+    if (answer && !bridge && position % 4 === 2) this.noise(time, .028, 'highpass', 4700, .018);
     if ((bar === 7 || bar === 15) && position === 14) this.noise(time, .07, 'bandpass', 2000, .04);
   }
 

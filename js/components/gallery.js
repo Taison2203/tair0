@@ -1,7 +1,7 @@
 /** Watermarked previews. Browser controls are deterrents, not screenshot protection. */
-import { el } from '../core/dom.js?v=identity-1';
-import { bus } from '../core/bus.js?v=identity-1';
-import { t } from '../core/i18n.js?v=identity-1';
+import { el } from '../core/dom.js?v=desk-20261119';
+import { bus } from '../core/bus.js?v=desk-20261119';
+import { t } from '../core/i18n.js?v=desk-20261119';
 
 const PHOTOS = [
   ['Портрет', 'Портрет инспектора на оливковом фоне'],

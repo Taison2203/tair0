@@ -1,33 +1,10 @@
 /** A small, optional inspection shift. Fictional papers never change the owner's dossier. */
-import { bus } from '../core/bus.js?v=identity-1';
-import { el } from '../core/dom.js?v=identity-1';
+import { bus } from '../core/bus.js?v=desk-20261119';
+import { el } from '../core/dom.js?v=desk-20261119';
 
-const VISITORS = [
-  {
-    name: 'Лидия Корина', number: 'AK-18064', birth: '14.05.1957',
-    permitBirth: '14.05.1951', until: '30.11.1982', problem: 'birth',
-    explanation: 'Даты рождения расходятся: в паспорте 14.05.1957, в разрешении — 14.05.1951. Въезд нужно отклонить.',
-  },
-  {
-    name: 'Марк Ветров', number: 'AK-30218', birth: '02.09.1954',
-    permitBirth: '02.09.1954', until: '12.12.1982', problem: null,
-    explanation: 'Имя, номер и дата рождения совпадают. Разрешение действует до 12.12.1982. Посетителя можно пропустить.',
-  },
-  {
-    name: 'Егор Белов', number: 'AK-54102', birth: '19.02.1960',
-    permitBirth: '19.02.1960', until: '21.11.1982', problem: 'until',
-    explanation: 'Разрешение истекло 21.11.1982, а на посту уже 23.11.1982. Въезд нужно отклонить.',
-  },
-];
-
-function shuffledVisitors() {
-  const visitors = [...VISITORS];
-  for (let i = visitors.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [visitors[i], visitors[j]] = [visitors[j], visitors[i]];
-  }
-  return visitors;
-}
+import { createInspectionCases } from '../core/inspectionCases.js?v=desk-20261119';
+import { getLanguage } from '../core/i18n.js?v=desk-20261119';
+const words=(ru,en)=>getLanguage()==='en'?en:ru;
 
 export function initInspection(audio) {
   const dialog = document.querySelector('#doc-inspection');
@@ -40,17 +17,28 @@ export function initInspection(audio) {
   const actions = dialog.querySelector('[data-inspection-actions]');
   const next = dialog.querySelector('[data-inspection-next]');
   const scanner = document.querySelector('.scanner');
-  let visitors = shuffledVisitors();
+  let total=5;
+  let visitors = createInspectionCases(total);
+  let streak=0, best=0;
+  try{best=Number(localStorage.getItem('inspector.training.best.v2'))||0;}catch{}
+  const mode=el('div',{class:'inspection__modes'},
+    el('button',{type:'button',class:'board-tool',dataset:{trainingMode:'3'}},words('Тренировка · 3 дела','Practice · 3 cases')),
+    el('button',{type:'button',class:'board-tool',dataset:{trainingMode:'5'}},words('Смена · 5 дел','Shift · 5 cases')));
+  section.querySelector('.inspection__header').append(mode);
+  const record=el('p',{class:'inspection__record',dataset:{noTranslate:''}});
+  section.querySelector('.inspection__header').append(record);
+  function recordText(){record.textContent=words('Серия без ошибок: ','Correct streak: ')+streak+words(' · лучший результат: ',' · personal best: ')+best;}
+  mode.addEventListener('click',event=>{const target=event.target.closest('[data-training-mode]');if(!target)return;total=Number(target.dataset.trainingMode);restart();});
   let index = 0;
   let score = 0;
   let decided = false;
   let finished = false;
 
   function updateDesk() {
-    const completed = finished ? 3 : index + Number(decided);
-    if (!finished) progress.textContent = `Посетитель ${index + 1} из 3 · верных решений: ${score}`;
+    const completed = finished ? total : index + Number(decided);
+    if (!finished) progress.textContent = `Посетитель ${index + 1} из ${total} · верных решений: ${score}`;
     scanner.querySelector('.scanner__status').textContent = completed
-      ? `ПРОВЕРЕНО ${completed} ИЗ 3 · ВЕРНО ${score}` : '3 ПОСЕТИТЕЛЯ · 2 ДОКУМЕНТА';
+      ? `ПРОВЕРЕНО ${completed} ИЗ ${total} · ВЕРНО ${score}` : words(total+' посетителей · 2 документа',total+' visitors · 2 documents');
     scanner.querySelector('.scanner__code').textContent = finished ? 'ПОСМОТРЕТЬ ИТОГ СМЕНЫ' : completed ? 'ПРОДОЛЖИТЬ СМЕНУ' : 'НАЙТИ РАСХОЖДЕНИЯ';
     scanner.classList.toggle('is-verified', finished);
   }
@@ -67,8 +55,8 @@ export function initInspection(audio) {
     return el('article', { class: 'inspection__paper' + (permit ? ' inspection__paper--permit' : '') },
       el('p', { class: 'inspection__authority' }, permit ? 'МИНИСТЕРСТВО ВЪЕЗДА' : 'РЕСПУБЛИКА АРСТОТЦКА'),
       el('h3', {}, permit ? 'РАЗРЕШЕНИЕ НА ВЪЕЗД' : 'ПАСПОРТ'),
-      field(name, 'name', 'ИМЯ', visitor.name),
-      field(name, 'number', '№ ПАСПОРТА', visitor.number),
+      field(name, 'name', 'ИМЯ', permit ? visitor.permitName : visitor.name),
+      field(name, 'number', '№ ПАСПОРТА', permit ? visitor.permitNumber : visitor.number),
       field(name, 'birth', 'ДАТА РОЖДЕНИЯ', permit ? visitor.permitBirth : visitor.birth),
       field(name, permit ? 'until' : 'country', permit ? 'ДЕЙСТВУЕТ ДО' : 'ГРАЖДАНСТВО', permit ? visitor.until : 'Арстотцка'),
       el('p', { class: 'inspection__serial' }, permit ? 'БЛАНК В-82 · ВРЕМЕННЫЙ ВЪЕЗД' : 'М.В.Д. · ЛИЧНОСТЬ ВЛАДЕЛЬЦА'),
@@ -86,19 +74,27 @@ export function initInspection(audio) {
     actions.hidden = false;
     actions.querySelectorAll('button').forEach(button => { button.disabled = false; });
     next.hidden = true;
-    next.textContent = index === 2 ? 'ЗАВЕРШИТЬ СМЕНУ →' : 'СЛЕДУЮЩИЙ ПОСЕТИТЕЛЬ →';
+    next.textContent = index === total-1 ? words('ЗАВЕРШИТЬ СМЕНУ','FINISH SHIFT') : words('СЛЕДУЮЩИЙ ПОСЕТИТЕЛЬ','NEXT VISITOR');
+    mode.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(Number(b.dataset.trainingMode)===total)));
+    recordText();
     updateDesk();
   }
+  function restart(){visitors=createInspectionCases(total);index=0;score=0;streak=0;finished=false;renderVisitor();audio.play('paperFeed');}
 
   papers.addEventListener('click', event => {
     const target = event.target.closest('[data-compare]');
-    if (!target || finished) return;
+    if (!target || finished || decided) return;
     const key = target.dataset.compare;
     papers.querySelectorAll('[data-compare]').forEach(button => {
       const selected = button.dataset.compare === key;
       button.classList.toggle('is-compared', selected);
       button.setAttribute('aria-pressed', String(selected));
     });
+    const pair=[...papers.querySelectorAll('[data-compare]')].filter(b=>b.dataset.compare===key);
+    if(pair.length===2)feedback.textContent=pair[0].querySelector('strong').textContent===pair[1].querySelector('strong').textContent
+      ? words('Строки совпадают. Проверьте остальные данные.','These fields match. Check the remaining details.')
+      : words('Обнаружено расхождение. Сверьте выделенные строки.','Discrepancy found. Compare the highlighted fields.');
+    else feedback.textContent=words('Проверьте срок: разрешение должно действовать на 23.11.1982.','Check validity: the permit must cover 23 Nov 1982.');
     audio.play('compare');
   });
 
@@ -110,7 +106,9 @@ export function initInspection(audio) {
     const visitor = visitors[index];
     const allowed = button.dataset.verdict === 'approve';
     const correct = allowed === !visitor.problem;
-    if (correct) score++;
+    if (correct){score++;streak++;}else streak=0;
+    if(streak>best){best=streak;try{localStorage.setItem('inspector.training.best.v2',String(best));}catch{}}
+    recordText();
     actions.querySelectorAll('button').forEach(control => { control.disabled = true; });
     actions.hidden = true;
     ink.textContent = allowed ? 'ВЪЕЗД ОДОБРЕН' : 'ВЪЕЗД ЗАПРЕЩЁН';
@@ -121,7 +119,13 @@ export function initInspection(audio) {
     papers.querySelectorAll('[data-compare]').forEach(control => {
       control.classList.toggle('is-discrepancy', control.dataset.compare === visitor.problem);
     });
-    feedback.textContent = (correct ? 'ВЕРНО. ' : 'ОШИБКА ИНСПЕКТОРА. ') + visitor.explanation;
+    const reasons={
+      birth:words('Даты рождения в документах различаются.','The birth dates do not match.'),
+      name:words('Имя в разрешении отличается от паспорта.','The permit name differs from the passport.'),
+      number:words('Номер паспорта в разрешении неверный.','The passport number on the permit is incorrect.'),
+      until:words('Срок разрешения истёк до 23.11.1982.','The permit expired before 23 Nov 1982.'),
+    };
+    feedback.textContent=(correct?words('ВЕРНО. ','CORRECT. '):words('ОШИБКА ИНСПЕКТОРА. ','INSPECTOR ERROR. '))+(reasons[visitor.problem]||words('Данные совпадают, разрешение действительно.','All details match and the permit is valid.'));
     next.hidden = false;
     updateDesk();
     audio.play(correct ? (allowed ? 'approve' : 'deny') : 'buzzer');
@@ -137,25 +141,26 @@ export function initInspection(audio) {
     progress.textContent = 'Смена завершена · все посетители проверены';
     papers.replaceChildren(el('article', { class: 'inspection__report' },
       el('p', {}, 'ВЕДОМОСТЬ УЧЕБНОГО ПОСТА'),
-      el('h3', {}, `${score} ИЗ 3`),
-      el('p', {}, score === 3 ? 'Без единого нарушения. Отличная работа, инспектор.' : 'Ошибки разобраны. В следующей смене проверьте каждую строку.'),
+      el('h3', {}, `${score} ИЗ ${total}`),
+      el('p', {}, score === total ? 'Без единого нарушения. Отличная работа, инспектор.' : 'Ошибки разобраны. В следующей смене проверьте каждую строку.'),
     ));
     ink.hidden = true;
     actions.hidden = true;
-    feedback.textContent = 'Министерство благодарит за внимательность. Чай за свой счёт.';
+    feedback.textContent = words('Смена закрыта. Новый набор документов будет отличаться.','Shift closed. The next set of papers will be different.');
     next.textContent = 'НОВАЯ УЧЕБНАЯ СМЕНА';
     next.hidden = false;
     updateDesk();
     bus.emit('receipt:print', {
-      header: 'УЧЕБНАЯ СМЕНА ЗАКРЫТА', meta: `КПП № 1 · ВЕРНО ${score} ИЗ 3`,
-      text: score === 3 ? 'Нарушений в работе инспектора не обнаружено. Допуск к следующей смене одобрен.' : 'Учебные ошибки учтены. Перед следующим решением сверьте данные и срок действия разрешения.',
+      header: 'УЧЕБНАЯ СМЕНА ЗАКРЫТА', meta: `КПП № 1 · ВЕРНО ${score} ИЗ ${total}`,
+      text: score === total ? 'Нарушений в работе инспектора не обнаружено. Допуск к следующей смене одобрен.' : 'Учебные ошибки учтены. Перед следующим решением сверьте данные и срок действия разрешения.',
     });
   }
 
   next.addEventListener('click', () => {
     if (finished || index < visitors.length - 1) audio.play('paperFeed');
     if (finished) {
-      visitors = shuffledVisitors();
+      visitors = createInspectionCases(total);
+      streak=0;
       index = 0;
       score = 0;
       finished = false;

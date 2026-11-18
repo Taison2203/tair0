@@ -1,6 +1,6 @@
 /** Public API routing. No bot credentials are shipped to the browser. */
 const hosted = ['tair0.me', 'www.tair0.me'].includes(location.hostname);
-const origin = hosted ? 'https://tair-portfolio-api.spicytitan257.chatgpt.site' : '';
+const origin = hosted ? 'https://tair-portfolio-api.q5yhpcm78q.chatgpt.site' : '';
 let visitorId;
 function visitor() {
   if (visitorId) return visitorId;
@@ -16,6 +16,6 @@ export function apiFetch(path, options = {}) {
   const headers = new Headers(options.headers);
   const contact = path.startsWith('/api/contact') || path.startsWith('/api/telegram');
   if (contact) headers.set('X-Visitor-ID', visitor());
-  const base = contact ? 'https://tair-portfolio-api.spicytitan257.chatgpt.site' : origin;
+  const base = contact ? 'https://tair-portfolio-api.q5yhpcm78q.chatgpt.site' : origin;
   return fetch(base + path, { ...options, headers, credentials: base ? 'omit' : 'same-origin' });
 }

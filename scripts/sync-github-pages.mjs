@@ -15,7 +15,15 @@ for(const name of ['assets','css','js']){
   if(relative==='' || (!relative.startsWith('..') && !path.isAbsolute(relative)))throw new Error('Target cannot be inside a public asset directory.');
   for(const prefix of ['', 'papers-portfolio', 'Tair.site/papers-portfolio']){
     const destination=path.join(target,prefix,name);
-    if(path.resolve(publicSource)!==path.resolve(destination))fs.cpSync(publicSource,destination,{recursive:true});
+    if(path.resolve(publicSource)!==path.resolve(destination))fs.cpSync(publicSource,destination,{recursive:true,filter:file=>path.relative(publicSource,file).replaceAll('\\','/')!=='img/photo.jpg'});
+  }
+}
+// Retire obsolete public files. Canonical sources and Git history remain recoverable.
+for(const prefix of ['', 'papers-portfolio', 'Tair.site/papers-portfolio']){
+  for(const obsolete of ['assets/img/photo.jpg',...(prefix?['server.js','README.md']:[])]){
+    const file=path.resolve(target,prefix,obsolete);
+    if(!file.startsWith(target+path.sep))throw new Error('Unexpected public cleanup path.');
+    if(fs.existsSync(file))fs.unlinkSync(file);
   }
 }
 function cleanPublicText(folder){for(const item of fs.readdirSync(folder,{withFileTypes:true})){const file=path.join(folder,item.name);if(item.isDirectory())cleanPublicText(file);else if(/\.(?:js|css)$/.test(file))fs.writeFileSync(file,cleanText(fs.readFileSync(file,'utf8')));}}

@@ -211,4 +211,12 @@ export const ENGLISH = {
   'Открыть выбор языка сайта': 'Choose the site language',
   'Прочитать правила просмотра материалов': 'Read the rules for viewing archive materials',
   'Прослушать эффекты и настроить громкость': 'Listen to sound effects and adjust the volume',
+  'Анна Мирова': 'Anna Mirova',
+  'Анна Мирнова': 'Anna Mirnova',
+  'Лев Орлов': 'Lev Orlov',
+  'Вера Зорина': 'Vera Zorina',
+  'Ян Северин': 'Jan Severin',
+  'Мила Волкова': 'Mila Volkova',
+  'Павел Тихов': 'Pavel Tikhov',
+  'Нина Белова': 'Nina Belova',
 };
