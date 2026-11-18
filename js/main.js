@@ -42,7 +42,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   initReceipts(audio);
   initCaptureProtection(audio);
   await chooseLanguage();
-  document.querySelector('.site-footer__tools')?.append(document.querySelector('.dup-btn'));
+  const duplicateButton = document.querySelector('.dup-btn');
+  duplicateButton?.querySelectorAll('br').forEach(br => br.replaceWith(document.createTextNode(' ')));
+  if (duplicateButton) document.querySelector('.site-footer__tools')?.append(duplicateButton);
   const startScreen = initStartScreen();
   const music = new Music(audio);
 
