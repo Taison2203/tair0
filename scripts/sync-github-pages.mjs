@@ -27,7 +27,8 @@ for(const prefix of ['', 'papers-portfolio', 'Tair.site/papers-portfolio']){
   }
 }
 function cleanPublicText(folder){for(const item of fs.readdirSync(folder,{withFileTypes:true})){const file=path.join(folder,item.name);if(item.isDirectory())cleanPublicText(file);else if(/\.(?:js|css)$/.test(file))fs.writeFileSync(file,cleanText(fs.readFileSync(file,'utf8')));}}
-for(const name of ['css','js'])cleanPublicText(path.join(target,name));
+for(const prefix of ['', 'papers-portfolio', 'Tair.site/papers-portfolio'])
+  for(const name of ['css','js'])cleanPublicText(path.join(target,prefix,name));
 fs.writeFileSync(path.join(target,'index.html'),html);
 const redirect=`<!doctype html>
 <html lang="ru">
