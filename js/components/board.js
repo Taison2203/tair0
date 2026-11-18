@@ -1,6 +1,6 @@
 /** Public noticeboard and a Telegram-approved owner desk. No credentials persist in storage. */
-import { getLanguage, getLocale } from '../core/i18n.js?v=reactions-20261119c';
-import { createReaction, observeView, releaseReactions } from './reactions.js?v=reactions-20261119c';
+import { getLanguage, getLocale } from '../core/i18n.js?v=compact-20261119';
+import { createReaction, observeView, releaseReactions } from './reactions.js?v=compact-20261119';
 const API='https://tair-portfolio-api.q5yhpcm78q.chatgpt.site';
 const words=(ru,en)=>getLanguage()==='en'?en:ru;
 const node=(tag,props={},...children)=>{const e=document.createElement(tag);for(const [k,v] of Object.entries(props))if(k==='class')e.className=v;else if(k==='text')e.textContent=v;else if(k==='onClick')e.addEventListener('click',v);else e.setAttribute(k,v);for(const c of children)e.append(c);return e;};
@@ -35,7 +35,7 @@ export function initBoard(audio){
   const label=(text,control)=>node('label',{class:'board-field'},node('span',{text}),control);
   form.append(editorTitle,label(words('Заголовок','Title'),title),label(words('Текст','Text'),body),label(words('Вложение · до 6 МБ','Attachment · up to 6 MB'),file),node('p',{class:'board-help',text:words('PNG, JPEG, WebP, PDF, TXT, ZIP. Метаданные фотографий удаляются перед загрузкой. Файлы станут доступны всем после публикации.','PNG, JPEG, WebP, PDF, TXT, ZIP. Photo metadata is removed before upload. Files become public when published.')}),fileStatus,node('button',{type:'button',class:'board-tool',text:words('Убрать вложение','Remove attachment'),onClick:()=>{fileId=null;file.value='';fileStatus.textContent=words('Без вложения','No attachment');}}),label(words('Опубликовать для всех','Publish for everyone'),published),label(words('Закрепить наверху','Pin to top'),pinned),submit,node('button',{type:'button',class:'board-tool',text:words('Новая запись','New notice'),onClick:resetEditor}),node('button',{type:'button',class:'board-tool',text:words('Выйти из кабинета','Sign out'),onClick:logout}));
   panel.append(loginBox,form);
-  board.append(node('header',{class:'board-header'},node('p',{class:'board-kicker',text:words('ЛИЧНЫЙ АРХИВ · ТАИР','PERSONAL ARCHIVE · TAIR')}),heading,sub),node('div',{class:'board-tools'},refresh,owner,archive),status,panel,list);
+  board.append(node('div',{class:'board-topbar'},node('header',{class:'board-header'},node('p',{class:'board-kicker',text:words('ЛИЧНЫЙ АРХИВ · ТАИР','PERSONAL ARCHIVE · TAIR')}),heading,sub),node('div',{class:'board-tools'},refresh,owner,archive)),status,panel,list);
   dialog.append(close,board);document.body.append(dialog);
   const openButton=node('button',{type:'button',class:'board-invitation','aria-haspopup':'dialog',onClick:open},node('span',{class:'board-invitation__pin','aria-hidden':'true'}),node('span',{class:'board-invitation__title',text:words('ДОСКА ОБЪЯВЛЕНИЙ','NOTICEBOARD')}),node('span',{class:'board-invitation__description',text:words('Заметки и обновления Таира · открыть','Tair’s notes and updates · open')}));
   document.querySelector('#desk').append(openButton);
@@ -53,7 +53,7 @@ export function initBoard(audio){
     stopViews.forEach(stop=>stop());stopViews=[];releaseReactions(list);
     list.replaceChildren();
     const visible=posts.filter(p=>session?Boolean(p.deleted)===showArchive:true);
-    if(!visible.length){list.append(node('article',{class:'board-empty'},node('span',{'aria-hidden':'true',text:'✦'}),node('h3',{text:showArchive?words('АРХИВ ПУСТ','ARCHIVE IS EMPTY'):words('МЕСТО ДЛЯ НОВЫХ ИСТОРИЙ','ROOM FOR NEW STORIES')}),node('p',{text:showArchive?words('Здесь можно восстановить снятые с доски записи.','Notices removed from the board can be restored here.'):words('Доска готова. Таир может приколоть сюда запись, фотографию или файл.','The board is ready for Tair’s notes, pictures and files.')})));return;}
+    if(!visible.length){list.append(node('article',{class:'board-empty'},node('span',{'aria-hidden':'true',class:'board-empty__icon'}),node('h3',{text:showArchive?words('АРХИВ ПУСТ','ARCHIVE IS EMPTY'):words('МЕСТО ДЛЯ НОВЫХ ИСТОРИЙ','ROOM FOR NEW STORIES')}),node('p',{text:showArchive?words('Здесь можно восстановить снятые с доски записи.','Notices removed from the board can be restored here.'):words('Доска готова. Таир может приколоть сюда запись, фотографию или файл.','The board is ready for Tair’s notes, pictures and files.')})));return;}
     for(const p of visible){
       const card=node('article',{class:'board-post'+(p.pinned?' is-pinned':'')});
       card.append(node('span',{class:'board-post__pin','aria-hidden':'true'}),node('p',{class:'board-post__meta',text:(session&&!p.published?words('ЧЕРНОВИК · ','DRAFT · '):p.pinned?words('ЗАКРЕПЛЕНО · ','PINNED · '):'')+new Intl.DateTimeFormat(getLocale(),{dateStyle:'medium'}).format(new Date(p.created_at))}),node('h3',{text:p.title}),node('p',{class:'board-post__body',text:p.body}));
@@ -95,7 +95,7 @@ export function initBoard(audio){
   form.addEventListener('submit',async event=>{
     event.preventDefault();if(busy||!session)return;
     if(!body.value.trim()&&!file.files[0]&&!fileId){message(words('Добавьте текст или вложение.','Add text or an attachment.'));return;}
-    busy=true;submit.disabled=true;message(words('Регистрируем запись…','Registering the notice…'));
+    audio.play('transmit');busy=true;submit.disabled=true;message(words('Регистрируем запись…','Registering the notice…'));
     try{
       if(file.files[0]){
         let upload=file.files[0];if(upload.size>6*1024*1024)throw Error(words('Максимум 6 МБ на файл.','Maximum file size is 6 MB.'));
@@ -110,8 +110,17 @@ export function initBoard(audio){
     const image=await createImageBitmap(input);try{if(image.width>10000||image.height>10000)throw Error(words('Изображение слишком большое.','Image dimensions are too large.'));const ratio=Math.min(1,2048/Math.max(image.width,image.height)),canvas=document.createElement('canvas');canvas.width=Math.round(image.width*ratio);canvas.height=Math.round(image.height*ratio);canvas.getContext('2d').drawImage(image,0,0,canvas.width,canvas.height);const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/webp',.92));if(!blob)throw Error(words('Не удалось подготовить фото.','Could not prepare the photo.'));return new File([blob],input.name.replace(/\.[^.]+$/,'')+'.webp',{type:'image/webp'});}finally{image.close();}
   }
   function open(){opener=document.activeElement;dialog.showModal();board.scrollTop=0;audio.play('paper');loadPosts();}
-  dialog.addEventListener('close',()=>{stopViews.forEach(stop=>stop());stopViews=[];opener?.focus({preventScroll:true});});
-  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&login&&dialog.open)checkLogin();});
+  dialog.addEventListener('close',()=>{audio.play('documentClose');stopViews.forEach(stop=>stop());stopViews=[];opener?.focus({preventScroll:true});});
+  // User gestures only: background authentication polling stays quiet.
+  board.addEventListener('click',event=>{
+    const control=event.target.closest('button,a');
+    if(!control||control.disabled||control.closest('.social-controls')||control.type==='submit')return;
+    const sound=control===owner?(panel.hidden?'noteUnfold':'noteFold'):control===refresh?'paper':control===loginButton||control===telegram?'transmit':'tick';
+    audio.play(sound,{gain:.65});
+  },true);
+  form.addEventListener('change',event=>{if(event.target.matches('input[type=checkbox],input[type=file]'))audio.play(event.target.type==='file'?'paper':'tick',{gain:.5});});
+  form.addEventListener('keydown',event=>{if(event.target.matches('textarea,input:not([type=checkbox]):not([type=file])')&&!event.ctrlKey&&!event.metaKey&&(event.key.length===1||event.key==='Backspace'))audio.play('key',{gain:.35});});
+  document.addEventListener('visibilitychange' ,()=>{if(!document.hidden&&login&&dialog.open)checkLogin();});
   window.addEventListener('pagehide',()=>{session='';login=null;clearTimeout(pollTimer);});
   return {open};
 }

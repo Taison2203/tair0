@@ -3,17 +3,17 @@
  * User-facing facts are read from config/content.js; missing facts stay redacted.
  */
 
-import { $, el, stepAnim, css, mulberry32 } from '../core/dom.js?v=reactions-20261119c';
+import { $, el, stepAnim, css, mulberry32 } from '../core/dom.js?v=compact-20261119';
 import {
   drawSprite, ICON_NETWORK, ICON_DATABASE, ICON_HARDWARE, ICON_ANALYTICS,
   CASE_LASER, CASE_AI, CASE_ROBLOX,
-} from '../core/sprites.js?v=reactions-20261119c';
-import { makePortrait } from '../core/pixelate.js?v=reactions-20261119c';
-import { bus } from '../core/bus.js?v=reactions-20261119c';
-import { CONTENT } from '../config/content.js?v=reactions-20261119c';
-import { t } from '../core/i18n.js?v=reactions-20261119c';
-import { initContact } from './contact.js?v=reactions-20261119c';
-import { initGallery } from './gallery.js?v=reactions-20261119c';
+} from '../core/sprites.js?v=compact-20261119';
+import { makePortrait } from '../core/pixelate.js?v=compact-20261119';
+import { bus } from '../core/bus.js?v=compact-20261119';
+import { CONTENT } from '../config/content.js?v=compact-20261119';
+import { t } from '../core/i18n.js?v=compact-20261119';
+import { initContact } from './contact.js?v=compact-20261119';
+import { initGallery } from './gallery.js?v=compact-20261119';
 
 const VALID_DOCS = new Set(['passport', 'pass', 'cases', 'contact', 'gallery', 'inspection']);
 const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;

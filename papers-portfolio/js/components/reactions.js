@@ -1,6 +1,6 @@
 /** Shared counters, explicit like state, and account confirmation through the existing bot. */
-import { apiFetch } from '../core/api.js?v=reactions-20261119c';
-import { getLanguage } from '../core/i18n.js?v=reactions-20261119c';
+import { apiFetch } from '../core/api.js?v=compact-20261119';
+import { getLanguage } from '../core/i18n.js?v=compact-20261119';
 const words=(ru,en)=>getLanguage()==='en'?en:ru;
 const states=new Map(),queued=new Set(),viewed=new Set(),disposers=new WeakMap();let batchTimer,audio,linked=false,login,loginTimer,loginDeadline=0,desiredTarget=null,returnFocus;
 function state(target){if(!states.has(target))states.set(target,{target,views:null,likes:null,liked:false,pending:false,epoch:0,widgets:new Set()});return states.get(target);}
@@ -62,12 +62,12 @@ function makeLogin(){
  const p=document.createElement('p');p.textContent=words('Подтвердите Telegram в боте. После подтверждения поставим лайк выбранному объекту. На сайте видны только общие числа — ваше имя и ник не публикуются.','Confirm Telegram in the bot. We will then like the selected item. Only totals are public — your name and username are not published.');
  const text=document.createElement('p');text.className='social-login__status';text.setAttribute('role','status');
  const link=document.createElement('a');link.className='board-tool';link.target='_blank';link.rel='noopener noreferrer';link.hidden=true;link.textContent=words('Подтвердить в Telegram','Confirm in Telegram');
- const check=document.createElement('button');check.className='board-tool';check.type='button';check.textContent=words('Я подтвердил · проверить','Confirmed · check');check.addEventListener('click',checkLogin);
+ const check=document.createElement('button');check.className='board-tool';check.type='button';check.textContent=words('Я подтвердил · проверить','Confirmed · check');check.addEventListener('click',()=>{audio?.play('tick',{gain:.6});checkLogin();});
  const cancel=document.createElement('button');cancel.className='board-tool';cancel.type='button';cancel.textContent=words('Отмена','Cancel');cancel.addEventListener('click',()=>d.close());
- d.append(h,p,link,check,cancel,text);d.addEventListener('close',()=>{clearTimeout(loginTimer);desiredTarget=null;returnFocus?.focus({preventScroll:true});});document.body.append(d);login={dialog:d,text,link,check};return login;
+ d.append(h,p,link,check,cancel,text);link.addEventListener('click',()=>audio?.play('transmit'));d.addEventListener('close',()=>{audio?.play('documentClose');clearTimeout(loginTimer);desiredTarget=null;returnFocus?.focus({preventScroll:true});});document.body.append(d);login={dialog:d,text,link,check};return login;
 }
 async function showLogin(target,opener){
- const ui=login||makeLogin();desiredTarget=target;returnFocus=opener;ui.link.hidden=true;ui.check.disabled=true;ui.text.textContent=words('Готовим пропуск…','Preparing your pass…');if(!ui.dialog.open)ui.dialog.showModal();
+ const ui=login||makeLogin();desiredTarget=target;returnFocus=opener;ui.link.hidden=true;ui.check.disabled=true;ui.text.textContent=words('Готовим пропуск…','Preparing your pass…');if(!ui.dialog.open){ui.dialog.showModal();audio?.play('documentOpen');}
  try{const data=await call('/api/telegram/link',{method:'POST'});if(!ui.dialog.open)return;ui.link.href=data.url;ui.link.hidden=false;ui.check.disabled=false;loginDeadline=Date.now()+data.expiresIn*1000;ui.text.textContent=words('Откройте бота, нажмите «Старт» и подтвердите привязку.','Open the bot, press Start and confirm the link.');loginTimer=setTimeout(checkLogin,5000);}catch(e){ui.text.textContent=e.message;ui.check.disabled=false;}
 }
 async function checkLogin(){

@@ -1,30 +1,30 @@
 /** Application entry point: load type, prepare documents, then allow the shift to start. */
 
-import { AudioEngine } from './audio/engine.js?v=reactions-20261119c';
-import { initSoundArchive } from './components/soundArchive.js?v=reactions-20261119c';
-import { SFX } from './audio/sfx.js?v=reactions-20261119c';
-import { Music } from './audio/music.js?v=reactions-20261119c';
-import { initScale } from './core/scale.js?v=reactions-20261119c';
+import { AudioEngine } from './audio/engine.js?v=compact-20261119';
+import { initSoundArchive } from './components/soundArchive.js?v=compact-20261119';
+import { SFX } from './audio/sfx.js?v=compact-20261119';
+import { Music } from './audio/music.js?v=compact-20261119';
+import { initScale } from './core/scale.js?v=compact-20261119';
 import {
   makeDeskTexture, makeGrainTexture, makeRingTexture, initClock,
   createScanner, initMuteButton,
-} from './components/desk.js?v=reactions-20261119c';
-import { initStartScreen } from './components/startScreen.js?v=reactions-20261119c';
-import { initBook } from './components/book.js?v=reactions-20261119c';
-import { initDocuments } from './components/documents.js?v=reactions-20261119c';
-import { initReceipts } from './components/receipts.js?v=reactions-20261119c';
-import { initNews } from './components/news.js?v=reactions-20261119c';
-import { initEzic, initPenalty } from './components/ezic.js?v=reactions-20261119c';
-import { bus } from './core/bus.js?v=reactions-20261119c';
-import { CONTENT } from './config/content.js?v=reactions-20261119c';
-import { makePortrait } from './core/pixelate.js?v=reactions-20261119c';
-import { initShift } from './components/shift.js?v=reactions-20261119c';
-import { initAtmosphere } from './components/atmosphere.js?v=reactions-20261119c';
-import { chooseLanguage } from './core/i18n.js?v=reactions-20261119c';
-import { initCaptureProtection } from './components/captureProtection.js?v=reactions-20261119c';
-import { initBoard } from './components/board.js?v=reactions-20261119c';
-import { initSecrets } from './components/secrets.js?v=reactions-20261119c';
-import { initReactions } from './components/reactions.js?v=reactions-20261119c';
+} from './components/desk.js?v=compact-20261119';
+import { initStartScreen } from './components/startScreen.js?v=compact-20261119';
+import { initBook } from './components/book.js?v=compact-20261119';
+import { initDocuments } from './components/documents.js?v=compact-20261119';
+import { initReceipts } from './components/receipts.js?v=compact-20261119';
+import { initNews } from './components/news.js?v=compact-20261119';
+import { initEzic, initPenalty } from './components/ezic.js?v=compact-20261119';
+import { bus } from './core/bus.js?v=compact-20261119';
+import { CONTENT } from './config/content.js?v=compact-20261119';
+import { makePortrait } from './core/pixelate.js?v=compact-20261119';
+import { initShift } from './components/shift.js?v=compact-20261119';
+import { initAtmosphere } from './components/atmosphere.js?v=compact-20261119';
+import { chooseLanguage } from './core/i18n.js?v=compact-20261119';
+import { initCaptureProtection } from './components/captureProtection.js?v=compact-20261119';
+import { initBoard } from './components/board.js?v=compact-20261119';
+import { initSecrets } from './components/secrets.js?v=compact-20261119';
+import { initReactions } from './components/reactions.js?v=compact-20261119';
 
 async function loadRequiredFonts() {
   if (!document.fonts?.load) return;
@@ -42,6 +42,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   initReceipts(audio);
   initCaptureProtection(audio);
   await chooseLanguage();
+  document.querySelector('.site-footer__tools')?.append(document.querySelector('.dup-btn'));
   const startScreen = initStartScreen();
   const music = new Music(audio);
 
@@ -140,7 +141,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.addEventListener('pointerover', (event) => {
     if (event.pointerType === 'touch' || !audio.ready) return;
     const target = event.target instanceof Element
-      ? event.target.closest('.tab, .chip, .btn:not(:disabled), .case-tab, .dup-btn:not(:disabled), .doc__close, .clip--b, .mute')
+      ? event.target.closest('.tab, .chip, .btn:not(:disabled), .case-tab, .dup-btn:not(:disabled), .doc__close, .clip--b, .mute, .board-tool:not(:disabled), .board-close, .board-invitation, .social-like:not(:disabled)')
       : null;
     if (!target || target.contains(event.relatedTarget)) return;
     audio.play('hover', { gain: .7 });
