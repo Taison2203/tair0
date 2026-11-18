@@ -1,30 +1,30 @@
 /** Application entry point: load type, prepare documents, then allow the shift to start. */
 
-import { AudioEngine } from './audio/engine.js?v=reactions-20261119';
-import { initSoundArchive } from './components/soundArchive.js?v=reactions-20261119';
-import { SFX } from './audio/sfx.js?v=reactions-20261119';
-import { Music } from './audio/music.js?v=reactions-20261119';
-import { initScale } from './core/scale.js?v=reactions-20261119';
+import { AudioEngine } from './audio/engine.js?v=reactions-20261119b';
+import { initSoundArchive } from './components/soundArchive.js?v=reactions-20261119b';
+import { SFX } from './audio/sfx.js?v=reactions-20261119b';
+import { Music } from './audio/music.js?v=reactions-20261119b';
+import { initScale } from './core/scale.js?v=reactions-20261119b';
 import {
   makeDeskTexture, makeGrainTexture, makeRingTexture, initClock,
   createScanner, initMuteButton,
-} from './components/desk.js?v=reactions-20261119';
-import { initStartScreen } from './components/startScreen.js?v=reactions-20261119';
-import { initBook } from './components/book.js?v=reactions-20261119';
-import { initDocuments } from './components/documents.js?v=reactions-20261119';
-import { initReceipts } from './components/receipts.js?v=reactions-20261119';
-import { initNews } from './components/news.js?v=reactions-20261119';
-import { initEzic, initPenalty } from './components/ezic.js?v=reactions-20261119';
-import { bus } from './core/bus.js?v=reactions-20261119';
-import { CONTENT } from './config/content.js?v=reactions-20261119';
-import { makePortrait } from './core/pixelate.js?v=reactions-20261119';
-import { initShift } from './components/shift.js?v=reactions-20261119';
-import { initAtmosphere } from './components/atmosphere.js?v=reactions-20261119';
-import { chooseLanguage } from './core/i18n.js?v=reactions-20261119';
-import { initCaptureProtection } from './components/captureProtection.js?v=reactions-20261119';
-import { initBoard } from './components/board.js?v=reactions-20261119';
-import { initSecrets } from './components/secrets.js?v=reactions-20261119';
-import { initReactions } from './components/reactions.js?v=reactions-20261119';
+} from './components/desk.js?v=reactions-20261119b';
+import { initStartScreen } from './components/startScreen.js?v=reactions-20261119b';
+import { initBook } from './components/book.js?v=reactions-20261119b';
+import { initDocuments } from './components/documents.js?v=reactions-20261119b';
+import { initReceipts } from './components/receipts.js?v=reactions-20261119b';
+import { initNews } from './components/news.js?v=reactions-20261119b';
+import { initEzic, initPenalty } from './components/ezic.js?v=reactions-20261119b';
+import { bus } from './core/bus.js?v=reactions-20261119b';
+import { CONTENT } from './config/content.js?v=reactions-20261119b';
+import { makePortrait } from './core/pixelate.js?v=reactions-20261119b';
+import { initShift } from './components/shift.js?v=reactions-20261119b';
+import { initAtmosphere } from './components/atmosphere.js?v=reactions-20261119b';
+import { chooseLanguage } from './core/i18n.js?v=reactions-20261119b';
+import { initCaptureProtection } from './components/captureProtection.js?v=reactions-20261119b';
+import { initBoard } from './components/board.js?v=reactions-20261119b';
+import { initSecrets } from './components/secrets.js?v=reactions-20261119b';
+import { initReactions } from './components/reactions.js?v=reactions-20261119b';
 
 async function loadRequiredFonts() {
   if (!document.fonts?.load) return;

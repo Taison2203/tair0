@@ -151,7 +151,7 @@ export const ENGLISH = {
   "Звуки поста": "Checkpoint sounds",
   "МИНИСТЕРСТВО ВЪЕЗДА · ФОНОТЕКА № 2203": "MINISTRY OF ADMISSION · SOUND FILE NO. 2203",
   "ЗВУКОВОЙ АРХИВ": "SOUND ARCHIVE",
-  "40 звуков рабочего поста. Выберите запись для прослушивания.": "40 checkpoint sounds. Select a recording to listen.",
+  "42 звука рабочего поста. Выберите запись для прослушивания.": "42 checkpoint sounds. Select a recording to listen.",
   "ГРОМКОСТЬ ПОСТА": "CHECKPOINT VOLUME",
   "Эффекты": "Effects",
   "Музыка": "Music",

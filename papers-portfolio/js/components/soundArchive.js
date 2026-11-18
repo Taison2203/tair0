@@ -1,6 +1,6 @@
 /** A paper catalogue for auditioning the checkpoint's original sound effects. */
-import { el } from '../core/dom.js?v=reactions-20261119';
-import { t } from '../core/i18n.js?v=reactions-20261119';
+import { el } from '../core/dom.js?v=reactions-20261119b';
+import { t } from '../core/i18n.js?v=reactions-20261119b';
 
 export function initSoundArchive(audio) {
   const opener = document.querySelector('[data-sound-archive]');
@@ -88,7 +88,7 @@ export function initSoundArchive(audio) {
     el(
       'p',
       { class: 'sound-archive__intro' },
-      '40 звуков рабочего поста. Выберите запись для прослушивания.',
+      '42 звука рабочего поста. Выберите запись для прослушивания.',
     ),
     controls,
     el('div', { class: 'sound-archive__feedback' }, status, enable),
