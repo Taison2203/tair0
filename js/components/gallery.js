@@ -1,7 +1,8 @@
 /** Watermarked previews. Browser controls are deterrents, not screenshot protection. */
-import { el } from '../core/dom.js?v=desk-20261119';
-import { bus } from '../core/bus.js?v=desk-20261119';
-import { t } from '../core/i18n.js?v=desk-20261119';
+import { el } from '../core/dom.js?v=reactions-20261119';
+import { bus } from '../core/bus.js?v=reactions-20261119';
+import { t } from '../core/i18n.js?v=reactions-20261119';
+import { createReaction, observeView, refreshReactions, releaseReactions } from './reactions.js?v=reactions-20261119';
 
 const PHOTOS = [
   ['Портрет', 'Портрет инспектора на оливковом фоне'],
@@ -66,6 +67,11 @@ export function initGallery(audio) {
   let enlarged = false;
   let savedScroll = 0;
   const cards = [];
+  let stopPhotoView=()=>{},stopAlbumView=()=>{};
+  const summary=el('div',{class:'gallery-summary'},createReaction('gallery',{viewsOnly:true}));
+  const summaryLabel=el('p',{class:'gallery__note'},'Просмотры галереи');
+  summary.prepend(summaryLabel);grid.before(summary);
+  const social=el('div',{class:'gallery-view__social'});dialog.querySelector('[data-gallery-caption]').after(social);
 
   PHOTOS.forEach((photo, i) => {
     const button = el('button', { class: 'gallery-photo', type: 'button', 'aria-label': 'Открыть фото ' + photo.id + ': ' + photo.title },
@@ -80,7 +86,7 @@ export function initGallery(audio) {
       dialog.querySelector('[data-gallery-back]').focus({ preventScroll: true });
     });
     cards.push(button);
-    grid.append(button);
+    grid.append(el('article',{class:'gallery-entry'},button,createReaction('photo:'+photo.id)));
   });
 
   function renderImage() {
@@ -95,14 +101,18 @@ export function initGallery(audio) {
     dialog.querySelector('[data-gallery-caption]').textContent = photo.title;
   }
   function open(next, sliding = false) {
+    stopPhotoView();releaseReactions(social);
     const direction = next < index ? -.25 : .25;
     index = (next + PHOTOS.length) % PHOTOS.length;
     enlarged = false;
     album.scrollTop = 0;
     renderImage();
+    social.replaceChildren(createReaction('photo:'+PHOTOS[index].id));
+    stopPhotoView=observeView('photo:'+PHOTOS[index].id,stage);
     audio.play(sliding ? 'photoSlide' : 'photoPick', { pan: sliding ? direction : 0 });
   }
   function back() {
+    stopPhotoView();
     view.hidden = true;
     sheet.hidden = false;
     enlarged = false;
@@ -126,9 +136,11 @@ export function initGallery(audio) {
   });
   bus.on('doc:opened', ({ detail }) => {
     if (detail.key !== 'gallery') return;
+    refreshReactions();stopAlbumView();stopPhotoView();stopAlbumView=observeView('gallery',album);
     sheet.hidden = false;
     view.hidden = true;
     enlarged = false;
     album.scrollTop = 0;
   });
+  bus.on('doc:closed',({detail})=>{if(detail.key==='gallery'){stopAlbumView();stopPhotoView();}});
 }

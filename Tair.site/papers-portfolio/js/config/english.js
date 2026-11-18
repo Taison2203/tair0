@@ -219,4 +219,7 @@ export const ENGLISH = {
   'Мила Волкова': 'Mila Volkova',
   'Павел Тихов': 'Pavel Tikhov',
   'Нина Белова': 'Nina Belova',
+  'Просмотры галереи': 'Gallery views',
+  'Отметка нравится': 'Like reaction',
+  'Снять отметку': 'Remove reaction',
 };

@@ -1,10 +1,12 @@
 /** Public noticeboard and a Telegram-approved owner desk. No credentials persist in storage. */
-import { getLanguage, getLocale } from '../core/i18n.js?v=desk-20261119';
+import { getLanguage, getLocale } from '../core/i18n.js?v=reactions-20261119';
+import { createReaction, observeView, releaseReactions } from './reactions.js?v=reactions-20261119';
 const API='https://tair-portfolio-api.q5yhpcm78q.chatgpt.site';
 const words=(ru,en)=>getLanguage()==='en'?en:ru;
 const node=(tag,props={},...children)=>{const e=document.createElement(tag);for(const [k,v] of Object.entries(props))if(k==='class')e.className=v;else if(k==='text')e.textContent=v;else if(k==='onClick')e.addEventListener('click',v);else e.setAttribute(k,v);for(const c of children)e.append(c);return e;};
 export function initBoard(audio){
   let session='',login=null,pollTimer=null,busy=false,editing=null,fileId=null,posts=[],opener=null,showArchive=false;
+  let stopViews=[];
   const dialog=node('dialog',{class:'noticeboard-dialog','aria-labelledby':'noticeboard-title','data-no-translate':''});
   const close=node('button',{type:'button',class:'board-close',text:words('ЗАКРЫТЬ','CLOSE'),onClick:()=>dialog.close()});
   const board=node('section',{class:'noticeboard'});
@@ -48,6 +50,7 @@ export function initBoard(audio){
     try{const data=await request(session?'/api/admin/posts':'/api/board');posts=data.posts;render();message(session?words('Кабинет открыт. Черновики видны только вам.','Owner desk open. Drafts are visible only to you.'):posts.length?words('Свежие записи владельца.','Latest notices from the owner.'):words('Пока ни одного объявления. Первый лист появится здесь.','No notices yet. The first sheet will appear here.'));}catch(e){message(e.message);}finally{refresh.disabled=false;}
   }
   function render(){
+    stopViews.forEach(stop=>stop());stopViews=[];releaseReactions(list);
     list.replaceChildren();
     const visible=posts.filter(p=>session?Boolean(p.deleted)===showArchive:true);
     if(!visible.length){list.append(node('article',{class:'board-empty'},node('span',{'aria-hidden':'true',text:'✦'}),node('h3',{text:showArchive?words('АРХИВ ПУСТ','ARCHIVE IS EMPTY'):words('МЕСТО ДЛЯ НОВЫХ ИСТОРИЙ','ROOM FOR NEW STORIES')}),node('p',{text:showArchive?words('Здесь можно восстановить снятые с доски записи.','Notices removed from the board can be restored here.'):words('Доска готова. Таир может приколоть сюда запись, фотографию или файл.','The board is ready for Tair’s notes, pictures and files.')})));return;}
@@ -61,6 +64,7 @@ export function initBoard(audio){
         if(p.fileMime?.startsWith('image/'))a.append(node('img',{src:href,alt:p.title,loading:'lazy',decoding:'async',referrerpolicy:'no-referrer'}));
         a.append(node('span',{text:(p.fileName||words('Вложение','Attachment'))+' · '+Math.ceil((p.fileSize||0)/1024)+' KB'}));card.append(a);
       }else if(fid)card.append(node('p',{text:words('Вложение сохранено. Доступно посетителям после публикации.','Attachment saved. Available to visitors once published.')}));
+      if(!p.deleted&&(!session||p.published)){card.append(createReaction('post:'+p.id));stopViews.push(observeView('post:'+p.id,card));}
       if(session){const controls=p.deleted?node('div',{class:'board-post__tools'},node('button',{type:'button',class:'board-tool',text:words('Восстановить как черновик','Restore as draft'),onClick:async()=>{try{await request('/api/admin/posts/'+p.id+'/restore',{method:'POST'});await loadPosts();}catch(e){message(e.message);}}})):node('div',{class:'board-post__tools'},node('button',{type:'button',class:'board-tool',text:words('Изменить','Edit'),onClick:()=>edit(p)}),node('button',{type:'button',class:'board-tool board-tool--danger',text:words('Убрать в архив…','Archive…'),onClick:()=>confirmDelete(p,card)}));card.append(controls);}
       if(session&&p.deleted)card.append(node('button',{type:'button',class:'board-tool board-tool--danger',text:words('Удалить навсегда…','Delete permanently…'),onClick:()=>{
         if(card.querySelector('.board-confirm'))return;
@@ -106,7 +110,7 @@ export function initBoard(audio){
     const image=await createImageBitmap(input);try{if(image.width>10000||image.height>10000)throw Error(words('Изображение слишком большое.','Image dimensions are too large.'));const ratio=Math.min(1,2048/Math.max(image.width,image.height)),canvas=document.createElement('canvas');canvas.width=Math.round(image.width*ratio);canvas.height=Math.round(image.height*ratio);canvas.getContext('2d').drawImage(image,0,0,canvas.width,canvas.height);const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/webp',.92));if(!blob)throw Error(words('Не удалось подготовить фото.','Could not prepare the photo.'));return new File([blob],input.name.replace(/\.[^.]+$/,'')+'.webp',{type:'image/webp'});}finally{image.close();}
   }
   function open(){opener=document.activeElement;dialog.showModal();board.scrollTop=0;audio.play('paper');loadPosts();}
-  dialog.addEventListener('close',()=>{opener?.focus({preventScroll:true});});
+  dialog.addEventListener('close',()=>{stopViews.forEach(stop=>stop());stopViews=[];opener?.focus({preventScroll:true});});
   document.addEventListener('visibilitychange',()=>{if(!document.hidden&&login&&dialog.open)checkLogin();});
   window.addEventListener('pagehide',()=>{session='';login=null;clearTimeout(pollTimer);});
   return {open};

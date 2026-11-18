@@ -1,7 +1,7 @@
 /** Session-only desk interactions. No progress or visitor data leaves the browser. */
-import { bus } from '../core/bus.js?v=desk-20261119';
-import { CONTENT } from '../config/content.js?v=desk-20261119';
-import { initInspection } from './inspection.js?v=desk-20261119';
+import { bus } from '../core/bus.js?v=reactions-20261119';
+import { CONTENT } from '../config/content.js?v=reactions-20261119';
+import { initInspection } from './inspection.js?v=reactions-20261119';
 
 export function initShift(audio) {
   const visited = new Set();

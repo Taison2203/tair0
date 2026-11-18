@@ -313,6 +313,15 @@ export const SFX = {
     },
     { pan: 0.4 },
   ),
+  like: def('СИГНАЛЫ','Отметка нравится',.38,.32,(c,d,t)=>{
+    tone(c,d,t,523,.08,'square',.16);
+    tone(c,d,t+.065,784,.13,'triangle',.3);
+    tone(c,d,t+.15,1047,.16,'square',.1);
+  },{cooldown:250,variation:0}),
+  unlike: def('СИГНАЛЫ','Снять отметку',.26,.23,(c,d,t)=>{
+    tone(c,d,t,587,.09,'triangle',.2);
+    tone(c,d,t+.07,392,.13,'triangle',.2);
+  },{cooldown:250,variation:0}),
   ezic: def(
     'СИГНАЛЫ',
     'Шифр EZIC',

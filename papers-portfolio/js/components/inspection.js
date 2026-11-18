@@ -1,9 +1,9 @@
 /** A small, optional inspection shift. Fictional papers never change the owner's dossier. */
-import { bus } from '../core/bus.js?v=desk-20261119';
-import { el } from '../core/dom.js?v=desk-20261119';
+import { bus } from '../core/bus.js?v=reactions-20261119';
+import { el } from '../core/dom.js?v=reactions-20261119';
 
-import { createInspectionCases } from '../core/inspectionCases.js?v=desk-20261119';
-import { getLanguage } from '../core/i18n.js?v=desk-20261119';
+import { createInspectionCases } from '../core/inspectionCases.js?v=reactions-20261119';
+import { getLanguage } from '../core/i18n.js?v=reactions-20261119';
 const words=(ru,en)=>getLanguage()==='en'?en:ru;
 
 export function initInspection(audio) {
