@@ -1,8 +1,8 @@
 /** Watermarked previews. Browser controls are deterrents, not screenshot protection. */
-import { el } from '../core/dom.js?v=guide-20261119';
-import { bus } from '../core/bus.js?v=guide-20261119';
-import { t } from '../core/i18n.js?v=guide-20261119';
-import { createReaction, observeView, refreshReactions, releaseReactions } from './reactions.js?v=guide-20261119';
+import { el } from '../core/dom.js?v=reception-20261119';
+import { bus } from '../core/bus.js?v=reception-20261119';
+import { t } from '../core/i18n.js?v=reception-20261119';
+import { createReaction, observeView, refreshReactions, releaseReactions } from './reactions.js?v=reception-20261119';
 
 const PHOTOS = [
   ['Портрет', 'Портрет инспектора на оливковом фоне'],
@@ -66,6 +66,7 @@ export function initGallery(audio) {
   let index = 0;
   let enlarged = false;
   let savedScroll = 0;
+  let selectedCard = 0;
   const cards = [];
   let stopPhotoView=()=>{},stopAlbumView=()=>{};
   const summary=el('div',{class:'gallery-summary'},createReaction('gallery',{viewsOnly:true}));
@@ -80,6 +81,7 @@ export function initGallery(audio) {
     );
     button.addEventListener('click', () => {
       savedScroll = album.scrollTop;
+      selectedCard = i;
       sheet.hidden = true;
       view.hidden = false;
       open(i);
@@ -118,6 +120,7 @@ export function initGallery(audio) {
     enlarged = false;
     album.scrollTop = savedScroll;
     cards[index].focus({ preventScroll: true });
+    if (index !== selectedCard) cards[index].scrollIntoView({ block: 'nearest', inline: 'nearest' });
     audio.play('paper', { gain: .4 });
   }
   dialog.querySelector('[data-gallery-back]').addEventListener('click', back);

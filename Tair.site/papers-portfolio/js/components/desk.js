@@ -2,10 +2,10 @@
  * desk.js — Desk textures, clock, document scanner, mute button.
  */
 
-import { $, css, mulberry32 } from '../core/dom.js?v=guide-20261119';
-import { drawSprite, makeTile, SPEAKER_ON, SPEAKER_OFF, DIGITS } from '../core/sprites.js?v=guide-20261119';
-import { bus } from '../core/bus.js?v=guide-20261119';
-import { getLocale } from '../core/i18n.js?v=guide-20261119';
+import { $, css, mulberry32 } from '../core/dom.js?v=reception-20261119';
+import { drawSprite, makeTile, SPEAKER_ON, SPEAKER_OFF, DIGITS } from '../core/sprites.js?v=reception-20261119';
+import { bus } from '../core/bus.js?v=reception-20261119';
+import { getLocale } from '../core/i18n.js?v=reception-20261119';
 
 const SPEAKER_PAL = { '#': '--paper' };
 

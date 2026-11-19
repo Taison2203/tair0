@@ -1,7 +1,7 @@
 /** A short visitor handbook: useful paths, without another onboarding gate. */
-import { el } from '../core/dom.js?v=guide-20261119';
-import { bus } from '../core/bus.js?v=guide-20261119';
-import { getLanguage } from '../core/i18n.js?v=guide-20261119';
+import { el } from '../core/dom.js?v=reception-20261119';
+import { bus } from '../core/bus.js?v=reception-20261119';
+import { getLanguage } from '../core/i18n.js?v=reception-20261119';
 export function initVisitorGuide(audio) {
   const words=(ru,en)=>getLanguage()==='en'?en:ru;
   const opener=el('button',{type:'button','aria-haspopup':'dialog','aria-controls':'visitor-guide'},words('Как пользоваться','Visitor guide'));

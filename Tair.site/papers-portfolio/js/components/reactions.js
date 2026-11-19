@@ -1,8 +1,8 @@
 /** Shared counters, explicit like state, and account confirmation through the existing bot. */
-import { apiFetch } from '../core/api.js?v=guide-20261119';
-import { getLanguage } from '../core/i18n.js?v=guide-20261119';
+import { apiFetch } from '../core/api.js?v=reception-20261119';
+import { getLanguage } from '../core/i18n.js?v=reception-20261119';
 const words=(ru,en)=>getLanguage()==='en'?en:ru;
-const states=new Map(),queued=new Set(),viewed=new Set(),disposers=new WeakMap();let batchTimer,audio,linked=false,login,loginTimer,loginDeadline=0,desiredTarget=null,returnFocus;
+const states=new Map(),queued=new Set(),viewed=new Set(),disposers=new WeakMap();let batchTimer,audio,linked=false,login,loginTimer,activeIntent=null,returnFocus;
 function state(target){if(!states.has(target))states.set(target,{target,views:null,likes:null,liked:false,pending:false,epoch:0,widgets:new Set()});return states.get(target);}
 function update(item){const s=state(item.target);Object.assign(s,item);for(const render of s.widgets)render();}
 async function call(path,options={}){
@@ -31,6 +31,7 @@ export function createReaction(target,{viewsOnly=false}={}){
  button.addEventListener('click',async()=>{
   if(s.pending)return;status.textContent='';
   if(s.likes===null)await refresh([target]);
+  if(s.pending||!button.isConnected||!button.getClientRects().length)return;
   if(!linked){await showLogin(target,button);return;}
   await changeLike(s,!s.liked,status,root);
  });
@@ -64,19 +65,43 @@ function makeLogin(){
  const link=document.createElement('a');link.className='board-tool';link.target='_blank';link.rel='noopener noreferrer';link.hidden=true;link.textContent=words('Подтвердить в Telegram','Confirm in Telegram');
  const check=document.createElement('button');check.className='board-tool';check.type='button';check.textContent=words('Я подтвердил · проверить','Confirmed · check');check.addEventListener('click',()=>{audio?.play('tick',{gain:.6});checkLogin();});
  const cancel=document.createElement('button');cancel.className='board-tool';cancel.type='button';cancel.textContent=words('Отмена','Cancel');cancel.addEventListener('click',()=>d.close());
- d.append(h,p,link,check,cancel,text);link.addEventListener('click',()=>audio?.play('transmit'));d.addEventListener('close',()=>{audio?.play('documentClose');clearTimeout(loginTimer);desiredTarget=null;returnFocus?.focus({preventScroll:true});});document.body.append(d);login={dialog:d,text,link,check};return login;
+ d.append(h,p,link,check,cancel,text);link.addEventListener('click',()=>audio?.play('transmit'));d.addEventListener('close',()=>{if(d.open)return;audio?.play('documentClose');clearTimeout(loginTimer);activeIntent=null;returnFocus?.focus({preventScroll:true});});document.body.append(d);login={dialog:d,text,link,check};return login;
 }
 async function showLogin(target,opener){
- const ui=login||makeLogin();desiredTarget=target;returnFocus=opener;ui.link.hidden=true;ui.check.disabled=true;ui.text.textContent=words('Готовим пропуск…','Preparing your pass…');if(!ui.dialog.open){ui.dialog.showModal();audio?.play('documentOpen');}
- try{const data=await call('/api/telegram/link',{method:'POST'});if(!ui.dialog.open)return;ui.link.href=data.url;ui.link.hidden=false;ui.check.disabled=false;loginDeadline=Date.now()+data.expiresIn*1000;ui.text.textContent=words('Откройте бота, нажмите «Старт» и подтвердите привязку.','Open the bot, press Start and confirm the link.');loginTimer=setTimeout(checkLogin,5000);}catch(e){ui.text.textContent=e.message;ui.check.disabled=false;}
+ const ui=login||makeLogin();
+ const intent={target,opener,deadline:0};
+ clearTimeout(loginTimer);activeIntent=intent;returnFocus=opener;
+ ui.link.hidden=true;ui.link.removeAttribute('href');ui.check.disabled=true;
+ ui.check.textContent=words('Я подтвердил · проверить','Confirmed · check');ui.text.textContent=words('Готовим пропуск…','Preparing your pass…');
+ if(!ui.dialog.open){ui.dialog.showModal();audio?.play('documentOpen');}
+ try{
+   const data=await call('/api/telegram/link',{method:'POST'});
+   if(activeIntent!==intent||!ui.dialog.open)return;
+   ui.link.href=data.url;ui.link.hidden=false;ui.check.disabled=false;intent.deadline=Date.now()+data.expiresIn*1000;
+   ui.text.textContent=words('Откройте бота, нажмите «Старт» и подтвердите привязку.','Open the bot, press Start and confirm the link.');loginTimer=setTimeout(checkLogin,5000);
+ }catch(e){if(activeIntent===intent&&ui.dialog.open)retryPass(e.message);}
+}
+function retryPass(message){
+ activeIntent.deadline=0;login.link.hidden=true;login.link.removeAttribute('href');login.text.textContent=message;
+ login.check.textContent=words('Получить новый пропуск','Get a new pass');login.check.disabled=false;
 }
 async function checkLogin(){
- clearTimeout(loginTimer);if(!login?.dialog.open||login.check.disabled)return;
- if(document.hidden){loginTimer=setTimeout(checkLogin,5000);return;}
- if(Date.now()>loginDeadline){login.text.textContent=words('Пропуск истёк. Закройте окно и нажмите на лайк снова.','Pass expired. Close this window and press Like again.');return;}
+ const intent=activeIntent;
+ clearTimeout(loginTimer);if(!intent||!login?.dialog.open||login.check.disabled||document.hidden)return;
+ if(!intent.deadline){await showLogin(intent.target,intent.opener);return;}
+ if(Date.now()>=intent.deadline){retryPass(words('Срок действия пропуска истёк.','The pass has expired.'));return;}
  login.check.disabled=true;
- try{const data=await call('/api/social?targets='+encodeURIComponent(desiredTarget));if(data.linked){linked=true;data.items.forEach(update);const target=desiredTarget;login.dialog.close();
-   await mergeViewed();
-   await refreshReactions();const s=state(target);if(!s.liked){await changeLike(s,true);for(const render of s.widgets)render();}return;}login.text.textContent=words('Пока нет подтверждения. Нажмите «Старт» в боте и подтвердите привязку.','No confirmation yet. Press Start in the bot and confirm the link.');}catch(e){login.text.textContent=e.message;}finally{login.check.disabled=false;if(login.dialog.open)loginTimer=setTimeout(checkLogin,5000);}
+ try{
+   const data=await call('/api/social?targets='+encodeURIComponent(intent.target));
+   if(activeIntent!==intent||!login.dialog.open)return;
+   if(data.linked){
+     linked=true;data.items.forEach(update);login.dialog.close();
+     const s=state(intent.target),root=intent.opener?.closest('.social-controls');
+     if(!s.liked)await changeLike(s,true,root?.querySelector('.social-status'),root);
+     await mergeViewed();await refreshReactions();return;
+   }
+   login.text.textContent=words('Пока нет подтверждения. Нажмите «Старт» в боте и подтвердите привязку.','No confirmation yet. Press Start in the bot and confirm the link.');
+ }catch(e){if(activeIntent===intent&&login.dialog.open)login.text.textContent=e.message;}
+ finally{if(activeIntent===intent&&login.dialog.open){login.check.disabled=false;if(!document.hidden)loginTimer=setTimeout(checkLogin,5000);}}
 }
-export function initReactions(engine){audio=engine;document.addEventListener('visibilitychange',()=>{if(!document.hidden&&login?.dialog.open)checkLogin();});}
+export function initReactions(engine){audio=engine;document.addEventListener('visibilitychange',()=>{if(!document.hidden&&login?.dialog.open&&activeIntent?.deadline)checkLogin();});}

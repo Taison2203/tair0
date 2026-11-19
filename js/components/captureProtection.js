@@ -1,5 +1,5 @@
 /** Best-effort controls. Web pages cannot block OS screenshots or external cameras. */
-import { bus } from '../core/bus.js?v=guide-20261119';
+import { bus } from '../core/bus.js?v=reception-20261119';
 
 export function isCaptureShortcut(event) {
   const key=String(event.key||'').toLowerCase();

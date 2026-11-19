@@ -1,5 +1,5 @@
-import { bus } from '../core/bus.js?v=guide-20261119';
-import { getLanguage } from '../core/i18n.js?v=guide-20261119';
+import { bus } from '../core/bus.js?v=reception-20261119';
+import { getLanguage } from '../core/i18n.js?v=reception-20261119';
 export function initSecrets(audio){
  let buffer='',last=0,unlocked=false;
  window.addEventListener('keydown',event=>{

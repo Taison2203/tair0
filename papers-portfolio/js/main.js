@@ -1,31 +1,31 @@
 /** Application entry point: load type, prepare documents, then allow the shift to start. */
 
-import { AudioEngine } from './audio/engine.js?v=guide-20261119';
-import { initSoundArchive } from './components/soundArchive.js?v=guide-20261119';
-import { SFX } from './audio/sfx.js?v=guide-20261119';
-import { Music } from './audio/music.js?v=guide-20261119';
-import { initScale } from './core/scale.js?v=guide-20261119';
+import { AudioEngine } from './audio/engine.js?v=reception-20261119';
+import { initSoundArchive } from './components/soundArchive.js?v=reception-20261119';
+import { SFX } from './audio/sfx.js?v=reception-20261119';
+import { Music } from './audio/music.js?v=reception-20261119';
+import { initScale } from './core/scale.js?v=reception-20261119';
 import {
   makeDeskTexture, makeGrainTexture, makeRingTexture, initClock,
   createScanner, initMuteButton,
-} from './components/desk.js?v=guide-20261119';
-import { initStartScreen } from './components/startScreen.js?v=guide-20261119';
-import { initBook } from './components/book.js?v=guide-20261119';
-import { initDocuments } from './components/documents.js?v=guide-20261119';
-import { initReceipts } from './components/receipts.js?v=guide-20261119';
-import { initNews } from './components/news.js?v=guide-20261119';
-import { initEzic, initPenalty } from './components/ezic.js?v=guide-20261119';
-import { bus } from './core/bus.js?v=guide-20261119';
-import { CONTENT } from './config/content.js?v=guide-20261119';
-import { makePortrait } from './core/pixelate.js?v=guide-20261119';
-import { initShift } from './components/shift.js?v=guide-20261119';
-import { initAtmosphere } from './components/atmosphere.js?v=guide-20261119';
-import { chooseLanguage } from './core/i18n.js?v=guide-20261119';
-import { initCaptureProtection } from './components/captureProtection.js?v=guide-20261119';
-import { initVisitorGuide } from './components/visitorGuide.js?v=guide-20261119';
-import { initBoard } from './components/board.js?v=guide-20261119';
-import { initSecrets } from './components/secrets.js?v=guide-20261119';
-import { initReactions } from './components/reactions.js?v=guide-20261119';
+} from './components/desk.js?v=reception-20261119';
+import { initStartScreen } from './components/startScreen.js?v=reception-20261119';
+import { initBook } from './components/book.js?v=reception-20261119';
+import { initDocuments } from './components/documents.js?v=reception-20261119';
+import { initReceipts } from './components/receipts.js?v=reception-20261119';
+import { initNews } from './components/news.js?v=reception-20261119';
+import { initEzic, initPenalty } from './components/ezic.js?v=reception-20261119';
+import { bus } from './core/bus.js?v=reception-20261119';
+import { CONTENT } from './config/content.js?v=reception-20261119';
+import { makePortrait } from './core/pixelate.js?v=reception-20261119';
+import { initShift } from './components/shift.js?v=reception-20261119';
+import { initAtmosphere } from './components/atmosphere.js?v=reception-20261119';
+import { chooseLanguage } from './core/i18n.js?v=reception-20261119';
+import { initCaptureProtection } from './components/captureProtection.js?v=reception-20261119';
+import { initVisitorGuide } from './components/visitorGuide.js?v=reception-20261119';
+import { initBoard } from './components/board.js?v=reception-20261119';
+import { initSecrets } from './components/secrets.js?v=reception-20261119';
+import { initReactions } from './components/reactions.js?v=reception-20261119';
 
 async function loadRequiredFonts() {
   if (!document.fonts?.load) return;
@@ -103,13 +103,17 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   startScreen.onStart(async ({ muted }) => {
-    await audio.unlock({ muted });
+    // Begin audio during the gesture. Some mobile browsers defer resume() until
+    // audio output becomes available; the handbook must still open immediately.
+    audio.unlock({ muted }).then(ready => {
+      if (!ready) return;
+      initMuteButton(audio, {
+        onMute: () => music.stop(),
+        onUnmute: () => music.start(),
+      });
+      if (!audio.muted && !document.hidden) { music.start(); audio.play('shiftStart'); }
+    }).catch(() => { /* A shift can be completed with audio unavailable. */ });
     document.body.dataset.phase = 'shift';
-    initMuteButton(audio, {
-      onMute: () => music.stop(),
-      onUnmute: () => music.start(),
-    });
-    if (!muted) { music.start(); audio.play('shiftStart'); }
     await startScreen.hide();
     document.querySelector('#desk')?.removeAttribute('inert');
     document.querySelector('#desk')?.classList.add('is-revealed');
@@ -153,8 +157,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   window.addEventListener('keydown', (event) => {
     if (document.body.dataset.phase !== 'shift') return;
-    if (event.target.matches('input, textarea, select, button, a, [contenteditable="true"]')) return;
-    if (document.querySelector('dialog.doc[open]')) return;
+    if (event.defaultPrevented || event.isComposing || event.repeat || event.ctrlKey || event.altKey || event.metaKey) return;
+    if (event.target.closest?.('input, textarea, select, button, a, [contenteditable="true"]')) return;
+    if (document.querySelector('dialog[open]')) return;
     if (event.key === '1') bus.emit('tab:select', { key: 'passport' });
     if (event.key === '2') bus.emit('tab:select', { key: 'pass' });
     if (event.key === '3') bus.emit('tab:select', { key: 'cases' });
