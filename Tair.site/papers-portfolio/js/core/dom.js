@@ -2,7 +2,7 @@
  * dom.js — DOM helpers, animation waiters, selectors.
  */
 
-import { t } from './i18n.js?v=polish-20261119';
+import { t } from './i18n.js?v=guide-20261119';
 
 /** querySelector shorthand. */
 export const $ = (sel, root = document) => root.querySelector(sel);

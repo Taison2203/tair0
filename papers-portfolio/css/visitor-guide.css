@@ -1,0 +1,13 @@
+/* A single paper handbook, with short routes into the existing site. */
+.visitor-guide{width:min(660px,calc(100vw - 24px));max-width:calc(100vw - 24px);max-height:calc(100svh - 24px);padding:0;border:0;margin:auto;background:transparent;color:var(--ink);overflow:visible}
+.visitor-guide::backdrop{background:rgb(12 18 12 / 82%);backdrop-filter:blur(3px)}
+.visitor-guide__paper{padding:28px;border:3px solid #77785b;background:#ded8b8;max-height:calc(100svh - 96px);overflow-y:auto;overscroll-behavior:contain;box-shadow:6px 7px 0 #0005;font:15px/1.8 var(--font-ui)}
+.visitor-guide__kicker{font:11px/1.7 var(--font-ui);letter-spacing:.5px;margin-bottom:14px;color:#575c43}
+.visitor-guide h2{font:15px/1.9 var(--font-display);margin-bottom:20px}
+.visitor-guide ol{padding-left:24px;margin:20px 0}.visitor-guide li{padding-left:4px;margin:14px 0}.visitor-guide strong{font-weight:bold}
+.visitor-guide__actions{display:flex;gap:10px;flex-wrap:wrap;margin:22px 0 14px}.visitor-guide__actions .btn{font-size:9px;min-height:44px;padding:12px}
+.visitor-guide__telegram{display:inline-block;min-height:44px;padding:8px 0;color:#34452d;text-decoration:underline;text-underline-offset:4px}
+.visitor-guide__note{font-size:13px;margin-top:16px;padding-top:14px;border-top:1px dotted #7a7b60}
+@media(max-width:599px){.visitor-guide__paper{padding:20px 16px;font-size:14px}.visitor-guide h2{font-size:12px}.visitor-guide__actions .btn{flex:1 1 90px;font-size:8px}}
+
+.visitor-guide[open] .visitor-guide__paper{animation:paper-arrive 240ms ease-out}

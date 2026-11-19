@@ -1,30 +1,31 @@
 /** Application entry point: load type, prepare documents, then allow the shift to start. */
 
-import { AudioEngine } from './audio/engine.js?v=polish-20261119';
-import { initSoundArchive } from './components/soundArchive.js?v=polish-20261119';
-import { SFX } from './audio/sfx.js?v=polish-20261119';
-import { Music } from './audio/music.js?v=polish-20261119';
-import { initScale } from './core/scale.js?v=polish-20261119';
+import { AudioEngine } from './audio/engine.js?v=guide-20261119';
+import { initSoundArchive } from './components/soundArchive.js?v=guide-20261119';
+import { SFX } from './audio/sfx.js?v=guide-20261119';
+import { Music } from './audio/music.js?v=guide-20261119';
+import { initScale } from './core/scale.js?v=guide-20261119';
 import {
   makeDeskTexture, makeGrainTexture, makeRingTexture, initClock,
   createScanner, initMuteButton,
-} from './components/desk.js?v=polish-20261119';
-import { initStartScreen } from './components/startScreen.js?v=polish-20261119';
-import { initBook } from './components/book.js?v=polish-20261119';
-import { initDocuments } from './components/documents.js?v=polish-20261119';
-import { initReceipts } from './components/receipts.js?v=polish-20261119';
-import { initNews } from './components/news.js?v=polish-20261119';
-import { initEzic, initPenalty } from './components/ezic.js?v=polish-20261119';
-import { bus } from './core/bus.js?v=polish-20261119';
-import { CONTENT } from './config/content.js?v=polish-20261119';
-import { makePortrait } from './core/pixelate.js?v=polish-20261119';
-import { initShift } from './components/shift.js?v=polish-20261119';
-import { initAtmosphere } from './components/atmosphere.js?v=polish-20261119';
-import { chooseLanguage } from './core/i18n.js?v=polish-20261119';
-import { initCaptureProtection } from './components/captureProtection.js?v=polish-20261119';
-import { initBoard } from './components/board.js?v=polish-20261119';
-import { initSecrets } from './components/secrets.js?v=polish-20261119';
-import { initReactions } from './components/reactions.js?v=polish-20261119';
+} from './components/desk.js?v=guide-20261119';
+import { initStartScreen } from './components/startScreen.js?v=guide-20261119';
+import { initBook } from './components/book.js?v=guide-20261119';
+import { initDocuments } from './components/documents.js?v=guide-20261119';
+import { initReceipts } from './components/receipts.js?v=guide-20261119';
+import { initNews } from './components/news.js?v=guide-20261119';
+import { initEzic, initPenalty } from './components/ezic.js?v=guide-20261119';
+import { bus } from './core/bus.js?v=guide-20261119';
+import { CONTENT } from './config/content.js?v=guide-20261119';
+import { makePortrait } from './core/pixelate.js?v=guide-20261119';
+import { initShift } from './components/shift.js?v=guide-20261119';
+import { initAtmosphere } from './components/atmosphere.js?v=guide-20261119';
+import { chooseLanguage } from './core/i18n.js?v=guide-20261119';
+import { initCaptureProtection } from './components/captureProtection.js?v=guide-20261119';
+import { initVisitorGuide } from './components/visitorGuide.js?v=guide-20261119';
+import { initBoard } from './components/board.js?v=guide-20261119';
+import { initSecrets } from './components/secrets.js?v=guide-20261119';
+import { initReactions } from './components/reactions.js?v=guide-20261119';
 
 async function loadRequiredFonts() {
   if (!document.fonts?.load) return;
@@ -83,6 +84,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     initSoundArchive(audio);
     initReactions(audio);
     initBoard(audio);
+    initVisitorGuide(audio);
     initSecrets(audio);
     await initDocuments(audio);
     initShift(audio);

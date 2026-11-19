@@ -1,6 +1,6 @@
 /** Shared counters, explicit like state, and account confirmation through the existing bot. */
-import { apiFetch } from '../core/api.js?v=polish-20261119';
-import { getLanguage } from '../core/i18n.js?v=polish-20261119';
+import { apiFetch } from '../core/api.js?v=guide-20261119';
+import { getLanguage } from '../core/i18n.js?v=guide-20261119';
 const words=(ru,en)=>getLanguage()==='en'?en:ru;
 const states=new Map(),queued=new Set(),viewed=new Set(),disposers=new WeakMap();let batchTimer,audio,linked=false,login,loginTimer,loginDeadline=0,desiredTarget=null,returnFocus;
 function state(target){if(!states.has(target))states.set(target,{target,views:null,likes:null,liked:false,pending:false,epoch:0,widgets:new Set()});return states.get(target);}
