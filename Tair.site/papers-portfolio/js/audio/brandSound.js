@@ -1,5 +1,5 @@
 /** A quiet three-note cue. If autoplay is blocked, unlock on entry interaction. */
-export function playBrandSound() {
+export function playBrandSound({ waitForIntroTap = false } = {}) {
   const Audio = window.AudioContext || window.webkitAudioContext;
   if (!Audio) return;
   let context;
@@ -38,6 +38,9 @@ export function playBrandSound() {
   function unlock() {
     if (played) return;
     void context.resume().then(play).catch(() => {});
+  }
+  if (waitForIntroTap && context.state !== 'running' && navigator.getAutoplayPolicy?.(context) !== 'allowed') {
+    return unlock;
   }
   const options = { signal: listeners.signal, capture: true };
   for (const selector of ['#brand-intro', '#language-screen']) {

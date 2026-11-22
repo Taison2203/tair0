@@ -17,6 +17,18 @@
 .brand-intro:not([hidden]) + .language-screen { display: none; }
 #desk[inert] { visibility: hidden; }
 .brand-intro__content { display: flex; flex-direction: column; align-items: center; gap: inherit; }
+.brand-intro.is-awaiting-start .brand-intro__content { visibility: hidden; }
+.brand-intro:not(.is-playing) .brand-intro__content * { animation-play-state: paused; }
+.brand-intro__start {
+  position: absolute;
+  padding: 14px 24px;
+  border: 1px solid #666;
+  border-radius: 999px;
+  background: #111;
+  color: white;
+  font: 500 16px system-ui, sans-serif;
+  cursor: pointer;
+}
 .entry-logo { display: block; width: clamp(134px, 21vw, 198px); max-height: 48svh; height: auto; overflow: visible; }
 .brand-intro__name { font: 500 clamp(24px, 4vw, 36px)/1.1 system-ui, sans-serif; letter-spacing: .045em; }
 .brand-intro__ai, .brand-intro__r { display: none; }
@@ -241,7 +253,7 @@ html[lang="en"] .request__title { font-size: 13px; }
 }
 @keyframes brand-comet {
   from { transform: translateY(0); }
-  to { transform: translateY(102%); }
+  to { transform: translateY(100%); }
 }
 @keyframes brand-gate-panel {
   from { translate: 0 0; }

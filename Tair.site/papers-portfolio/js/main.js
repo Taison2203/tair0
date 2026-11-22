@@ -27,7 +27,7 @@ import { initVisitorGuide } from './components/visitorGuide.js?v=reception-20261
 import { initBoard } from './components/board.js?v=board-return-1';
 import { initSecrets } from './components/secrets.js?v=reception-20261119';
 import { initReactions } from './components/reactions.js?v=reception-20261119';
-import { playBrandSound } from './audio/brandSound.js?v=2';
+import { playBrandSound } from './audio/brandSound.js?v=3';
 
 async function loadRequiredFonts() {
   if (!document.fonts?.load) return;
@@ -45,8 +45,22 @@ document.addEventListener('DOMContentLoaded', async () => {
   initReceipts(audio);
   initCaptureProtection(audio);
   const intro = document.querySelector('#brand-intro');
-  playBrandSound();
-  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  const motion = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const touchIntro = motion && matchMedia('(pointer: coarse)').matches;
+  const startSound = playBrandSound({ waitForIntroTap: touchIntro });
+  if (startSound) {
+    const start = intro.querySelector('.brand-intro__start');
+    intro.classList.add('is-awaiting-start');
+    start.hidden = false;
+    start.focus({ preventScroll: true });
+    await new Promise(resolve => start.addEventListener('click', () => {
+      startSound();
+      start.hidden = true;
+      intro.classList.remove('is-awaiting-start');
+      resolve();
+    }, { once: true }));
+  }
+  if (motion) {
     const languageScreen = document.querySelector('#language-screen');
     const desktop = matchMedia('(min-width: 800px) and (pointer: fine)').matches;
     languageScreen.inert = true;
