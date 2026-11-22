@@ -62,8 +62,9 @@
   to { translate: 0 0; }
 }
 @keyframes brand-ai-reveal {
-  from { clip-path: inset(0 50%); }
-  to { clip-path: inset(0); }
+  0% { clip-path: inset(0 50%); }
+  99.99% { clip-path: inset(0); }
+  100% { clip-path: none; }
 }
 @keyframes brand-r-draw {
   0% { transform: translateX(-25%); clip-path: polygon(0 0, 12% 0, 12% 23%, 0 23%); }
@@ -249,8 +250,13 @@ html[lang="en"] .request__title { font-size: 13px; }
   }
   .brand-intro.is-playing .brand-intro__ai {
     mix-blend-mode: difference;
-    animation: brand-ai-reveal var(--spread), brand-finish 350ms 2560ms ease both;
+    animation: brand-ai-reveal var(--spread);
   }
+  .brand-intro.is-playing .brand-intro__ai > path {
+    animation: brand-gate-panel 690ms 2560ms cubic-bezier(.5,0,.25,1) forwards;
+  }
+  .brand-intro__a { --gate-exit: -100vw; }
+  .brand-intro__i { --gate-exit: 100vw; }
 }
 @keyframes brand-comet {
   from { transform: translateY(0); }
