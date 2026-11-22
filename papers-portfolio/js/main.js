@@ -21,7 +21,7 @@ import { makePortrait } from './core/pixelate.js?v=reception-20261119';
 import { initShift } from './components/shift.js?v=reception-20261119';
 import { initAtmosphere } from './components/atmosphere.js?v=reception-20261119';
 import { chooseLanguage } from './core/i18n.js?v=reception-20261119';
-import { stepAnim } from './core/dom.js?v=reception-20261119';
+import { stepAnim } from './core/dom.js?v=brand-crossfade';
 import { initCaptureProtection } from './components/captureProtection.js?v=reception-20261119';
 import { initVisitorGuide } from './components/visitorGuide.js?v=reception-20261119';
 import { initBoard } from './components/board.js?v=board-return-1';
@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const languageScreen = document.querySelector('#language-screen');
     const desktop = matchMedia('(min-width: 800px) and (pointer: fine)').matches;
     languageScreen.inert = true;
-    await stepAnim(intro, 'is-playing', desktop ? 3910 : 2110);
+    await stepAnim(intro, 'is-playing', desktop ? 4250 : 2110);
     languageScreen.inert = false;
   }
   intro.hidden = true;

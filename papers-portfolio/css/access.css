@@ -193,7 +193,7 @@ html[lang="en"] .request__title { font-size: 13px; }
   .brand-intro.is-playing {
     isolation: isolate;
     background: white;
-    animation: brand-gate-finish 3850ms linear both;
+    animation: brand-gate-finish 4180ms linear both;
   }
   .brand-intro.is-playing + .language-screen { display: flex; }
   .brand-intro.is-playing .brand-intro__content { animation: none; }
@@ -248,7 +248,7 @@ html[lang="en"] .request__title { font-size: 13px; }
   to { translate: var(--gate-exit) 0; }
 }
 @keyframes brand-gate-finish {
-  0%, 86% { opacity: 1; }
+  0%, 78% { opacity: 1; }
   100% { opacity: 0; }
 }
 @media print {

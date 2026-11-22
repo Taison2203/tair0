@@ -29,7 +29,7 @@ export function stepAnim(el, cls, fallbackMs = 900) {
       resolve();
     };
     const onEnd = (e) => {
-      if (e.target === el) finish();
+      if (e.target === el && !e.pseudoElement) finish();
     };
     const t = setTimeout(finish, fallbackMs);
     el.addEventListener('animationend', onEnd);
