@@ -47,7 +47,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   const intro = document.querySelector('#brand-intro');
   playBrandSound();
   if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    await stepAnim(intro, 'is-playing', 2110);
+    const languageScreen = document.querySelector('#language-screen');
+    const desktop = matchMedia('(min-width: 800px) and (pointer: fine)').matches;
+    languageScreen.inert = true;
+    await stepAnim(intro, 'is-playing', desktop ? 3910 : 2110);
+    languageScreen.inert = false;
   }
   intro.hidden = true;
   await chooseLanguage();

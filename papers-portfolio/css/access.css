@@ -189,6 +189,68 @@ html[lang="en"] .request__title { font-size: 13px; }
   100% { opacity: 0; }
 }
 @keyframes brand-hold { from, to { background-color: #000; } }
+@media (min-width: 800px) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .brand-intro.is-playing {
+    isolation: isolate;
+    background: white;
+    animation: brand-gate-finish 3850ms linear both;
+  }
+  .brand-intro.is-playing + .language-screen { display: flex; }
+  .brand-intro.is-playing .brand-intro__content { animation: none; }
+
+  .brand-intro.is-playing::before, .brand-intro.is-playing::after {
+    content: "";
+    position: absolute;
+    inset: 0 50% 0 0;
+    background: black;
+    z-index: -2;
+    --gate-exit: -101%;
+    animation: brand-gate-panel 690ms 2560ms cubic-bezier(.5,0,.25,1) both;
+  }
+  .brand-intro.is-playing::after {
+    inset: 0 0 0 50%;
+    --gate-exit: 101%;
+  }
+
+  .brand-intro.is-playing .brand-intro__content::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    top: -110%;
+    left: 50%;
+    width: calc(var(--letter-frame) * 760 / 790 + var(--letter-gap));
+    height: 110%;
+    border-radius: 0 0 50% 50% / 0 0 8% 8%;
+    translate: -50% 0;
+    background: white;
+    animation: brand-comet 790ms 1690ms cubic-bezier(.4,0,.22,1) both;
+  }
+  .brand-intro.is-playing .entry-logo {
+    --gate-exit: -100vw;
+    animation: brand-spread var(--spread), brand-gate-panel 690ms 2560ms cubic-bezier(.5,0,.25,1) forwards;
+  }
+  .brand-intro.is-playing .brand-intro__r {
+    --gate-exit: 100vw;
+    animation: brand-r-draw 470ms 625ms cubic-bezier(.3,.2,.32,1) both,
+      brand-spread var(--spread), brand-gate-panel 690ms 2560ms cubic-bezier(.5,0,.25,1) forwards;
+  }
+  .brand-intro.is-playing .brand-intro__ai {
+    mix-blend-mode: difference;
+    animation: brand-ai-reveal var(--spread), brand-finish 350ms 2560ms ease both;
+  }
+}
+@keyframes brand-comet {
+  from { transform: translateY(0); }
+  to { transform: translateY(102%); }
+}
+@keyframes brand-gate-panel {
+  from { translate: 0 0; }
+  to { translate: var(--gate-exit) 0; }
+}
+@keyframes brand-gate-finish {
+  0%, 86% { opacity: 1; }
+  100% { opacity: 0; }
+}
 @media print {
   body > :not(#capture-shield) { display: none !important; }
   #capture-shield { display: block !important; position: static; height: auto; background: white; color: black; }
