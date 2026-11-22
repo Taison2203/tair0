@@ -23,6 +23,9 @@ html[lang="ru"] .dispatch__language-note { display: none; }
 .capture-shield { position: fixed; inset: 0; width: 100%; height: 100%; max-width: none; max-height: none; border: 0; padding: 20px; margin: 0; background: #171d17; color: var(--paper); overflow-y: auto; }
 .capture-shield[open] { display: grid; place-items: center; }
 .capture-shield::backdrop { background: #171d17; }
+.capture-shield { box-sizing: border-box; scrollbar-width: none; }
+.capture-shield::-webkit-scrollbar { display: none; }
+html:has(#capture-shield[open]), body:has(#capture-shield[open]) { overflow: hidden; }
 .capture-shield__order { width: min(100%,660px); text-align: center; padding: 22px 30px; border: 2px solid var(--olive-d); outline: 1px solid var(--frame-l); outline-offset: 5px; }
 .capture-shield img, .privacy-curtain img { display: block; margin: 0 auto 14px; image-rendering: pixelated; }
 .capture-shield__agency { font: 12px/1.8 var(--font-display); margin: 0 0 5px; }
@@ -59,6 +62,41 @@ html[lang="en"] .request__title { font-size: 13px; }
 }
 @media (max-height: 600px) { .language-screen { justify-content: start; padding-top: 24px; gap: 12px; } .language-screen > img { width: 96px; height: 78px; } .capture-shield[open] { align-items: start; } }
 @media (prefers-reduced-motion: reduce) { .language-screen > img { animation: none; } .language-screen__choices button { transition: none; } }
+
+@media (prefers-reduced-motion: no-preference) {
+  .language-screen {
+    isolation: isolate;
+    background: radial-gradient(ellipse at center, var(--desk-1), var(--desk-0) 70%);
+  }
+  .language-screen::after {
+    content: "";
+    position: fixed;
+    z-index: 1;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(transparent 47%, rgb(207 199 154 / 14%) 50%, transparent 53%);
+    animation: entry-scan 720ms ease-out both;
+  }
+  .language-screen > img { animation: entry-insignia 520ms steps(7, end) both; }
+  .language-screen__serial, .language-screen h1 {
+    animation: entry-paper 420ms 110ms ease-out both;
+  }
+  .language-screen__choices button { animation: entry-paper 420ms 180ms ease-out both; }
+  .language-screen__choices button + button { animation-delay: 250ms; }
+  #start-screen:not([hidden]) .start__title { animation: entry-paper 440ms ease-out both; }
+}
+@keyframes entry-scan {
+  from { transform: translateY(-55%); opacity: 1; }
+  to { transform: translateY(55%); opacity: 0; }
+}
+@keyframes entry-insignia {
+  from { clip-path: inset(0 0 100%); opacity: .4; }
+  to { clip-path: inset(0); opacity: 1; }
+}
+@keyframes entry-paper {
+  from { translate: 0 12px; opacity: .35; }
+  to { translate: 0; opacity: 1; }
+}
 @media print {
   body > :not(#capture-shield) { display: none !important; }
   #capture-shield { display: block !important; position: static; height: auto; background: white; color: black; }
