@@ -27,7 +27,7 @@ import { initVisitorGuide } from './components/visitorGuide.js?v=reception-20261
 import { initBoard } from './components/board.js?v=board-return-1';
 import { initSecrets } from './components/secrets.js?v=reception-20261119';
 import { initReactions } from './components/reactions.js?v=reception-20261119';
-import { playBrandSound } from './audio/brandSound.js?v=1';
+import { playBrandSound } from './audio/brandSound.js?v=2';
 
 async function loadRequiredFonts() {
   if (!document.fonts?.load) return;

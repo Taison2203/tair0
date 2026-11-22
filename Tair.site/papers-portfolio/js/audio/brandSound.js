@@ -12,21 +12,27 @@ export function playBrandSound() {
     played = true;
     listeners.abort();
     const start = context.currentTime + .025;
-    const notes = [[392, 0, .32], [587.33, .14, .39], [783.99, .34, .56]];
+    const timbre = context.createPeriodicWave(
+      new Float32Array(4),
+      new Float32Array([0, 1, .24, .07])
+    );
+    const notes = [[392, 0, .42], [587.33, .17, .48], [783.99, .39, .62]];
     for (const [frequency, offset, duration] of notes) {
       const tone = context.createOscillator();
+      tone.setPeriodicWave(timbre);
       const envelope = context.createGain();
       const at = start + offset;
       tone.frequency.setValueAtTime(frequency * .995, at);
       tone.frequency.exponentialRampToValueAtTime(frequency, at + .09);
       envelope.gain.setValueAtTime(.0001, at);
-      envelope.gain.exponentialRampToValueAtTime(.045, at + .045);
+      envelope.gain.exponentialRampToValueAtTime(.105, at + .045);
+      envelope.gain.exponentialRampToValueAtTime(.047, at + .14);
       envelope.gain.exponentialRampToValueAtTime(.0001, at + duration);
       tone.connect(envelope).connect(context.destination);
       tone.start(at);
       tone.stop(at + duration);
     }
-    setTimeout(() => { void context.close().catch(() => {}); }, 1000);
+    setTimeout(() => { void context.close().catch(() => {}); }, 1150);
   }
 
   function unlock() {

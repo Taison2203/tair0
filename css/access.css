@@ -17,7 +17,7 @@
 .brand-intro:not([hidden]) + .language-screen { display: none; }
 #desk[inert] { visibility: hidden; }
 .brand-intro__content { display: flex; flex-direction: column; align-items: center; gap: inherit; }
-.entry-logo { display: block; width: clamp(116px, 19vw, 176px); max-height: 48svh; height: auto; overflow: visible; }
+.entry-logo { display: block; width: clamp(134px, 21vw, 198px); max-height: 48svh; height: auto; overflow: visible; }
 .brand-intro__name { font: 500 clamp(24px, 4vw, 36px)/1.1 system-ui, sans-serif; letter-spacing: .045em; }
 .entry-logo__curve { filter: drop-shadow(2px 2px 3px #216dd066); }
 .entry-logo__stem { filter: drop-shadow(2px 2px 3px #8d10c766); }
@@ -101,8 +101,8 @@ html[lang="en"] .request__title { font-size: 13px; }
   .brand-intro.is-playing { animation: brand-hold 2050ms linear both; }
   .brand-intro.is-playing .brand-intro__content { animation: brand-finish 310ms 1740ms ease both; }
   .entry-logo rect { transform-box: fill-box; transform-origin: center; }
-  .entry-logo__blue { --entry-offset: -210px; animation: entry-pill 990ms cubic-bezier(.22,.7,.3,1) both; }
-  .entry-logo__violet { --entry-offset: 210px; animation: entry-pill 990ms 130ms cubic-bezier(.22,.7,.3,1) both; }
+  .entry-logo__blue { --entry-offset: -220px; animation: entry-pill 970ms cubic-bezier(.3,.65,.3,1) both; }
+  .entry-logo__violet { --entry-offset: 220px; animation: entry-pill 970ms 110ms cubic-bezier(.3,.65,.3,1) both; }
   .entry-logo__curve { animation: entry-curve 840ms 135ms cubic-bezier(.25,.75,.24,1) both; }
   .entry-logo .entry-logo__stem { transform-origin: center top; animation: entry-stem 920ms 330ms cubic-bezier(.22,.7,.3,1) both; }
   .brand-intro__name { animation: brand-name 720ms 670ms cubic-bezier(.2,.7,.3,1) both; }
@@ -118,9 +118,10 @@ html[lang="en"] .request__title { font-size: 13px; }
   to { transform: translateY(55%); opacity: 0; }
 }
 @keyframes entry-pill {
-  0% { transform: translateX(var(--entry-offset)) scale(.7, 1.2); opacity: 0; }
-  58% { transform: translateX(calc(var(--entry-offset) * -.08)) scale(1.12, .88); opacity: 1; }
-  79% { transform: scale(.97, 1.04); }
+  0% { transform: translateX(var(--entry-offset)) scale(1.18, .8); opacity: 0; }
+  22% { opacity: 1; }
+  58% { transform: translateX(calc(var(--entry-offset) * -.07)) scale(.92, 1.07); }
+  79% { transform: translateX(calc(var(--entry-offset) * .02)) scale(1.035, .97); }
   100% { transform: none; }
 }
 @keyframes entry-curve {
@@ -140,7 +141,7 @@ html[lang="en"] .request__title { font-size: 13px; }
 }
 @keyframes brand-name {
   0% { opacity: 0; transform: translateY(18px) scale(.92); }
-  60% { opacity: 1; transform: translateY(-3px) scale(1.035); }
+  60% { opacity: 1; transform: translateY(-4px) scale(1.035); }
   82% { transform: translateY(1px) scale(.994); }
   100% { opacity: 1; transform: none; }
 }
