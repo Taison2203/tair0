@@ -81,4 +81,24 @@ function playAir(context, elapsed) {
     air.start(at);
     air.stop(at + duration);
   }
+
+  // An open fifth under the movement, resolving an octave higher at the gates.
+  for (const [offset, frequency, duration, level] of [
+    [1.23, 293.66, .48, .062],
+    [1.86, 440, .52, .05],
+    [2.72, 587.33, .62, .042],
+  ]) {
+    if (offset < elapsed) continue;
+    const at = context.currentTime + offset - elapsed;
+    const tone = context.createOscillator();
+    const envelope = context.createGain();
+    tone.type = 'sine';
+    tone.frequency.value = frequency;
+    envelope.gain.setValueAtTime(.0001, at);
+    envelope.gain.exponentialRampToValueAtTime(level, at + .055);
+    envelope.gain.exponentialRampToValueAtTime(.0001, at + duration);
+    tone.connect(envelope).connect(context.destination);
+    tone.start(at);
+    tone.stop(at + duration);
+  }
 }
