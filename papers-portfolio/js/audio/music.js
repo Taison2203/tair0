@@ -184,6 +184,60 @@ const newThemes = [
 }));
 
 const themeById = new Map([...originalThemes, ...newThemes].map(theme => [theme.id, theme]));
+// Each response is a new phrase written for its theme. The original melody
+// remains the main statement, so the development has something to return to.
+const responses = {
+  'red-order': [['Gm', 55, 67, 70, 73], ['Bb', 70, 65, 58, 65], ['Dm', 74, 69, 68, 62], ['A', 64, 61, 57, 61]],
+  'iron-watch': [['Bb', 58, 70, 77, 76], ['C', 72, 67, 64, 67], ['Gm', 79, 74, 70, 67], ['A', 76, 73, 69, 64]],
+  'alarm-at-station': [['Dm', 77, 0, 81, 77], ['Bb', 82, 77, 0, 74], ['Gm', 79, 77, 74, 70], ['A', 76, 73, 0, 69]],
+  'parade-ground': [['Bb', 74, 70, 77, 74], ['F', 72, 69, 77, 81], ['Gm', 82, 79, 74, 70], ['A', 76, 73, 69, 64]],
+  'archive-signal': [['Dm', 0, 77, 76, 69], ['Bb', 74, 0, 70, 65], ['Gm', 0, 79, 74, 70], ['A', 76, 0, 73, 69]],
+  'last-train': [['F', 81, 77, 0, 72], ['C', 79, 76, 72, 0], ['Bb', 82, 77, 74, 70], ['A', 76, 73, 69, 0]],
+  'winter-station': [['Bb', 77, 74, 0, 70], ['Dm', 76, 69, 65, 0], ['Gm', 79, 0, 74, 70], ['A', 73, 69, 0, 64]],
+  'unanswered-letter': [['F', 77, 76, 0, 72], ['C', 76, 72, 67, 0], ['Gm', 79, 77, 74, 70], ['A', 73, 69, 64, 0]],
+  'empty-yard': [['F', 69, 72, 77, 0], ['Bb', 74, 77, 82, 77], ['Gm', 79, 74, 70, 0], ['A', 76, 73, 0, 69]],
+  'distant-window': [['F', 72, 77, 0, 81], ['Dm', 81, 77, 74, 69], ['Bb', 82, 77, 74, 0], ['C', 79, 76, 72, 0]],
+  'after-lights-out': [['Bb', 74, 77, 0, 74], ['F', 72, 69, 72, 0], ['Gm', 79, 74, 70, 67], ['A', 76, 73, 69, 0]],
+  'night-shift': [['Bb', 70, 74, 77, 74], ['C', 76, 72, 67, 0], ['Gm', 79, 74, 70, 67], ['A', 76, 73, 69, 64]],
+  'paper-route': [['Bb', 70, 77, 74, 77], ['F', 81, 77, 72, 69], ['Gm', 79, 74, 77, 70], ['A', 76, 73, 69, 73]],
+  'morning-report': [['Bb', 74, 77, 82, 81], ['F', 77, 72, 69, 72], ['Gm', 79, 74, 70, 74], ['C', 76, 79, 76, 72]],
+  'pocket-radio': [['Bb', 82, 86, 89, 86], ['F', 84, 81, 77, 81], ['Dm', 86, 84, 81, 77], ['C', 79, 84, 88, 84]],
+  'queue-dance': [['Bb', 77, 82, 86, 82], ['Gm', 79, 86, 82, 79], ['F', 81, 77, 84, 81], ['C', 79, 84, 86, 88]],
+  'commandants-tea': [['Bb', 74, 77, 82, 84], ['Dm', 81, 77, 74, 77], ['Gm', 79, 82, 86, 82], ['C', 84, 79, 76, 72]],
+  'last-stamp': [['Bb', 82, 86, 89, 86], ['C', 84, 79, 88, 84], ['Dm', 86, 81, 77, 81], ['A', 85, 81, 76, 73]],
+};
+
+function arrange(theme) {
+  const barCount = Math.round(theme.bpm / 4);
+  const score = theme.bars;
+  const sparse = theme.rhythm === 'sparse';
+  const introCount = barCount >= 24 ? 4 : 2;
+  const outroCount = barCount >= 24 ? 3 : 2;
+  const statement = score.slice(0, 8);
+  const answer = responses[theme.id].map(([chord, ...pitches]) => [
+    chord, pitches.flatMap((pitch, i) => pitch
+      ? [[(sparse ? [0, 5, 9, 12] : [0, 3, 8, 12])[i], sparse ? [4, 3.4, 2.4, 3][i] : [2.4, 3.3, 2.6, 2.5][i], pitch]]
+      : []),
+  ]);
+  const excerpt = (bar, count) => [bar[0], bar[1].slice(0, count)];
+  const intro = Array.from({ length: introCount }, (_, i) =>
+    excerpt(statement[i], i === 0 ? 1 : 2));
+  const developmentCount = Math.floor((barCount - introCount - outroCount - statement.length) / 2);
+  const development = Array.from({ length: developmentCount }, (_, i) =>
+    i < answer.length ? answer[i] : score[(i + 2) % score.length]);
+  const peakCount = barCount - introCount - statement.length - development.length - outroCount;
+  const peakSource = score.length > 8 ? [...score.slice(8), ...answer] : [...answer.slice(2), ...statement, ...answer];
+  const peak = Array.from({ length: peakCount }, (_, i) => peakSource[i % peakSource.length]);
+  const outro = Array.from({ length: outroCount }, (_, i) =>
+    excerpt(i === outroCount - 1 ? score.at(-1) : statement.at(-outroCount + i + 1), outroCount - i));
+  return {
+    ...theme, bpm: barCount * 4,
+    bars: [...intro, ...statement, ...development, ...peak, ...outro],
+    introCount, peakStart: intro.length + statement.length + development.length,
+    outroStart: barCount - outroCount,
+  };
+}
+
 // Intensity eases into grief, steadies into a shift, then brightens. The final
 // tune returns to D minor and leads back into the opening march.
 const THEMES = [
@@ -191,7 +245,7 @@ const THEMES = [
   'last-train', 'winter-station', 'unanswered-letter', 'empty-yard', 'distant-window',
   'after-lights-out', 'night-shift', 'paper-route', 'morning-report',
   'pocket-radio', 'queue-dance', 'commandants-tea', 'last-stamp',
-].map(id => themeById.get(id));
+].map(id => arrange(themeById.get(id)));
 export const MUSIC_TRACKS = THEMES.map(({ id, title, titleEn, bpm, bars }) => ({
   id, title, titleEn, bpm, duration: bars.length * 240 / bpm,
 }));
@@ -389,6 +443,12 @@ export class Music {
   playStep(step, time, theme, stepSeconds, level = 1) {
     const bar = Math.floor(step / BAR_STEPS);
     const position = step % BAR_STEPS;
+    const opening = bar < theme.introCount;
+    const ending = bar >= theme.outroStart;
+    const climax = bar >= theme.peakStart && !ending;
+    if (opening) level *= .60 + .32 * bar / theme.introCount;
+    if (climax) level *= 1.12;
+    if (ending) level *= .78 - .16 * (bar - theme.outroStart);
     const [chordName, melody] = theme.bars[bar];
     const chord = CHORDS[chordName];
     const answer = bar >= theme.bars.length / 2;
@@ -410,13 +470,19 @@ export class Music {
     for (const [at, length, pitch] of melody) {
       if (at === position) note(theme.lead || 'lead', pitch, length, bridge ? .065 : answer ? .105 : .09);
     }
+    if (climax && position === 11) {
+      note('harmony', chord.arp[1] + 12, 2.8, bridge ? .018 : .03);
+    }
 
-    if (!bridge && (position === 0 || ((march || answer) && position === 8))) this.kick(time, level);
-    if (!bridge && (position === 12 || ((march || bar >= 4) && position === 4))) {
+    const drums = !bridge && !ending && (!opening || bar === theme.introCount - 1);
+    if (drums && (position === 0 || ((march || answer) && position === 8))) this.kick(time, level);
+    if (drums && (position === 12 || ((march || bar >= 4) && position === 4))) {
       this.noise(time, .105, 'bandpass', 1700, .075 * level);
     }
-    if (answer && !bridge && position % 4 === 2) this.noise(time, .028, 'highpass', 4700, .018 * level);
-    if (!bridge && (bar === 7 || bar === 15) && position === 14) this.noise(time, .07, 'bandpass', 2000, .04 * level);
+    if (drums && answer && position % 4 === 2) this.noise(time, .028, 'highpass', 4700, .018 * level);
+    if (drums && (bar === theme.peakStart - 1 || bar === theme.outroStart - 1) && position === 14) {
+      this.noise(time, .07, 'bandpass', 2000, .04 * level);
+    }
   }
 
   playBacking(style, chord, position, note) {
