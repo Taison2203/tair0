@@ -37,6 +37,7 @@
       --spread-from: var(--letter-travel);
       animation: brand-spread var(--spread);
     }
+    .brand-intro__content .entry-logo__curve { animation-duration: 490ms; }
     .brand-intro__r {
       --spread-from: calc(-1 * var(--letter-travel));
       animation: brand-r-draw 470ms 625ms cubic-bezier(.3,.2,.32,1) both, brand-spread var(--spread);
@@ -53,9 +54,9 @@
   to { clip-path: inset(0); }
 }
 @keyframes brand-r-draw {
-  0% { clip-path: polygon(0 0, 12% 0, 12% 23%, 0 23%); }
+  0% { transform: translateX(-25%); clip-path: polygon(0 0, 12% 0, 12% 23%, 0 23%); }
   48% { clip-path: polygon(0 0, 78% 0, 58% 48%, 0 48%); }
-  100% { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
+  100% { transform: translateX(0); clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
 }
 .entry-logo__curve { filter: drop-shadow(2px 2px 3px #216dd066); }
 .entry-logo__stem { filter: drop-shadow(2px 2px 3px #8d10c766); }
