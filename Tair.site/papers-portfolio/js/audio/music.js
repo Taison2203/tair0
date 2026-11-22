@@ -42,7 +42,7 @@ const SCORE = [
 const THEMES = [
   {
     // «Парадный плац»: dotted calls and a minor-key march.
-    bpm: 108, rhythm: 'march', bars: [
+    bpm: 108, rhythm: 'march', lead: 'brass', bars: [
       ['Dm', [[0, 3, 62], [3, 1, 62], [4, 3, 65], [8, 3, 69], [12, 3, 74]]],
       ['Bb', [[0, 5, 70], [6, 2, 69], [8, 3, 65], [12, 3, 62]]],
       ['Gm', [[0, 3, 67], [3, 1, 67], [4, 3, 70], [8, 3, 74], [12, 3, 72]]],
@@ -55,7 +55,7 @@ const THEMES = [
   },
   {
     // «Сигнал из архива»: sparse, syncopated radio-like phrases.
-    bpm: 88, rhythm: 'sparse', bars: [
+    bpm: 88, rhythm: 'sparse', lead: 'reed', bars: [
       ['Gm', [[2, 2, 74], [7, 3, 70], [12, 3, 67]]],
       ['Gm', [[0, 4, 62], [9, 2, 65], [13, 2, 67]]],
       ['Bb', [[2, 2, 77], [7, 3, 74], [12, 3, 70]]],
@@ -68,7 +68,7 @@ const THEMES = [
   },
   {
     // «После отбоя»: a gentler descending motif for the quiet shift.
-    bpm: 71, rhythm: 'sparse', bars: [
+    bpm: 71, rhythm: 'sparse', lead: 'flute', bars: [
       ['F',  [[0, 6, 72], [8, 3, 69], [12, 3, 65]]],
       ['C',  [[0, 4, 67], [6, 2, 64], [10, 5, 60]]],
       ['Dm', [[0, 6, 69], [8, 3, 65], [12, 3, 62]]],
@@ -81,7 +81,7 @@ const THEMES = [
   },
   {
     // «Красный приказ»: clipped signals against heavy, even percussion.
-    bpm: 126, rhythm: 'march', bars: [
+    bpm: 126, rhythm: 'march', lead: 'brass', bars: [
       ['Dm', [[0, 2, 62], [3, 1, 62], [6, 2, 68], [8, 2, 69], [12, 2, 62]]],
       ['A',  [[0, 2, 61], [4, 1, 64], [6, 1, 61], [8, 4, 57], [14, 1, 64]]],
       ['Bb', [[0, 2, 65], [3, 1, 65], [6, 2, 71], [8, 3, 70], [12, 2, 65]]],
@@ -94,7 +94,7 @@ const THEMES = [
   },
   {
     // «Чай в комендатуре»: bouncing major-key call and response.
-    bpm: 118, rhythm: 'night', bars: [
+    bpm: 118, rhythm: 'night', lead: 'bell', bars: [
       ['F',  [[0, 2, 65], [3, 2, 69], [6, 2, 72], [10, 2, 74], [13, 2, 72]]],
       ['C',  [[0, 3, 67], [5, 2, 72], [8, 2, 76], [12, 2, 74]]],
       ['Bb', [[0, 2, 70], [3, 2, 74], [6, 2, 77], [10, 2, 74], [13, 2, 72]]],
@@ -107,7 +107,7 @@ const THEMES = [
   },
   {
     // «Письмо без ответа»: descending phrases, ending on an unresolved A.
-    bpm: 66, rhythm: 'sparse', bars: [
+    bpm: 66, rhythm: 'sparse', lead: 'flute', bars: [
       ['Dm', [[0, 5, 69], [6, 3, 65], [11, 4, 64]]],
       ['Bb', [[0, 7, 62], [10, 4, 65]]],
       ['Gm', [[0, 5, 67], [6, 3, 65], [11, 4, 58]]],
@@ -120,7 +120,7 @@ const THEMES = [
   },
   {
     // «Последний поезд»: wide intervals and a distant, unresolved refrain.
-    bpm: 74, rhythm: 'sparse', bars: [
+    bpm: 74, rhythm: 'sparse', lead: 'reed', bars: [
       ['Gm', [[2, 7, 74], [12, 3, 67]]],
       ['Bb', [[0, 7, 77], [11, 4, 72]]],
       ['Dm', [[2, 7, 69], [12, 3, 65]]],
@@ -180,6 +180,9 @@ export class Music {
     if (!this.resources) {
       this.resources = {
         lead: makePulse(ctx, .25),
+        brass: makePulse(ctx, .5),
+        reed: makePulse(ctx, .18),
+        bell: ctx.createPeriodicWave(new Float32Array(7), new Float32Array([0, 1, .12, .3, 0, .15, .08])),
         harmony: makePulse(ctx, .125),
         noise: makeNoise(ctx),
       };
@@ -245,7 +248,7 @@ export class Music {
       this.tone('harmony', note+(bridge?12:0), time, STEP_SECONDS * (bridge?2.5:1.5), bridge?.027:answer ? .044 : .034);
     }
     for (const [at, length, note] of melody) {
-      if (at === position) this.tone('lead', note, time, STEP_SECONDS * length, bridge?.065:answer ? .105 : .09);
+      if (at === position) this.tone(theme.lead || 'lead', note, time, STEP_SECONDS * length, bridge?.065:answer ? .105 : .09);
     }
 
     if (!bridge && (position === 0 || ((march || answer) && position === 8))) this.kick(time);
@@ -271,14 +274,16 @@ export class Music {
     const oscillator = context.createOscillator();
     const gain = context.createGain();
     const filter = context.createBiquadFilter();
-    if (type === 'triangle') oscillator.type = 'triangle';
+    const melody = type !== 'triangle' && type !== 'harmony';
+    if (type === 'flute') oscillator.type = 'sine';
+    else if (type === 'triangle') oscillator.type = 'triangle';
     else oscillator.setPeriodicWave(this.resources[type]);
     oscillator.frequency.setValueAtTime(mtof(midi), time);
     filter.type = 'lowpass';
-    filter.frequency.value = type === 'lead' ? 2600 : type === 'harmony' ? 1800 : 1400;
+    filter.frequency.value = melody ? 2600 : type === 'harmony' ? 1800 : 1400;
     filter.Q.value = .45;
     // Tiny stepped vibrato only on held lead notes; no detuned chorus or reverb.
-    if (type === 'lead' && duration > .45) {
+    if (melody && type !== 'bell' && duration > .45) {
       for (let at = .24, i = 0; at < duration - .1; at += .09, i++) {
         oscillator.detune.setValueAtTime(i % 2 ? -5 : 5, time + at);
       }

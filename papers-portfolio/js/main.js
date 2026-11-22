@@ -3,7 +3,7 @@
 import { AudioEngine } from './audio/engine.js?v=reception-20261119';
 import { initSoundArchive } from './components/soundArchive.js?v=reception-20261119';
 import { SFX } from './audio/sfx.js?v=portrait-honk';
-import { Music } from './audio/music.js?v=shift-themes-2';
+import { Music } from './audio/music.js?v=shift-themes-3';
 import { initScale } from './core/scale.js?v=reception-20261119';
 import {
   makeDeskTexture, makeGrainTexture, makeRingTexture, initClock,
