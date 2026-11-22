@@ -30,6 +30,7 @@
   }
   .brand-intro__name { display: none; }
   .brand-intro__content > svg { display: block; width: auto; height: min(var(--letter-frame), 48svh); overflow: visible; }
+  .brand-intro__content > .brand-intro__r { width: calc(var(--letter-frame) * 132 / 163); }
   @media (prefers-reduced-motion: no-preference) {
     .brand-intro__content { --spread: 530ms 1110ms cubic-bezier(.3,.1,.24,1) both; }
     .brand-intro__content > .entry-logo {
@@ -38,7 +39,7 @@
     }
     .brand-intro__r {
       --spread-from: calc(-1 * var(--letter-travel));
-      animation: brand-r-arrive 650ms 430ms cubic-bezier(.23,.72,.32,1) both, brand-spread var(--spread);
+      animation: brand-r-draw 470ms 625ms cubic-bezier(.3,.2,.32,1) both, brand-spread var(--spread);
     }
     .brand-intro__ai { animation: brand-ai-reveal var(--spread); }
   }
@@ -51,11 +52,10 @@
   from { clip-path: inset(0 50%); }
   to { clip-path: inset(0); }
 }
-@keyframes brand-r-arrive {
-  0% { opacity: 0; transform: translateX(42px) scale(.88, 1.12) rotate(6deg); }
-  50% { opacity: 1; transform: translateX(-5px) scale(1.05, .95) rotate(-2deg); }
-  76% { transform: translateX(1px) scale(.99, 1.01); }
-  100% { opacity: 1; transform: none; }
+@keyframes brand-r-draw {
+  0% { clip-path: polygon(0 0, 12% 0, 12% 23%, 0 23%); }
+  48% { clip-path: polygon(0 0, 78% 0, 58% 48%, 0 48%); }
+  100% { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
 }
 .entry-logo__curve { filter: drop-shadow(2px 2px 3px #216dd066); }
 .entry-logo__stem { filter: drop-shadow(2px 2px 3px #8d10c766); }
