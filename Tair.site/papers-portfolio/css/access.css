@@ -253,7 +253,7 @@ html[lang="en"] .request__title { font-size: 13px; }
     animation: brand-ai-reveal var(--spread);
   }
   .brand-intro.is-playing .brand-intro__ai > path {
-    animation: brand-gate-panel 690ms 2560ms cubic-bezier(.5,0,.25,1) forwards;
+    animation: brand-letter-exit 690ms 2560ms cubic-bezier(.5,0,.25,1) forwards;
   }
   .brand-intro__a { --gate-exit: -100vw; }
   .brand-intro__i { --gate-exit: 100vw; }
@@ -265,6 +265,11 @@ html[lang="en"] .request__title { font-size: 13px; }
 @keyframes brand-gate-panel {
   from { translate: 0 0; }
   to { translate: var(--gate-exit) 0; }
+}
+@keyframes brand-letter-exit {
+  0% { transform: translateX(0); visibility: visible; }
+  99.99% { transform: translateX(var(--gate-exit)); visibility: visible; }
+  100% { transform: translateX(var(--gate-exit)); visibility: hidden; }
 }
 @keyframes brand-gate-finish {
   0%, 88% { opacity: 1; animation-timing-function: ease-in-out; }
