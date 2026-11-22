@@ -1,16 +1,21 @@
-/** A quiet three-note cue. If autoplay is blocked, unlock on entry interaction. */
-export function playBrandSound({ waitForIntroTap = false } = {}) {
+/** Sound follows the active intro, including when playback unlocks during it. */
+export function playBrandSound(intro, { desktop }) {
   const Audio = window.AudioContext || window.webkitAudioContext;
   if (!Audio) return;
   let context;
   try { context = new Audio(); } catch { return; }
 
   const listeners = new AbortController();
+  const startedAt = performance.now();
   let played = false;
   function play() {
     if (played || context.state !== 'running') return;
     played = true;
     listeners.abort();
+    if (desktop) {
+      playAir(context, (performance.now() - startedAt) / 1000);
+      return;
+    }
     const start = context.currentTime + .025;
     const timbre = context.createPeriodicWave(
       new Float32Array(4),
@@ -39,13 +44,41 @@ export function playBrandSound({ waitForIntroTap = false } = {}) {
     if (played) return;
     void context.resume().then(play).catch(() => {});
   }
-  if (waitForIntroTap && context.state !== 'running' && navigator.getAutoplayPolicy?.(context) !== 'allowed') {
-    return unlock;
-  }
-  const options = { signal: listeners.signal, capture: true };
-  for (const selector of ['#brand-intro', '#language-screen']) {
-    document.querySelector(selector).addEventListener('click', unlock, options);
-  }
+  intro.addEventListener('click', unlock, { signal: listeners.signal });
   if (context.state === 'running') play();
-  else if (navigator.getAutoplayPolicy?.(context) === 'allowed') unlock();
+  else unlock();
+  return () => {
+    listeners.abort();
+    if (context.state !== 'closed') void context.close().catch(() => {});
+  };
+}
+
+function playAir(context, elapsed) {
+  const wind = context.createBuffer(1, Math.ceil(context.sampleRate * .8), context.sampleRate);
+  const samples = wind.getChannelData(0);
+  for (let i = 0; i < samples.length; i++) samples[i] = Math.random() * 2 - 1;
+
+  // Offsets follow the CSS for letter separation, the falling line, and the gates.
+  for (const [offset, duration, from, to, volume] of [
+    [1.11, .46, 650, 1350, .15],
+    [1.69, .70, 1500, 370, .18],
+    [2.56, .67, 530, 210, .22],
+  ]) {
+    if (offset < elapsed - .07) continue;
+    const at = context.currentTime + Math.max(.025, offset - elapsed);
+    const air = context.createBufferSource();
+    const filter = context.createBiquadFilter();
+    const envelope = context.createGain();
+    air.buffer = wind;
+    filter.type = 'bandpass';
+    filter.Q.value = .65;
+    filter.frequency.setValueAtTime(from, at);
+    filter.frequency.exponentialRampToValueAtTime(to, at + duration);
+    envelope.gain.setValueAtTime(.0001, at);
+    envelope.gain.linearRampToValueAtTime(volume, at + duration * .37);
+    envelope.gain.exponentialRampToValueAtTime(.0001, at + duration);
+    air.connect(filter).connect(envelope).connect(context.destination);
+    air.start(at);
+    air.stop(at + duration);
+  }
 }

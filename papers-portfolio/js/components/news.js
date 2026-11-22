@@ -12,7 +12,7 @@ function readableItems(items) {
     if (!item || typeof item.title !== 'string' || !Number.isFinite(Date.parse(item.publishedAt))) return false;
     try {
       const url = new URL(item.href);
-      return url.protocol === 'https:' && ['news.google.com'].some(domain => url.hostname === domain || url.hostname.endsWith('.' + domain));
+      return url.protocol === 'https:' && ['news.google.com', 'tengrinews.kz', 'euronews.com'].some(domain => url.hostname === domain || url.hostname.endsWith('.' + domain));
     } catch { return false; }
   }).slice(0, 8);
 }

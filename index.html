@@ -34,7 +34,7 @@
   <link rel="stylesheet" href="css/inspection.css">
   <link rel="stylesheet" href="css/motion.css?v=polish-20261119">
   <link rel="stylesheet" href="css/gallery.css?v=reception-20261119">
-  <link rel="stylesheet" href="css/access.css?v=brand-v7-gate-sync">
+  <link rel="stylesheet" href="css/access.css?v=brand-v7-air">
   <link rel="stylesheet" href="css/sound-archive.css?v=footer-1">
   <link rel="stylesheet" href="css/board.css?v=compact-20261119">
   <link rel="stylesheet" href="css/refinements.css?v=desktop-scrollbars-1">
@@ -79,7 +79,6 @@
       </g>
     </svg>
     </div>
-  <button type="button" class="brand-intro__start" hidden>Старт / Start</button>
   </div>
   <section id="language-screen" class="language-screen" aria-labelledby="language-title" data-no-translate>
     <img src="assets/img/eagle.svg" alt="" width="144" height="117">
@@ -204,18 +203,13 @@
       </div>
       <ol class="dispatch__items" data-news-items aria-live="polite" aria-busy="true"></ol>
       <p class="dispatch__status" data-news-status role="status">Подключаем архив новостей…</p>
-      <h3 class="dispatch__archive-title">О ВЫПУСКЕ</h3>
-      <section class="dispatch__lead" aria-label="Источники новостей">
-        <p>В первую очередь — Казахстан. Затем — главные темы мира. Заголовки за последние три дня из Казинформа, Tengrinews, официальных ведомств и международных редакций.</p>
-        <p>Откройте сообщение, чтобы прочитать материал у источника. Порядок не является рейтингом популярности.</p>
-      </section>
       <footer class="dispatch__footer">Автообновление · 15 минут</footer>
     </aside>
 
     <aside class="desk-file" aria-label="Краткая карточка кандидата">
       <h2 class="desk-file__heading">КАРТОЧКА КАНДИДАТА</h2>
       <div class="desk-file__body">
-        <div class="desk-file__photo" data-desk-photo></div>
+        <button class="desk-file__photo" type="button" data-desk-photo data-portrait-sound aria-label="Портрет кандидата"></button>
         <dl class="desk-file__fields">
           <dt>ИМЯ</dt><dd data-dossier-name>ТАИР</dd>
           <dt>ВОЗРАСТ</dt><dd data-dossier-age>18</dd>
@@ -263,7 +257,7 @@
         <div class="passport__docno">АРСТОТЦКА · <span data-passport-number></span></div>
         </header>
         <div class="passport__body">
-          <div class="passport__photo"></div>
+          <button class="passport__photo" type="button" data-portrait-sound aria-label="Портрет в паспорте"></button>
           <div class="passport__fields"></div>
         </div>
         <div class="passport__barcode" aria-hidden="true"></div>
@@ -439,6 +433,6 @@
     </main>
   </noscript>
 
-  <script type="module" src="js/main.js?v=brand-v7-soft"></script>
+  <script type="module" src="js/main.js?v=brand-v7-air"></script>
 </body>
 </html>

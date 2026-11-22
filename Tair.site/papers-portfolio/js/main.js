@@ -2,7 +2,7 @@
 
 import { AudioEngine } from './audio/engine.js?v=reception-20261119';
 import { initSoundArchive } from './components/soundArchive.js?v=reception-20261119';
-import { SFX } from './audio/sfx.js?v=reception-20261119';
+import { SFX } from './audio/sfx.js?v=portrait-squeak';
 import { Music } from './audio/music.js?v=reception-20261119';
 import { initScale } from './core/scale.js?v=reception-20261119';
 import {
@@ -13,7 +13,7 @@ import { initStartScreen } from './components/startScreen.js?v=reception-2026111
 import { initBook } from './components/book.js?v=reception-20261119';
 import { initDocuments } from './components/documents.js?v=reception-20261119';
 import { initReceipts } from './components/receipts.js?v=reception-20261119';
-import { initNews } from './components/news.js?v=reception-20261119';
+import { initNews } from './components/news.js?v=direct-feeds';
 import { initEzic, initPenalty } from './components/ezic.js?v=reception-20261119';
 import { bus } from './core/bus.js?v=reception-20261119';
 import { CONTENT } from './config/content.js?v=reception-20261119';
@@ -27,7 +27,7 @@ import { initVisitorGuide } from './components/visitorGuide.js?v=reception-20261
 import { initBoard } from './components/board.js?v=board-return-1';
 import { initSecrets } from './components/secrets.js?v=reception-20261119';
 import { initReactions } from './components/reactions.js?v=reception-20261119';
-import { playBrandSound } from './audio/brandSound.js?v=3';
+import { playBrandSound } from './audio/brandSound.js?v=4';
 
 async function loadRequiredFonts() {
   if (!document.fonts?.load) return;
@@ -46,25 +46,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   initCaptureProtection(audio);
   const intro = document.querySelector('#brand-intro');
   const motion = !matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const touchIntro = motion && matchMedia('(pointer: coarse)').matches;
-  const startSound = playBrandSound({ waitForIntroTap: touchIntro });
-  if (startSound) {
-    const start = intro.querySelector('.brand-intro__start');
-    intro.classList.add('is-awaiting-start');
-    start.hidden = false;
-    start.focus({ preventScroll: true });
-    await new Promise(resolve => start.addEventListener('click', () => {
-      startSound();
-      start.hidden = true;
-      intro.classList.remove('is-awaiting-start');
-      resolve();
-    }, { once: true }));
-  }
   if (motion) {
     const languageScreen = document.querySelector('#language-screen');
     const desktop = matchMedia('(min-width: 800px) and (pointer: fine)').matches;
     languageScreen.inert = true;
+    const finishSound = playBrandSound(intro, { desktop });
     await stepAnim(intro, 'is-playing', desktop ? 3710 : 2110);
+    finishSound?.();
     languageScreen.inert = false;
   }
   intro.hidden = true;
@@ -95,6 +83,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     await loadRequiredFonts();
     const deskPhoto = document.querySelector('[data-desk-photo]');
     if (deskPhoto) deskPhoto.replaceChildren(await makePortrait(CONTENT.passport.photo, 32, 42, CONTENT.passport.pixelArt));
+    for (const portrait of document.querySelectorAll('[data-portrait-sound]')) {
+      portrait.addEventListener('click', () => audio.play('portraitSqueak'));
+    }
     const dossierValues = [
       ['[data-dossier-name]', CONTENT.owner.givenName],
       ['[data-dossier-age]', String(CONTENT.passport.issueYear - CONTENT.passport.birthYear)],

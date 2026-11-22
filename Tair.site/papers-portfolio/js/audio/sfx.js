@@ -84,6 +84,11 @@ const def = (group, label, dur, level, build, extra = {}) => ({
   ...extra,
 });
 export const SFX = {
+  portraitSqueak: def('СИГНАЛЫ', 'Игрушечный писк', .22, .32, (c, d, t) => {
+    tone(c, d, t, 520, .065, 'triangle', .48, 1260);
+    tone(c, d, t + .055, 1240, .14, 'triangle', .38, 690);
+    tone(c, d, t + .069, 1810, .065, 'sine', .10, 940);
+  }),
   hover: def(
     'УПРАВЛЕНИЕ',
     'Наведение',
