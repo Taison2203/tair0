@@ -207,11 +207,44 @@ const responses = {
   'last-stamp': [['Bb', 82, 86, 89, 86], ['C', 84, 79, 88, 84], ['Dm', 86, 81, 77, 81], ['A', 85, 81, 76, 73]],
 };
 
+// Opening motifs are voiced independently of the main statement.
+// A zero is a rest at that position, not a silent prelude.
+const openings = {
+  'red-order': ['salute', ['Dm', 62, 62, 68, 69, 62], ['A', 64, 61, 57, 61, 69]],
+  'iron-watch': ['march', ['Dm', 57, 62, 65, 69, 62], ['Bb', 58, 65, 70, 74, 70]],
+  'alarm-at-station': ['signal', ['Gm', 79, 74, 79, 77], ['A', 76, 73, 69, 0]],
+  'parade-ground': ['salute', ['Dm', 62, 65, 69, 74, 72], ['F', 72, 69, 77, 76, 72]],
+  'archive-signal': ['signal', ['Gm', 0, 74, 70, 0], ['Bb', 77, 74, 72, 70]],
+  'last-train': ['sway', ['Gm', 74, 70, 67, 62], ['Bb', 0, 65, 70, 74]],
+  'winter-station': ['legato', ['Gm', 74, 70, 65], ['Bb', 65, 62, 0]],
+  'unanswered-letter': ['legato', ['Dm', 69, 65, 64], ['Bb', 65, 62, 65]],
+  'empty-yard': ['echo', ['Dm', 69, 62, 74, 65], ['Bb', 77, 74, 0, 70]],
+  'distant-window': ['sway', ['Bb', 70, 77, 74, 72], ['F', 69, 72, 77, 69]],
+  'after-lights-out': ['legato', ['F', 69, 72, 65], ['C', 67, 64, 60]],
+  'night-shift': ['echo', ['Dm', 62, 65, 69, 65], ['A', 64, 61, 0, 57]],
+  'paper-route': ['march', ['Dm', 62, 65, 69, 72, 69], ['F', 65, 69, 72, 77, 72]],
+  'morning-report': ['sway', ['F', 65, 69, 72, 77], ['C', 76, 72, 67, 64]],
+  'pocket-radio': ['skip', ['C', 72, 76, 79, 84, 79], ['F', 81, 77, 72, 69, 72]],
+  'queue-dance': ['sway', ['F', 65, 72, 69, 74], ['Bb', 70, 74, 77, 82]],
+  'commandants-tea': ['skip', ['F', 77, 72, 69, 72, 74], ['C', 76, 67, 72, 76, 79]],
+  'last-stamp': ['salute', ['F', 77, 81, 84, 81, 77], ['Bb', 82, 77, 74, 70, 74]],
+};
+const entrances = {
+  salute: [[0, 1.9], [2, 1.4], [4, 2.8], [8, 2.8], [12, 3]],
+  march: [[0, 2.7], [3, .8], [4, 2.9], [8, 3.1], [12, 2.8]],
+  signal: [[1, 1.3], [3, 1.7], [7, 2.5], [12, 2.3]],
+  sway: [[0, 4.9], [6, 2.2], [9, 2.2], [12, 3.1]],
+  legato: [[0, 6.4], [7, 3.9], [11, 4.5]],
+  echo: [[0, 2.2], [3, 1.5], [8, 2.7], [13, 1.9]],
+  skip: [[0, 1.7], [3, 1.5], [6, 2.1], [10, 1.6], [13, 2.3]],
+};
+
 function arrange(theme) {
   const barCount = Math.round(theme.bpm / 4);
   const score = theme.bars;
   const sparse = theme.rhythm === 'sparse';
-  const introCount = barCount >= 24 ? 4 : 2;
+  const [entryStyle, ...entryBars] = openings[theme.id];
+  const introCount = entryBars.length;
   const outroCount = barCount >= 24 ? 3 : 2;
   const statement = score.slice(0, 8);
   const answer = responses[theme.id].map(([chord, ...pitches]) => [
@@ -220,8 +253,9 @@ function arrange(theme) {
       : []),
   ]);
   const excerpt = (bar, count) => [bar[0], bar[1].slice(0, count)];
-  const intro = Array.from({ length: introCount }, (_, i) =>
-    excerpt(statement[i], i === 0 ? 1 : 2));
+  const intro = entryBars.map(([chord, ...pitches]) => [
+    chord, pitches.flatMap((pitch, i) => pitch ? [[...entrances[entryStyle][i], pitch]] : []),
+  ]);
   const developmentCount = Math.floor((barCount - introCount - outroCount - statement.length) / 2);
   const development = Array.from({ length: developmentCount }, (_, i) =>
     i < answer.length ? answer[i] : score[(i + 2) % score.length]);
@@ -233,7 +267,7 @@ function arrange(theme) {
   return {
     ...theme, bpm: barCount * 4,
     bars: [...intro, ...statement, ...development, ...peak, ...outro],
-    introCount, peakStart: intro.length + statement.length + development.length,
+    introCount, entryStyle, peakStart: intro.length + statement.length + development.length,
     outroStart: barCount - outroCount,
   };
 }
@@ -315,7 +349,7 @@ export class Music {
     this.startedAt = this.next;
     musicBus.gain.cancelScheduledValues(ctx.currentTime);
     musicBus.gain.setValueAtTime(0, ctx.currentTime);
-    musicBus.gain.linearRampToValueAtTime(LEVEL, ctx.currentTime + (this.onTrackEnd ? .14 : 1.4));
+    musicBus.gain.linearRampToValueAtTime(LEVEL, ctx.currentTime + (this.onTrackEnd ? .14 : .38));
     this.pump();
     this.timer = setInterval(() => this.pump(), 30);
   }
@@ -446,8 +480,8 @@ export class Music {
     const opening = bar < theme.introCount;
     const ending = bar >= theme.outroStart;
     const climax = bar >= theme.peakStart && !ending;
-    if (opening) level *= .60 + .32 * bar / theme.introCount;
-    if (climax) level *= 1.12;
+    if (opening) level *= ['echo', 'legato'].includes(theme.entryStyle) ? .88 : .98;
+    if (climax) level *= 1.07;
     if (ending) level *= .78 - .16 * (bar - theme.outroStart);
     const [chordName, melody] = theme.bars[bar];
     const chord = CHORDS[chordName];
@@ -474,7 +508,7 @@ export class Music {
       note('harmony', chord.arp[1] + 12, 2.8, bridge ? .018 : .03);
     }
 
-    const drums = !bridge && !ending && (!opening || bar === theme.introCount - 1);
+    const drums = !bridge && !ending && (!opening || theme.entryStyle !== 'echo');
     if (drums && (position === 0 || ((march || answer) && position === 8))) this.kick(time, level);
     if (drums && (position === 12 || ((march || bar >= 4) && position === 4))) {
       this.noise(time, .105, 'bandpass', 1700, .075 * level);
