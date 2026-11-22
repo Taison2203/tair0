@@ -27,6 +27,7 @@ import { initVisitorGuide } from './components/visitorGuide.js?v=reception-20261
 import { initBoard } from './components/board.js?v=board-return-1';
 import { initSecrets } from './components/secrets.js?v=reception-20261119';
 import { initReactions } from './components/reactions.js?v=reception-20261119';
+import { playBrandSound } from './audio/brandSound.js?v=1';
 
 async function loadRequiredFonts() {
   if (!document.fonts?.load) return;
@@ -43,12 +44,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   const audio = new AudioEngine(SFX);
   initReceipts(audio);
   initCaptureProtection(audio);
+  const intro = document.querySelector('#brand-intro');
+  playBrandSound();
   if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    const intro = document.querySelector('#brand-intro');
-    intro.hidden = false;
     await stepAnim(intro, 'is-playing', 2110);
-    intro.hidden = true;
   }
+  intro.hidden = true;
   await chooseLanguage();
   const duplicateButton = document.querySelector('.dup-btn');
   duplicateButton?.querySelectorAll('br').forEach(br => br.replaceWith(document.createTextNode(' ')));
