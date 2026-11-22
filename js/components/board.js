@@ -28,13 +28,19 @@ export function initBoard(audio){
   const form=node('form',{class:'board-editor',hidden:''});
   const title=node('input',{name:'title',required:'',maxlength:'120',autocomplete:'off'});
   const body=node('textarea',{name:'body',maxlength:'6000',rows:'7'});
-  const file=node('input',{type:'file',accept:'image/png,image/jpeg,image/webp,application/pdf,text/plain,application/zip'});
+  const file=node('input',{type:'file',accept:'image/*,application/pdf,text/plain,application/zip'});
   const published=node('input',{type:'checkbox'}),pinned=node('input',{type:'checkbox'});
   const fileStatus=node('p',{class:'board-file-status'});
   const submit=node('button',{type:'submit',class:'btn',text:words('ПОСТАВИТЬ ПЕЧАТЬ И СОХРАНИТЬ','STAMP AND SAVE')});
+  const receipt=node('p',{class:'board-file-status',role:'status','aria-live':'polite',hidden:''});
+  function feedback(text){
+    receipt.hidden=false;
+    receipt.textContent=text;
+  }
   const editorTitle=node('h3',{text:words('НОВАЯ ЗАПИСЬ','NEW NOTICE')});
   const label=(text,control)=>node('label',{class:'board-field'},node('span',{text}),control);
   form.append(editorTitle,label(words('Заголовок','Title'),title),label(words('Текст','Text'),body),label(words('Вложение · до 6 МБ','Attachment · up to 6 MB'),file),node('p',{class:'board-help',text:words('PNG, JPEG, WebP, PDF, TXT, ZIP. Метаданные фотографий удаляются перед загрузкой. Файлы станут доступны всем после публикации.','PNG, JPEG, WebP, PDF, TXT, ZIP. Photo metadata is removed before upload. Files become public when published.')}),fileStatus,node('button',{type:'button',class:'board-tool',text:words('Убрать вложение','Remove attachment'),onClick:()=>{fileId=null;file.value='';fileStatus.textContent=words('Без вложения','No attachment');}}),label(words('Опубликовать для всех','Publish for everyone'),published),label(words('Закрепить наверху','Pin to top'),pinned),submit,node('button',{type:'button',class:'board-tool',text:words('Новая запись','New notice'),onClick:resetEditor}),node('button',{type:'button',class:'board-tool',text:words('Выйти из кабинета','Sign out'),onClick:logout}));
+  submit.after(receipt);
   panel.append(loginBox,form);
   board.append(node('div',{class:'board-topbar'},node('header',{class:'board-header'},node('p',{class:'board-kicker',text:words('ЛИЧНЫЙ АРХИВ · ТАИР','PERSONAL ARCHIVE · TAIR')}),heading,sub),node('div',{class:'board-tools'},refresh,owner,archive)),status,panel,list);
   dialog.append(close,board);document.body.append(dialog);
@@ -115,21 +121,42 @@ export function initBoard(audio){
     if(!body.value.trim()&&!file.files[0]&&!fileId){message(words('Добавьте текст или вложение.','Add text or an attachment.'));return;}
     const token=session,postPath='/api/admin/posts'+(editing?'/'+editing:''),method=editing?'PUT':'POST';
     const draft={title:title.value.trim(),body:body.value.trim(),published:published.checked,pinned:pinned.checked,fileId};
-    audio.play('transmit');busy=true;submit.disabled=true;message(words('Регистрируем запись…','Registering the notice…'));
+    feedback(words('Готовим запись…','Preparing notice…'));audio.play('transmit');busy=true;submit.disabled=true;message(words('Регистрируем запись…','Registering the notice…'));
     try{
       if(file.files[0]){
-        let upload=file.files[0];if(upload.size>6*1024*1024)throw Error(words('Максимум 6 МБ на файл.','Maximum file size is 6 MB.'));
-        if(upload.type.startsWith('image/'))upload=await cleanImage(upload);
+        let upload=file.files[0];
+        if(upload.type.startsWith('image/') || /\.(jpe?g|png|webp|heic|heif|avif)$/i.test(upload.name))upload=await cleanImage(upload);
+        if(upload.size>6*1024*1024)throw Error(words('Максимум 6 МБ на файл.','Maximum file size is 6 MB.'));
+        feedback(words('Загружаем вложение…','Uploading attachment…'));
         if(session!==token)return;
         const saved=await request('/api/admin/uploads?name='+encodeURIComponent(upload.name),{method:'POST',headers:{'Content-Type':upload.type||'application/zip'},body:upload},token);if(session!==token)return;draft.fileId=saved.id;fileId=saved.id;file.value='';fileStatus.textContent=saved.name;
       }
       await request(postPath,{method,headers:{'Content-Type':'application/json'},body:JSON.stringify(draft)},token);
       if(session!==token)return;
-      audio.play('stamp');form.classList.add('is-filed');setTimeout(()=>form.classList.remove('is-filed'),600);resetEditor();await loadPosts();if(session===token)message(words('ЗАПИСЬ СОХРАНЕНА. Печать поставлена.','NOTICE SAVED. Stamped and filed.'));
-    }catch(e){if(session===token)message(e.message);}finally{if(session===token){busy=false;submit.disabled=false;}}
+      feedback(draft.published?words('✓ ОПУБЛИКОВАНО','✓ PUBLISHED'):words('✓ ЧЕРНОВИК СОХРАНЁН','✓ DRAFT SAVED'));
+      audio.play(draft.published?'approve':'stamp');
+      if(!matchMedia('(prefers-reduced-motion: reduce)').matches)receipt.animate?.([{opacity:.4,transform:'scale(.96)'},{opacity:1,transform:'scale(1)'}],{duration:300});
+      form.classList.add('is-filed');setTimeout(()=>form.classList.remove('is-filed'),600);resetEditor();await loadPosts();if(session===token)message(words('ЗАПИСЬ СОХРАНЕНА. Печать поставлена.','NOTICE SAVED. Stamped and filed.'));
+    }catch(e){if(session===token){feedback(e.message);message(e.message);audio.play('deny');}}finally{if(session===token){busy=false;submit.disabled=false;}}
   });
   async function cleanImage(input){
-    const image=await createImageBitmap(input);try{if(image.width>10000||image.height>10000)throw Error(words('Изображение слишком большое.','Image dimensions are too large.'));const ratio=Math.min(1,2048/Math.max(image.width,image.height)),canvas=document.createElement('canvas');canvas.width=Math.round(image.width*ratio);canvas.height=Math.round(image.height*ratio);canvas.getContext('2d').drawImage(image,0,0,canvas.width,canvas.height);const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/webp',.92));if(!blob)throw Error(words('Не удалось подготовить фото.','Could not prepare the photo.'));return new File([blob],input.name.replace(/\.[^.]+$/,'')+'.webp',{type:'image/webp'});}finally{image.close();}
+    const url=URL.createObjectURL(input);
+    try{
+      const image=new Image();
+      image.src=url;
+      try{await image.decode();}catch{throw Error(words('Телефон не смог прочитать фото. Выберите JPEG или PNG.','Could not read this photo. Choose a JPEG or PNG.'));}
+      const ratio=Math.min(1,2048/Math.max(image.naturalWidth,image.naturalHeight));
+      const canvas=document.createElement('canvas');
+      canvas.width=Math.max(1,Math.round(image.naturalWidth*ratio));
+      canvas.height=Math.max(1,Math.round(image.naturalHeight*ratio));
+      const ctx=canvas.getContext('2d');
+      ctx.fillStyle='#fff';
+      ctx.fillRect(0,0,canvas.width,canvas.height);
+      ctx.drawImage(image,0,0,canvas.width,canvas.height);
+      const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',.87));
+      if(!blob)throw Error(words('Не удалось подготовить фото.','Could not prepare photo.'));
+      return new File([blob],input.name.replace(/\.[^.]+$/,'')+(blob.type==='image/png'?'.png':'.jpg'),{type:blob.type});
+    }finally{URL.revokeObjectURL(url);}
   }
   function open(){opener=document.activeElement;dialog.showModal();board.scrollTop=0;audio.play('paper');loadPosts();if(login)checkLogin();}
   dialog.addEventListener('close',()=>{listRevision++;clearTimeout(pollTimer);audio.play('documentClose');stopViews.forEach(stop=>stop());stopViews=[];opener?.focus({preventScroll:true});});

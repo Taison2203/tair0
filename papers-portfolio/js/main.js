@@ -23,7 +23,7 @@ import { initAtmosphere } from './components/atmosphere.js?v=reception-20261119'
 import { chooseLanguage } from './core/i18n.js?v=reception-20261119';
 import { initCaptureProtection } from './components/captureProtection.js?v=reception-20261119';
 import { initVisitorGuide } from './components/visitorGuide.js?v=reception-20261119';
-import { initBoard } from './components/board.js?v=reception-20261119';
+import { initBoard } from './components/board.js?v=photo-20261122';
 import { initSecrets } from './components/secrets.js?v=reception-20261119';
 import { initReactions } from './components/reactions.js?v=reception-20261119';
 
