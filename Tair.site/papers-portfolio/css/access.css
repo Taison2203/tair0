@@ -1,6 +1,22 @@
 /* One entry choice, with the same paper, ink and eagle as the checkpoint. */
 .language-screen { position: fixed; inset: 0; z-index: 1100; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; padding: 32px 20px; overflow-y: auto; background: var(--desk-0); color: var(--paper); }
-.entry-logo { display: block; width: clamp(94px, 18vw, 132px); height: auto; flex: none; overflow: visible; }
+.language-screen > img { width: 144px; height: 117px; image-rendering: pixelated; }
+.brand-intro {
+  position: fixed;
+  inset: 0;
+  z-index: 1101;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(10px, 3vh, 24px);
+  overflow: hidden;
+  color: #fff;
+  background: #000;
+}
+.brand-intro:not([hidden]) + .language-screen { display: none; }
+.entry-logo { display: block; width: clamp(116px, 19vw, 176px); max-height: 48svh; height: auto; overflow: visible; }
+.brand-intro__name { font: 500 clamp(24px, 4vw, 36px)/1.1 system-ui, sans-serif; letter-spacing: .045em; }
 .entry-logo__curve { filter: drop-shadow(2px 2px 3px #216dd066); }
 .entry-logo__stem { filter: drop-shadow(2px 2px 3px #8d10c766); }
 .language-screen__serial { font: 10px/1.6 var(--font-ui); letter-spacing: 4px; color: var(--olive-d); margin: 0; }
@@ -79,11 +95,14 @@ html[lang="en"] .request__title { font-size: 13px; }
     background: linear-gradient(transparent 47%, rgb(207 199 154 / 14%) 50%, transparent 53%);
     animation: entry-scan 720ms ease-out both;
   }
+  .language-screen > img { animation: eagle-reveal 550ms steps(5) both; }
+  .brand-intro.is-playing { animation: brand-finish 2050ms ease both; }
   .entry-logo rect { transform-box: fill-box; transform-origin: center; }
-  .entry-logo__blue { --entry-offset: -160px; animation: entry-pill 680ms cubic-bezier(.2,.75,.24,1) both; }
-  .entry-logo__violet { --entry-offset: 160px; animation: entry-pill 680ms 75ms cubic-bezier(.2,.75,.24,1) both; }
-  .entry-logo__curve { animation: entry-curve 630ms 70ms cubic-bezier(.25,.75,.24,1) both; }
-  .entry-logo .entry-logo__stem { transform-origin: center top; animation: entry-stem 620ms 180ms cubic-bezier(.2,.75,.24,1) both; }
+  .entry-logo__blue { --entry-offset: -210px; animation: entry-pill 990ms cubic-bezier(.22,.7,.3,1) both; }
+  .entry-logo__violet { --entry-offset: 210px; animation: entry-pill 990ms 130ms cubic-bezier(.22,.7,.3,1) both; }
+  .entry-logo__curve { animation: entry-curve 840ms 135ms cubic-bezier(.25,.75,.24,1) both; }
+  .entry-logo .entry-logo__stem { transform-origin: center top; animation: entry-stem 920ms 330ms cubic-bezier(.22,.7,.3,1) both; }
+  .brand-intro__name { animation: brand-name 720ms 670ms cubic-bezier(.2,.7,.3,1) both; }
   .language-screen__serial, .language-screen h1 {
     animation: entry-paper 420ms 110ms ease-out both;
   }
@@ -115,6 +134,16 @@ html[lang="en"] .request__title { font-size: 13px; }
 @keyframes entry-paper {
   from { translate: 0 12px; opacity: .35; }
   to { translate: 0; opacity: 1; }
+}
+@keyframes brand-name {
+  0% { opacity: 0; transform: translateY(18px) scale(.92); }
+  60% { opacity: 1; transform: translateY(-3px) scale(1.035); }
+  82% { transform: translateY(1px) scale(.994); }
+  100% { opacity: 1; transform: none; }
+}
+@keyframes brand-finish {
+  0%, 84% { opacity: 1; }
+  100% { opacity: 0; }
 }
 @media print {
   body > :not(#capture-shield) { display: none !important; }

@@ -21,6 +21,7 @@ import { makePortrait } from './core/pixelate.js?v=reception-20261119';
 import { initShift } from './components/shift.js?v=reception-20261119';
 import { initAtmosphere } from './components/atmosphere.js?v=reception-20261119';
 import { chooseLanguage } from './core/i18n.js?v=reception-20261119';
+import { stepAnim } from './core/dom.js?v=reception-20261119';
 import { initCaptureProtection } from './components/captureProtection.js?v=reception-20261119';
 import { initVisitorGuide } from './components/visitorGuide.js?v=reception-20261119';
 import { initBoard } from './components/board.js?v=board-return-1';
@@ -42,6 +43,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   const audio = new AudioEngine(SFX);
   initReceipts(audio);
   initCaptureProtection(audio);
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const intro = document.querySelector('#brand-intro');
+    intro.hidden = false;
+    await stepAnim(intro, 'is-playing', 2110);
+    intro.hidden = true;
+  }
   await chooseLanguage();
   const duplicateButton = document.querySelector('.dup-btn');
   duplicateButton?.querySelectorAll('br').forEach(br => br.replaceWith(document.createTextNode(' ')));
