@@ -16,6 +16,11 @@
 }
 .brand-intro:not([hidden]) + .language-screen { display: none; }
 #desk[inert] { visibility: hidden; }
+@media (pointer: coarse) {
+  html:has(#desk[inert]), body:has(#desk[inert]) { overflow: hidden; }
+  .brand-intro, .language-screen, #start-screen { scrollbar-width: none; scrollbar-gutter: auto; }
+  .brand-intro::-webkit-scrollbar, .language-screen::-webkit-scrollbar, #start-screen::-webkit-scrollbar { display: none; }
+}
 .brand-intro__content { display: flex; flex-direction: column; align-items: center; gap: inherit; }
 .brand-intro:not(.is-playing) .brand-intro__content * { animation-play-state: paused; }
 [data-portrait-sound] { padding: 0; cursor: pointer; touch-action: manipulation; }
