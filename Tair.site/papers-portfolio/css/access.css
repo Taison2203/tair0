@@ -42,6 +42,15 @@
   }
   .brand-intro__name { display: none; }
   .brand-intro__content > svg { display: block; width: auto; height: min(var(--letter-frame), 48svh); overflow: visible; }
+  .brand-intro__ai {
+    display: block;
+    position: relative;
+    flex: none;
+    width: calc(var(--letter-frame) * 760 / 790);
+    height: var(--letter-frame);
+  }
+  .brand-intro__letter { position: absolute; inset: 0; }
+  .brand-intro__letter > svg { display: block; width: 100%; height: 100%; }
   .brand-intro__content > .brand-intro__r { width: calc(var(--letter-frame) * 132 / 163); }
   @media (prefers-reduced-motion: no-preference) {
     .brand-intro__content { --spread: 530ms 1110ms cubic-bezier(.3,.1,.24,1) both; }
@@ -252,11 +261,11 @@ html[lang="en"] .request__title { font-size: 13px; }
     mix-blend-mode: difference;
     animation: brand-ai-reveal var(--spread);
   }
-  .brand-intro.is-playing .brand-intro__ai > path {
+  .brand-intro.is-playing .brand-intro__letter {
     animation: brand-letter-exit 690ms 2560ms cubic-bezier(.5,0,.25,1) forwards;
   }
-  .brand-intro__a { --gate-exit: -100vw; }
-  .brand-intro__i { --gate-exit: 100vw; }
+  .brand-intro__letter--a { --gate-exit: -100vw; }
+  .brand-intro__letter--i { --gate-exit: 100vw; }
 }
 @keyframes brand-comet {
   from { transform: translateY(0); }
