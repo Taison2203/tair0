@@ -72,7 +72,8 @@ export function initBoard(audio){
       const fid=p.fileId||p.file_id;
       if(fid&&(!session||p.published)){
         const href=API+'/api/board/files/'+fid;
-        const a=node('a',{href,target:'_blank',rel:'noopener noreferrer',class:'board-attachment'});
+        const image=p.fileMime?.startsWith('image/');
+        const a=node('a',{href:image?'/photo/?'+encodeURIComponent(fid):href,target:'_blank',rel:'noopener noreferrer',class:'board-attachment'});
         if(p.fileMime?.startsWith('image/'))a.append(node('img',{src:href,alt:p.title,loading:'lazy',decoding:'async',referrerpolicy:'no-referrer'}));
         a.append(node('span',{text:(p.fileName||words('Вложение','Attachment'))+' · '+Math.ceil((p.fileSize||0)/1024)+' KB'}));card.append(a);
       }else if(fid)card.append(node('p',{text:words('Вложение сохранено. Доступно посетителям после публикации.','Attachment saved. Available to visitors once published.')}));

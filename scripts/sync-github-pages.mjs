@@ -30,6 +30,7 @@ function cleanPublicText(folder){for(const item of fs.readdirSync(folder,{withFi
 for(const prefix of ['', 'papers-portfolio', 'Tair.site/papers-portfolio'])
   for(const name of ['css','js'])cleanPublicText(path.join(target,prefix,name));
 fs.writeFileSync(path.join(target,'index.html'),html);
+fs.cpSync(path.join(source,'photo'),path.join(target,'photo'),{recursive:true});
 const redirect=`<!doctype html>
 <html lang="ru">
 <head>
