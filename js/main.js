@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const languageScreen = document.querySelector('#language-screen');
     const desktop = matchMedia('(min-width: 800px) and (pointer: fine)').matches;
     languageScreen.inert = true;
-    await stepAnim(intro, 'is-playing', desktop ? 4250 : 2110);
+    await stepAnim(intro, 'is-playing', desktop ? 3710 : 2110);
     languageScreen.inert = false;
   }
   intro.hidden = true;

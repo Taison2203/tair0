@@ -204,8 +204,9 @@ html[lang="en"] .request__title { font-size: 13px; }
 @media (min-width: 800px) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
   .brand-intro.is-playing {
     isolation: isolate;
-    background: white;
-    animation: brand-gate-finish 4180ms linear both;
+    --gate-light: #e5e5e5;
+    background: var(--gate-light);
+    animation: brand-gate-finish 3640ms linear both;
   }
   .brand-intro.is-playing + .language-screen { display: flex; }
   .brand-intro.is-playing .brand-intro__content { animation: none; }
@@ -234,7 +235,7 @@ html[lang="en"] .request__title { font-size: 13px; }
     height: 110%;
     border-radius: 0 0 50% 50% / 0 0 8% 8%;
     translate: -50% 0;
-    background: white;
+    background: var(--gate-light);
     animation: brand-comet 790ms 1690ms cubic-bezier(.4,0,.22,1) both;
   }
   .brand-intro.is-playing .entry-logo {
@@ -260,7 +261,7 @@ html[lang="en"] .request__title { font-size: 13px; }
   to { translate: var(--gate-exit) 0; }
 }
 @keyframes brand-gate-finish {
-  0%, 78% { opacity: 1; }
+  0%, 88% { opacity: 1; animation-timing-function: ease-in-out; }
   100% { opacity: 0; }
 }
 @media print {
