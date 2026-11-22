@@ -5,8 +5,6 @@
  * Notes use the Web Audio clock; timers only fill a short lookahead window.
  */
 
-const BPM = 78;
-const STEP_SECONDS = 60 / BPM / 4;
 const BAR_STEPS = 16;
 const LOOKAHEAD = .16;
 const LEVEL = .27;
@@ -41,7 +39,48 @@ const SCORE = [
   ['Dm', [[0, 3, 65], [4, 3, 64], [8, 5, 62]]],
   ['A',  [[0, 5, 57], [8, 2, 64], [12, 2.5, 61]]],
 ];
-const TOTAL_STEPS = SCORE.length * BAR_STEPS;
+const THEMES = [
+  {
+    // «Парадный плац»: dotted calls and a minor-key march.
+    bpm: 108, rhythm: 'march', bars: [
+      ['Dm', [[0, 3, 62], [3, 1, 62], [4, 3, 65], [8, 3, 69], [12, 3, 74]]],
+      ['Bb', [[0, 5, 70], [6, 2, 69], [8, 3, 65], [12, 3, 62]]],
+      ['Gm', [[0, 3, 67], [3, 1, 67], [4, 3, 70], [8, 3, 74], [12, 3, 72]]],
+      ['A',  [[0, 5, 69], [6, 2, 67], [8, 3, 64], [12, 3, 61]]],
+      ['F',  [[0, 3, 65], [3, 1, 67], [4, 3, 69], [8, 3, 72], [12, 3, 77]]],
+      ['C',  [[0, 5, 76], [6, 2, 72], [8, 3, 67], [12, 3, 64]]],
+      ['Bb', [[0, 3, 70], [4, 3, 69], [8, 3, 65], [12, 2, 62], [14, 2, 65]]],
+      ['A',  [[0, 3, 64], [4, 3, 61], [8, 6, 57]]],
+    ],
+  },
+  {
+    // «Сигнал из архива»: sparse, syncopated radio-like phrases.
+    bpm: 88, rhythm: 'sparse', bars: [
+      ['Gm', [[2, 2, 74], [7, 3, 70], [12, 3, 67]]],
+      ['Gm', [[0, 4, 62], [9, 2, 65], [13, 2, 67]]],
+      ['Bb', [[2, 2, 77], [7, 3, 74], [12, 3, 70]]],
+      ['A',  [[0, 4, 69], [10, 2, 64], [14, 2, 61]]],
+      ['Dm', [[2, 2, 74], [7, 3, 72], [12, 3, 69]]],
+      ['C',  [[0, 4, 67], [9, 2, 64], [13, 2, 60]]],
+      ['Bb', [[2, 3, 65], [8, 3, 70], [12, 3, 72]]],
+      ['Gm', [[0, 5, 74], [8, 5, 67]]],
+    ],
+  },
+  {
+    // «После отбоя»: a gentler descending motif for the quiet shift.
+    bpm: 71, rhythm: 'sparse', bars: [
+      ['F',  [[0, 6, 72], [8, 3, 69], [12, 3, 65]]],
+      ['C',  [[0, 4, 67], [6, 2, 64], [10, 5, 60]]],
+      ['Dm', [[0, 6, 69], [8, 3, 65], [12, 3, 62]]],
+      ['A',  [[0, 4, 64], [6, 2, 61], [10, 5, 57]]],
+      ['Bb', [[0, 4, 65], [4, 3, 70], [8, 6, 74]]],
+      ['Gm', [[0, 6, 70], [8, 3, 67], [12, 3, 62]]],
+      ['Dm', [[0, 5, 65], [8, 3, 64], [12, 3, 62]]],
+      ['A',  [[0, 6, 61], [8, 5, 64]]],
+    ],
+  },
+  { bpm: 78, rhythm: 'night', bars: SCORE },
+];
 const mtof = midi => 440 * 2 ** ((midi - 69) / 12);
 
 function makePulse(context, duty) {
@@ -80,7 +119,7 @@ export class Music {
     this.timer = null;
     this.voices = new Set();
     this.resources = null;
-    this.cycle = 0;
+    this.themeIndex = 0;
   }
 
   start() {
@@ -125,21 +164,25 @@ export class Music {
       this.next = ctx.currentTime + .08;
     }
     while (this.next < ctx.currentTime + LOOKAHEAD) {
-      this.playStep(this.step, this.next);
-      this.next += STEP_SECONDS;
-      this.step = (this.step + 1) % TOTAL_STEPS;
-      if(this.step===0)this.cycle++;
+      const theme = THEMES[this.themeIndex];
+      const stepSeconds = 60 / theme.bpm / 4;
+      this.playStep(this.step, this.next, theme, stepSeconds);
+      this.next += stepSeconds;
+      if (++this.step === theme.bars.length * BAR_STEPS) {
+        this.step = 0;
+        this.themeIndex = (this.themeIndex + 1) % THEMES.length;
+      }
     }
   }
 
-  playStep(step, time) {
+  playStep(step, time, theme, STEP_SECONDS) {
     const bar = Math.floor(step / BAR_STEPS);
     const position = step % BAR_STEPS;
-    const [chordName, melody] = SCORE[bar];
+    const [chordName, melody] = theme.bars[bar];
     const chord = CHORDS[chordName];
-    const answer = bar >= 8;
-    // Every second loop opens into a quieter bridge instead of repeating verbatim.
-    const bridge=this.cycle%2===1 && bar>=8 && bar<12;
+    const answer = bar >= theme.bars.length / 2;
+    const bridge = theme.rhythm === 'sparse';
+    const march = theme.rhythm === 'march';
 
     if (position === 0) this.tone('triangle', chord.bass, time, 5.5 * STEP_SECONDS, .34);
     if (position === 8) this.tone('triangle', chord.bass + (answer ? 12 : 0), time, 4 * STEP_SECONDS, .27);
@@ -150,11 +193,11 @@ export class Music {
       this.tone('harmony', note+(bridge?12:0), time, STEP_SECONDS * (bridge?2.5:1.5), bridge?.027:answer ? .044 : .034);
     }
     for (const [at, length, note] of melody) {
-      if (at === position && (!bridge || at<9)) this.tone('lead', note, time, STEP_SECONDS * length, bridge?.065:answer ? .105 : .09);
+      if (at === position) this.tone('lead', note, time, STEP_SECONDS * length, bridge?.065:answer ? .105 : .09);
     }
 
-    if (!bridge && (position === 0 || (answer && position === 8))) this.kick(time);
-    if (!bridge && (position === 12 || (bar >= 4 && position === 4))) {
+    if (!bridge && (position === 0 || ((march || answer) && position === 8))) this.kick(time);
+    if (!bridge && (position === 12 || ((march || bar >= 4) && position === 4))) {
       this.noise(time, .105, 'bandpass', 1700, .075);
     }
     if (answer && !bridge && position % 4 === 2) this.noise(time, .028, 'highpass', 4700, .018);
