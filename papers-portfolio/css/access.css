@@ -21,14 +21,35 @@
 .brand-intro__name { font: 500 clamp(24px, 4vw, 36px)/1.1 system-ui, sans-serif; letter-spacing: .045em; }
 .brand-intro__ai, .brand-intro__r { display: none; }
 @media (min-width: 800px) and (pointer: fine) {
-  .brand-intro__content { --letter-frame: clamp(140px, 17vw, 230px); flex-direction: row; gap: clamp(4px, 1vw, 16px); }
+  .brand-intro__content {
+    --letter-frame: min(clamp(140px, 17vw, 230px), 48svh);
+    --letter-gap: clamp(4px, 1vw, 16px);
+    --letter-travel: calc(var(--letter-frame) * 380 / 790 + var(--letter-gap));
+    flex-direction: row;
+    gap: var(--letter-gap);
+  }
   .brand-intro__name { display: none; }
   .brand-intro__content > svg { display: block; width: auto; height: min(var(--letter-frame), 48svh); overflow: visible; }
   @media (prefers-reduced-motion: no-preference) {
-    .brand-intro__r { animation: brand-r-arrive 670ms 620ms cubic-bezier(.23,.72,.32,1) both; }
-    .brand-intro__a, .brand-intro__i { transform-box: fill-box; transform-origin: center; animation: brand-name 550ms 1120ms cubic-bezier(.2,.7,.3,1) both; }
-    .brand-intro__i { animation-delay: 1190ms; }
+    .brand-intro__content { --spread: 530ms 1110ms cubic-bezier(.3,.1,.24,1) both; }
+    .brand-intro__content > .entry-logo {
+      --spread-from: var(--letter-travel);
+      animation: brand-spread var(--spread);
+    }
+    .brand-intro__r {
+      --spread-from: calc(-1 * var(--letter-travel));
+      animation: brand-r-arrive 650ms 430ms cubic-bezier(.23,.72,.32,1) both, brand-spread var(--spread);
+    }
+    .brand-intro__ai { animation: brand-ai-reveal var(--spread); }
   }
+}
+@keyframes brand-spread {
+  from { translate: var(--spread-from) 0; }
+  to { translate: 0 0; }
+}
+@keyframes brand-ai-reveal {
+  from { clip-path: inset(0 50%); }
+  to { clip-path: inset(0); }
 }
 @keyframes brand-r-arrive {
   0% { opacity: 0; transform: translateX(42px) scale(.88, 1.12) rotate(6deg); }
