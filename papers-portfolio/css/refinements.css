@@ -37,4 +37,7 @@ button:disabled{cursor:wait}dialog{overscroll-behavior:contain}
 
 /* Side tabs are outside the book: reserve their width before the newspaper. */
 @media(min-width:1200px){.book{width:min(calc(100% - 48px),calc(340 * var(--u)))}}
-@media(min-width:1000px){html,body{scrollbar-width:none}html::-webkit-scrollbar,body::-webkit-scrollbar{display:none}}
+@media (pointer: fine) {
+  :root, :root * { scrollbar-width: none !important; scrollbar-gutter: auto !important; }
+  :root::-webkit-scrollbar, :root *::-webkit-scrollbar { display: none; }
+}
