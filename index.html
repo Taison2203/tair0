@@ -34,7 +34,7 @@
   <link rel="stylesheet" href="css/inspection.css">
   <link rel="stylesheet" href="css/motion.css?v=polish-20261119">
   <link rel="stylesheet" href="css/gallery.css?v=reception-20261119">
-  <link rel="stylesheet" href="css/access.css?v=brand-v3">
+  <link rel="stylesheet" href="css/access.css?v=brand-v4">
   <link rel="stylesheet" href="css/sound-archive.css?v=footer-1">
   <link rel="stylesheet" href="css/board.css?v=compact-20261119">
   <link rel="stylesheet" href="css/refinements.css?v=desktop-scrollbars-1">
@@ -51,7 +51,10 @@
       <rect class="entry-logo__stem" x="460" y="426.466" width="80" height="400.534" rx="40" fill="white" />
     </svg>
     <span class="brand-intro__name">Tair</span>
-    <span class="brand-intro__ai"><span>A</span><span>I</span></span>
+    <svg class="brand-intro__ai" viewBox="0 110 760 790" width="159" height="165" aria-hidden="true">
+      <path class="brand-intro__a" fill="#fff" fill-rule="evenodd" d="M0 827 219 187h113l219 640H431l-47-147H159l-47 147H0Zm189-242h165l-82-262-83 262Z" />
+      <path class="brand-intro__i" fill="#fff" d="M644 187h116v640H644z" />
+    </svg>
     <svg class="brand-intro__r" viewBox="125 110 750 790" width="155" height="163" aria-hidden="true">
       <defs>
         <filter id="brand-r-inner" x="189" y="169" width="644" height="655.165" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
@@ -61,14 +64,15 @@
           <feColorMatrix type="matrix" values="0 0 0 0 .130301 0 0 0 0 .427587 0 0 0 0 .816346 0 0 0 1 0" />
           <feBlend in2="SourceGraphic" />
         </filter>
-        <linearGradient id="brand-r-core" x1="558.148" y1="371.175" x2="773.503" y2="371.175" gradientUnits="userSpaceOnUse">
-          <stop />
-          <stop offset="1" stop-color="#8D10C7" />
-        </linearGradient>
+        <mask id="brand-r-cutouts" x="125" y="110" width="750" height="790" maskUnits="userSpaceOnUse">
+          <rect x="125" y="110" width="750" height="790" fill="white" />
+          <circle cx="615.375" cy="371.375" r="94.375" />
+          <rect x="378" y="277.066" width="174" height="188.66" />
+        </mask>
       </defs>
-      <path class="brand-intro__r-shell" filter="url(#brand-r-inner)" fill="white" d="M614.604 176C640.264 176 665.673 181.055 689.379 190.874C713.085 200.694 734.625 215.086 752.77 233.23C770.914 251.375 785.306 272.915 795.126 296.621C804.945 320.327 810 345.736 810 371.396C810 397.055 804.946 422.464 795.126 446.171C785.306 469.877 770.914 491.417 752.77 509.562C734.625 527.706 713.085 542.098 689.379 551.918C668.79 560.446 646.916 565.377 624.71 566.527V566.792H602.97L774.077 737.899C793.812 757.634 793.811 789.63 774.077 809.364C754.343 829.099 722.347 829.099 702.612 809.364L425.199 531.952C420.929 527.682 417.699 522.765 415.504 517.519C406.447 502.372 401.24 484.657 401.24 465.726H427.786L464.845 428.667L501.903 465.726H614.604V176ZM614.604 277.066H239.533C211.624 277.066 189 254.442 189 226.533C189 198.625 211.625 176 239.533 176H614.604V277.066Z" />
-      <circle class="brand-intro__r-core" cx="615.375" cy="371.375" r="94.375" fill="url(#brand-r-core)" />
-      <rect x="378" y="276.7" width="174" height="189" fill="black" />
+      <g mask="url(#brand-r-cutouts)">
+        <path filter="url(#brand-r-inner)" fill="white" d="M614.604 176C640.264 176 665.673 181.055 689.379 190.874C713.085 200.694 734.625 215.086 752.77 233.23C770.914 251.375 785.306 272.915 795.126 296.621C804.945 320.327 810 345.736 810 371.396C810 397.055 804.946 422.464 795.126 446.171C785.306 469.877 770.914 491.417 752.77 509.562C734.625 527.706 713.085 542.098 689.379 551.918C668.79 560.446 646.916 565.377 624.71 566.527V566.792H602.97L774.077 737.899C793.812 757.634 793.811 789.63 774.077 809.364C754.343 829.099 722.347 829.099 702.612 809.364L425.199 531.952C420.929 527.682 417.699 522.765 415.504 517.519C406.447 502.372 401.24 484.657 401.24 465.726H427.786L464.845 428.667L501.903 465.726H614.604V176ZM614.604 277.066H239.533C211.624 277.066 189 254.442 189 226.533C189 198.625 211.625 176 239.533 176H614.604V277.066Z" />
+      </g>
     </svg>
     </div>
   </div>
