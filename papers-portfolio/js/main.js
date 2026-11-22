@@ -9,8 +9,8 @@ import {
   makeDeskTexture, makeGrainTexture, makeRingTexture, initClock,
   createScanner, initMuteButton,
 } from './components/desk.js?v=reception-20261119';
-import { initStartScreen } from './components/startScreen.js?v=reception-20261119';
-import { initBook } from './components/book.js?v=reception-20261119';
+import { initStartScreen } from './components/startScreen.js?v=entry-polish';
+import { initBook } from './components/book.js?v=entry-polish';
 import { initDocuments } from './components/documents.js?v=reception-20261119';
 import { initReceipts } from './components/receipts.js?v=reception-20261119';
 import { initNews } from './components/news.js?v=direct-feeds';
@@ -108,10 +108,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     initEzic(audio);
     initPenalty({ audio, isShiftActive: () => document.body.dataset.phase === 'shift' });
 
-    await audio.preload((progress) => startScreen.updateProgress(progress));
-    if (!audio.supported || typeof OfflineAudioContext === 'undefined') startScreen.updateProgress(1);
+    startScreen.updateProgress(1);
     startScreen.setReady();
     document.body.dataset.phase = 'ready';
+    // Effects can synthesize on demand while the cached versions render.
+    void audio.preload().catch(() => {});
   } catch (error) {
     console.error('[boot] required interface could not be prepared:', error);
     startScreen.updateProgress(1);
@@ -131,10 +132,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (!audio.muted && !document.hidden) { music.start(); audio.play('shiftStart'); }
     }).catch(() => { /* A shift can be completed with audio unavailable. */ });
     document.body.dataset.phase = 'shift';
+    const desk = document.querySelector('#desk');
+    desk?.classList.add('is-revealed');
     await startScreen.hide();
-    document.querySelector('#desk')?.removeAttribute('inert');
-    document.querySelector('#desk')?.classList.add('is-revealed');
-    window.setTimeout(() => document.querySelector('#desk')?.classList.remove('is-revealed'), 1200);
+    desk?.removeAttribute('inert');
+    window.setTimeout(() => desk?.classList.remove('is-revealed'), 900);
     bus.emit('shift:started');
 
     const requestedDoc = window.location.hash.slice(1);

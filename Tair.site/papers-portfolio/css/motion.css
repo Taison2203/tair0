@@ -17,6 +17,12 @@
 body:not([data-phase='shift']) .desk-dust, #desk[data-lamp='off'] .desk-dust { display: none; }
 #desk[data-visibility='hidden'] .desk-dust i { animation-play-state: paused; }
 /* Animate the paper surfaces, keeping their fixed mobile navigation unaffected. */
+#desk[inert].is-revealed { visibility: visible; }
+#start-screen.is-leaving { animation: shift-curtain 370ms cubic-bezier(.45,0,.24,1) both; }
+@keyframes shift-curtain {
+  from { clip-path: inset(0); opacity: 1; }
+  to { clip-path: inset(0 0 100%); opacity: .7; }
+}
 .is-revealed .page--left { animation: book-arrive 650ms cubic-bezier(.16,.7,.25,1) both; }
 .is-revealed .page--right { animation: book-arrive 650ms 80ms cubic-bezier(.16,.7,.25,1) both; }
 .is-revealed .desk-file { animation: prop-arrive 550ms 130ms cubic-bezier(.16,.7,.25,1) backwards; }

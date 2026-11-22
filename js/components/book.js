@@ -21,6 +21,7 @@ export function initBook(audio) {
 
   let activeTab = null;
   let navigationQueue = Promise.resolve();
+  let navigationRevision = 0;
 
   const redactedSurname = () => el('span', {
     class: 'classified',
@@ -179,7 +180,7 @@ export function initBook(audio) {
   async function triggerPageTurn(renderFn, onReveal = null) {
     audio.play('page', { gain: 0.8 });
 
-    if (pageTurn) {
+    if (pageTurn && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
       pageTurn.classList.remove('is-wiping-out');
       pageTurn.classList.add('is-wiping-in');
       await stepAnim(pageTurn, 'is-wiping-in', 250);
@@ -197,12 +198,20 @@ export function initBook(audio) {
 
   /* Select tab */
   function selectTab(tabKey, autoOpenDoc = true) {
-    const task = navigationQueue.then(() => selectTabNow(tabKey, autoOpenDoc));
+    return enqueueNavigation(isCurrent => selectTabNow(tabKey, autoOpenDoc, isCurrent));
+  }
+
+  function enqueueNavigation(run) {
+    const revision = ++navigationRevision;
+    const isCurrent = () => revision === navigationRevision;
+    const task = navigationQueue.then(() => {
+      if (isCurrent()) return run(isCurrent);
+    });
     navigationQueue = task.catch(() => {});
     return task;
   }
 
-  async function selectTabNow(tabKey, autoOpenDoc) {
+  async function selectTabNow(tabKey, autoOpenDoc, isCurrent) {
     if (activeTab === tabKey) {
       if (autoOpenDoc) bus.emit('doc:open', { key: tabKey });
       return;
@@ -219,15 +228,13 @@ export function initBook(audio) {
 
     await triggerPageTurn(
       () => renderSection(tabKey),
-      autoOpenDoc ? () => bus.emit('doc:open', { key: tabKey }) : null
+      autoOpenDoc ? () => { if (isCurrent()) bus.emit('doc:open', { key: tabKey }); } : null
     );
   }
 
   /* Reset to TOC */
   function resetToTOC() {
-    const task = navigationQueue.then(resetToTOCNow);
-    navigationQueue = task.catch(() => {});
-    return task;
+    return enqueueNavigation(resetToTOCNow);
   }
 
   async function resetToTOCNow() {

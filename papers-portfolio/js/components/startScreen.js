@@ -9,7 +9,6 @@ export function initStartScreen() {
   const blocks = screen.querySelectorAll('.progress__block');
   const btnStart = screen.querySelector('.btn--primary');
   const btnMute = screen.querySelector('.btn--secondary');
-  let onStartCb = null;
 
   function updateProgress(pct) {
     const filled = Math.round(pct * blocks.length);
@@ -26,7 +25,6 @@ export function initStartScreen() {
   }
 
   function onStart(cb) {
-    onStartCb = cb;
     btnStart.addEventListener('click', () => {
       if (btnStart.disabled) return;
       btnStart.disabled = true;
@@ -44,7 +42,9 @@ export function initStartScreen() {
   }
 
   async function hide() {
-    await stepAnim(screen, 'is-leaving', 600);
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      await stepAnim(screen, 'is-leaving', 600);
+    }
     screen.hidden = true;
   }
 
