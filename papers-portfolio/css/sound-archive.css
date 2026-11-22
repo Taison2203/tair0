@@ -186,3 +186,41 @@
     }
   }
 }
+.shift-music {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  width: min(100%, 440px);
+  margin: 12px auto 0;
+  padding: 6px 8px;
+  border: 1px solid #57614a;
+  background: #222c21;
+  color: #f2e7c5;
+  text-align: left;
+}
+.shift-music__icon {
+  display: grid;
+  place-items: center;
+  width: 31px;
+  height: 34px;
+  background: #394636;
+  color: #c1c9a8;
+  font: 20px/1 var(--font-ui);
+}
+.shift-music.is-playing .shift-music__icon { color: #ebcb80; }
+.shift-music__copy { display: grid; gap: 2px; }
+.shift-music__status { color: #c1c9a8; font: 11px/1.3 var(--font-ui); }
+.shift-music__title { overflow-wrap: anywhere; font: bold 13px/1.35 var(--font-ui); }
+.shift-music__next {
+  min-height: 44px;
+  padding: 6px 10px;
+  border: 1px solid #777e5d;
+  background: #344331;
+  color: #f2e7c5;
+  cursor: pointer;
+  font: 12px/1.4 var(--font-ui);
+}
+.shift-music__next:hover:not(:disabled) { background: #475a41; }
+.shift-music__next:focus-visible { outline: 2px solid #ebcb80; outline-offset: 2px; }
+.shift-music__next:disabled { opacity: .6; cursor: default; }

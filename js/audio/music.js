@@ -313,8 +313,9 @@ function makeNoise(context) {
   return buffer;
 }
 
-export class Music {
+export class Music extends EventTarget {
   constructor(engine) {
+    super();
     this.e = engine;
     this.step = 0;
     this.next = 0;
@@ -324,6 +325,23 @@ export class Music {
     this.themeIndex = Math.floor(Math.random() * THEMES.length);
     this.previewState = null;
     this.onTrackEnd = null;
+    this.soundingIndex = this.themeIndex;
+    this.pendingTrack = null;
+  }
+
+  get currentTrack() { return MUSIC_TRACKS[this.soundingIndex]; }
+  get nextTrack() { return MUSIC_TRACKS[(this.soundingIndex + 1) % THEMES.length]; }
+  get playing() { return this.timer !== null && !this.previewState; }
+
+  skip() {
+    if (this.previewState) return;
+    const playing = this.playing;
+    this.stop();
+    this.themeIndex = (this.soundingIndex + 1) % THEMES.length;
+    this.soundingIndex = this.themeIndex;
+    this.step = 0;
+    if (playing) this.start();
+    else this.dispatchEvent(new Event('change'));
   }
 
   start() {
@@ -345,6 +363,7 @@ export class Music {
     }
     // Resume on a bar line, avoiding an isolated fragment of a held melody note.
     this.step -= this.step % BAR_STEPS;
+    this.soundingIndex = this.themeIndex;
     this.next = ctx.currentTime + .08;
     this.startedAt = this.next;
     musicBus.gain.cancelScheduledValues(ctx.currentTime);
@@ -352,11 +371,14 @@ export class Music {
     musicBus.gain.linearRampToValueAtTime(LEVEL, ctx.currentTime + (this.onTrackEnd ? .14 : .38));
     this.pump();
     this.timer = setInterval(() => this.pump(), 30);
+    this.dispatchEvent(new Event('change'));
   }
 
   stop() {
     if (this.timer !== null) clearInterval(this.timer);
     this.timer = null;
+    this.pendingTrack = null;
+    this.dispatchEvent(new Event('change'));
     const { ctx, musicBus } = this.e;
     if (!ctx || !musicBus) return;
     const now = ctx.currentTime;
@@ -385,6 +407,7 @@ export class Music {
       player: null,
     };
     this.previewState = state;
+    this.dispatchEvent(new Event('change'));
     if (previous) this.closePreview(previous);
     else if (this.timer !== null) {
       this.stop();
@@ -433,12 +456,18 @@ export class Music {
     this.previewState = null;
     this.closePreview(state);
     if (resume && state.resumeShift && !this.e.muted && !globalThis.document?.hidden) this.start();
+    else this.dispatchEvent(new Event('change'));
   }
 
   pump() {
     const { ctx } = this.e;
     // A suspended AudioContext freezes its clock and all scheduled notes together.
     if (!ctx || ctx.state !== 'running') return;
+    if (this.pendingTrack && ctx.currentTime >= this.pendingTrack.time) {
+      this.soundingIndex = this.pendingTrack.index;
+      this.pendingTrack = null;
+      this.dispatchEvent(new Event('change'));
+    }
     if (this.onTrackEnd && this.step === THEMES[this.themeIndex].bars.length * BAR_STEPS) {
       if (ctx.currentTime >= this.next) this.onTrackEnd();
       return;
@@ -449,6 +478,9 @@ export class Music {
     }
     while (this.next < ctx.currentTime + LOOKAHEAD) {
       const theme = THEMES[this.themeIndex];
+      if (this.step === 0 && this.themeIndex !== this.soundingIndex && !this.pendingTrack) {
+        this.pendingTrack = { index: this.themeIndex, time: this.next };
+      }
       const nextTheme = THEMES[(this.themeIndex + 1) % THEMES.length];
       const remaining = theme.bars.length * BAR_STEPS - this.step;
       const cross = this.onTrackEnd ? 0 : Math.max(0, 1 - remaining / 9);

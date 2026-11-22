@@ -3,7 +3,8 @@
 import { AudioEngine } from './audio/engine.js?v=reception-20261119';
 import { initSoundArchive } from './components/soundArchive.js?v=reception-20261119';
 import { SFX } from './audio/sfx.js?v=portrait-honk';
-import { Music } from './audio/music.js?v=distinct-openings-1';
+import { Music } from './audio/music.js?v=shift-player-1';
+import { initShiftMusic } from './components/shiftMusic.js?v=shift-player-1';
 import { initScale } from './core/scale.js?v=reception-20261119';
 import {
   makeDeskTexture, makeGrainTexture, makeRingTexture, initClock,
@@ -24,7 +25,7 @@ import { chooseLanguage } from './core/i18n.js?v=reception-20261119';
 import { stepAnim } from './core/dom.js?v=brand-crossfade';
 import { initCaptureProtection } from './components/captureProtection.js?v=reception-20261119';
 import { initVisitorGuide } from './components/visitorGuide.js?v=reception-20261119';
-import { initBoard } from './components/board.js?v=distinct-openings-1';
+import { initBoard } from './components/board.js?v=shift-player-1';
 import { initSecrets } from './components/secrets.js?v=reception-20261119';
 import { initReactions } from './components/reactions.js?v=reception-20261119';
 import { playBrandSound } from './audio/brandSound.js?v=5';
@@ -99,6 +100,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     initBook(audio);
     initNews(audio);
     initSoundArchive(audio);
+    initShiftMusic(music, audio);
     initReactions(audio);
     initBoard(audio,music);
     initVisitorGuide(audio);
