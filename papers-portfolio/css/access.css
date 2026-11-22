@@ -214,6 +214,8 @@ html[lang="en"] .request__title { font-size: 13px; }
 @media (min-width: 800px) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
   .brand-intro.is-playing {
     isolation: isolate;
+    --gate-distance: 65vw;
+    --gate-motion: 690ms 2560ms cubic-bezier(.5,0,.25,1);
     --gate-light: #e5e5e5;
     background: var(--gate-light);
     animation: brand-gate-finish 3640ms linear both;
@@ -227,12 +229,12 @@ html[lang="en"] .request__title { font-size: 13px; }
     inset: 0 50% 0 0;
     background: black;
     z-index: -2;
-    --gate-exit: -101%;
-    animation: brand-gate-panel 690ms 2560ms cubic-bezier(.5,0,.25,1) both;
+    --gate-exit: calc(-1 * var(--gate-distance));
+    animation: brand-gate-panel var(--gate-motion) both;
   }
   .brand-intro.is-playing::after {
     inset: 0 0 0 50%;
-    --gate-exit: 101%;
+    --gate-exit: var(--gate-distance);
   }
 
   .brand-intro.is-playing .brand-intro__content::before {
@@ -249,23 +251,23 @@ html[lang="en"] .request__title { font-size: 13px; }
     animation: brand-comet 790ms 1690ms cubic-bezier(.4,0,.22,1) both;
   }
   .brand-intro.is-playing .entry-logo {
-    --gate-exit: -100vw;
-    animation: brand-spread var(--spread), brand-gate-panel 690ms 2560ms cubic-bezier(.5,0,.25,1) forwards;
+    --gate-exit: calc(-1 * var(--gate-distance));
+    animation: brand-spread var(--spread), brand-gate-panel var(--gate-motion) forwards;
   }
   .brand-intro.is-playing .brand-intro__r {
-    --gate-exit: 100vw;
+    --gate-exit: var(--gate-distance);
     animation: brand-r-draw 470ms 625ms cubic-bezier(.3,.2,.32,1) both,
-      brand-spread var(--spread), brand-gate-panel 690ms 2560ms cubic-bezier(.5,0,.25,1) forwards;
+      brand-spread var(--spread), brand-gate-panel var(--gate-motion) forwards;
   }
   .brand-intro.is-playing .brand-intro__ai {
     mix-blend-mode: difference;
     animation: brand-ai-reveal var(--spread);
   }
   .brand-intro.is-playing .brand-intro__letter {
-    animation: brand-letter-exit 690ms 2560ms cubic-bezier(.5,0,.25,1) forwards;
+    animation: brand-letter-exit var(--gate-motion) forwards;
   }
-  .brand-intro__letter--a { --gate-exit: -100vw; }
-  .brand-intro__letter--i { --gate-exit: 100vw; }
+  .brand-intro__letter--a { --gate-exit: calc(-1 * var(--gate-distance)); }
+  .brand-intro__letter--i { --gate-exit: var(--gate-distance); }
 }
 @keyframes brand-comet {
   from { transform: translateY(0); }
