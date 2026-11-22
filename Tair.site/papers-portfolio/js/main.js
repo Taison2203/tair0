@@ -3,7 +3,7 @@
 import { AudioEngine } from './audio/engine.js?v=reception-20261119';
 import { initSoundArchive } from './components/soundArchive.js?v=reception-20261119';
 import { SFX } from './audio/sfx.js?v=portrait-honk';
-import { Music } from './audio/music.js?v=shift-themes-3';
+import { Music } from './audio/music.js?v=owner-music-1';
 import { initScale } from './core/scale.js?v=reception-20261119';
 import {
   makeDeskTexture, makeGrainTexture, makeRingTexture, initClock,
@@ -24,7 +24,7 @@ import { chooseLanguage } from './core/i18n.js?v=reception-20261119';
 import { stepAnim } from './core/dom.js?v=brand-crossfade';
 import { initCaptureProtection } from './components/captureProtection.js?v=reception-20261119';
 import { initVisitorGuide } from './components/visitorGuide.js?v=reception-20261119';
-import { initBoard } from './components/board.js?v=board-return-1';
+import { initBoard } from './components/board.js?v=owner-music-1';
 import { initSecrets } from './components/secrets.js?v=reception-20261119';
 import { initReactions } from './components/reactions.js?v=reception-20261119';
 import { playBrandSound } from './audio/brandSound.js?v=5';
@@ -100,7 +100,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     initNews(audio);
     initSoundArchive(audio);
     initReactions(audio);
-    initBoard(audio);
+    initBoard(audio,music);
     initVisitorGuide(audio);
     initSecrets(audio);
     await initDocuments(audio);

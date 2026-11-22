@@ -41,7 +41,7 @@ const SCORE = [
 ];
 const THEMES = [
   {
-    // «Парадный плац»: dotted calls and a minor-key march.
+    id: 'parade-ground', title: 'Парадный плац', titleEn: 'Parade Ground',
     bpm: 108, rhythm: 'march', lead: 'brass', bars: [
       ['Dm', [[0, 3, 62], [3, 1, 62], [4, 3, 65], [8, 3, 69], [12, 3, 74]]],
       ['Bb', [[0, 5, 70], [6, 2, 69], [8, 3, 65], [12, 3, 62]]],
@@ -54,7 +54,7 @@ const THEMES = [
     ],
   },
   {
-    // «Сигнал из архива»: sparse, syncopated radio-like phrases.
+    id: 'archive-signal', title: 'Сигнал из архива', titleEn: 'Signal from the Archive',
     bpm: 88, rhythm: 'sparse', lead: 'reed', bars: [
       ['Gm', [[2, 2, 74], [7, 3, 70], [12, 3, 67]]],
       ['Gm', [[0, 4, 62], [9, 2, 65], [13, 2, 67]]],
@@ -67,7 +67,7 @@ const THEMES = [
     ],
   },
   {
-    // «После отбоя»: a gentler descending motif for the quiet shift.
+    id: 'after-lights-out', title: 'После отбоя', titleEn: 'After Lights Out',
     bpm: 71, rhythm: 'sparse', lead: 'flute', bars: [
       ['F',  [[0, 6, 72], [8, 3, 69], [12, 3, 65]]],
       ['C',  [[0, 4, 67], [6, 2, 64], [10, 5, 60]]],
@@ -80,7 +80,7 @@ const THEMES = [
     ],
   },
   {
-    // «Красный приказ»: clipped signals against heavy, even percussion.
+    id: 'red-order', title: 'Красный приказ', titleEn: 'Red Order',
     bpm: 126, rhythm: 'march', lead: 'brass', bars: [
       ['Dm', [[0, 2, 62], [3, 1, 62], [6, 2, 68], [8, 2, 69], [12, 2, 62]]],
       ['A',  [[0, 2, 61], [4, 1, 64], [6, 1, 61], [8, 4, 57], [14, 1, 64]]],
@@ -93,7 +93,7 @@ const THEMES = [
     ],
   },
   {
-    // «Чай в комендатуре»: bouncing major-key call and response.
+    id: 'commandants-tea', title: 'Чай в комендатуре', titleEn: 'Tea at the Commandant’s',
     bpm: 118, rhythm: 'night', lead: 'bell', bars: [
       ['F',  [[0, 2, 65], [3, 2, 69], [6, 2, 72], [10, 2, 74], [13, 2, 72]]],
       ['C',  [[0, 3, 67], [5, 2, 72], [8, 2, 76], [12, 2, 74]]],
@@ -106,7 +106,7 @@ const THEMES = [
     ],
   },
   {
-    // «Письмо без ответа»: descending phrases, ending on an unresolved A.
+    id: 'unanswered-letter', title: 'Письмо без ответа', titleEn: 'Unanswered Letter',
     bpm: 66, rhythm: 'sparse', lead: 'flute', bars: [
       ['Dm', [[0, 5, 69], [6, 3, 65], [11, 4, 64]]],
       ['Bb', [[0, 7, 62], [10, 4, 65]]],
@@ -119,7 +119,7 @@ const THEMES = [
     ],
   },
   {
-    // «Последний поезд»: wide intervals and a distant, unresolved refrain.
+    id: 'last-train', title: 'Последний поезд', titleEn: 'The Last Train',
     bpm: 74, rhythm: 'sparse', lead: 'reed', bars: [
       ['Gm', [[2, 7, 74], [12, 3, 67]]],
       ['Bb', [[0, 7, 77], [11, 4, 72]]],
@@ -131,8 +131,11 @@ const THEMES = [
       ['A',  [[0, 8, 73], [12, 3, 69]]],
     ],
   },
-  { bpm: 78, rhythm: 'night', bars: SCORE },
+  { id: 'night-shift', title: 'Ночная смена', titleEn: 'Night Shift', bpm: 78, rhythm: 'night', bars: SCORE },
 ];
+export const MUSIC_TRACKS = THEMES.map(({ id, title, titleEn, bpm, bars }) => ({
+  id, title, titleEn, bpm, duration: bars.length * 240 / bpm,
+}));
 const mtof = midi => 440 * 2 ** ((midi - 69) / 12);
 
 function makePulse(context, duty) {
@@ -172,9 +175,15 @@ export class Music {
     this.voices = new Set();
     this.resources = null;
     this.themeIndex = 0;
+    this.previewState = null;
+    this.onTrackEnd = null;
   }
 
   start() {
+    if (this.previewState) {
+      this.previewState.resumeShift = true;
+      return;
+    }
     const { ctx, musicBus } = this.e;
     if (!ctx || !musicBus || this.timer !== null) return;
     if (!this.resources) {
@@ -190,9 +199,10 @@ export class Music {
     // Resume on a bar line, avoiding an isolated fragment of a held melody note.
     this.step -= this.step % BAR_STEPS;
     this.next = ctx.currentTime + .08;
+    this.startedAt = this.next;
     musicBus.gain.cancelScheduledValues(ctx.currentTime);
     musicBus.gain.setValueAtTime(0, ctx.currentTime);
-    musicBus.gain.linearRampToValueAtTime(LEVEL, ctx.currentTime + 1.4);
+    musicBus.gain.linearRampToValueAtTime(LEVEL, ctx.currentTime + (this.onTrackEnd ? .14 : 1.4));
     this.pump();
     this.timer = setInterval(() => this.pump(), 30);
   }
@@ -210,10 +220,82 @@ export class Music {
     for (const voice of this.voices) voice.source.stop(now + .09);
   }
 
+  async preview(id, { onEnd } = {}) {
+    const themeIndex = THEMES.findIndex(theme => theme.id === id);
+    const AudioContext = globalThis.AudioContext || globalThis.webkitAudioContext;
+    if (themeIndex < 0 || !AudioContext) return false;
+    let context;
+    try {
+      context = new AudioContext({ latencyHint: 'interactive' });
+    } catch {
+      return false;
+    }
+    const previous = this.previewState;
+    const state = {
+      context,
+      duration: MUSIC_TRACKS[themeIndex].duration,
+      resumeShift: previous?.resumeShift ?? (this.timer !== null),
+      player: null,
+    };
+    this.previewState = state;
+    if (previous) this.closePreview(previous);
+    else if (this.timer !== null) {
+      this.stop();
+      // Mute the old scheduler's tail before the independently clocked preview.
+      this.e.musicBus.gain.cancelScheduledValues(this.e.ctx.currentTime);
+      this.e.musicBus.gain.setValueAtTime(0, this.e.ctx.currentTime);
+    }
+    try {
+      // Resume directly from the play gesture, including when shift audio is muted.
+      await context.resume();
+      if (this.previewState !== state) return false;
+      if (context.state !== 'running') throw new Error('Preview audio did not start');
+      const musicBus = context.createGain();
+      const volume = context.createGain();
+      volume.gain.value = this.e.volume?.music || .75;
+      musicBus.connect(volume).connect(context.destination);
+      const player = new Music({ ctx: context, musicBus });
+      state.player = player;
+      player.themeIndex = themeIndex;
+      player.onTrackEnd = () => {
+        this.stopPreview();
+        onEnd?.();
+      };
+      player.start();
+      return true;
+    } catch {
+      if (this.previewState === state) this.stopPreview();
+      return false;
+    }
+  }
+
+  get previewElapsed() {
+    const state = this.previewState;
+    if (!state?.player) return 0;
+    return Math.max(0, Math.min(state.duration, state.context.currentTime - state.player.startedAt));
+  }
+
+  closePreview(state) {
+    state.player?.stop();
+    if (state.context.state !== 'closed') void state.context.close().catch(() => {});
+  }
+
+  stopPreview({ resume = true } = {}) {
+    const state = this.previewState;
+    if (!state) return;
+    this.previewState = null;
+    this.closePreview(state);
+    if (resume && state.resumeShift && !this.e.muted && !globalThis.document?.hidden) this.start();
+  }
+
   pump() {
     const { ctx } = this.e;
     // A suspended AudioContext freezes its clock and all scheduled notes together.
     if (!ctx || ctx.state !== 'running') return;
+    if (this.onTrackEnd && this.step === THEMES[this.themeIndex].bars.length * BAR_STEPS) {
+      if (ctx.currentTime >= this.next) this.onTrackEnd();
+      return;
+    }
     if (ctx.currentTime - this.next > .1) {
       this.step -= this.step % BAR_STEPS;
       this.next = ctx.currentTime + .08;
@@ -224,6 +306,7 @@ export class Music {
       this.playStep(this.step, this.next, theme, stepSeconds);
       this.next += stepSeconds;
       if (++this.step === theme.bars.length * BAR_STEPS) {
+        if (this.onTrackEnd) return;
         this.step = 0;
         this.themeIndex = (this.themeIndex + 1) % THEMES.length;
       }

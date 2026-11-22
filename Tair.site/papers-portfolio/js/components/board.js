@@ -1,13 +1,15 @@
 /** Public noticeboard and a Telegram-approved owner desk. No credentials persist in storage. */
 import { getLanguage, getLocale } from '../core/i18n.js?v=reception-20261119';
 import { createReaction, observeView, releaseReactions } from './reactions.js?v=reception-20261119';
+import { createOwnerMusic } from './ownerMusic.js?v=owner-music-1';
 const API='https://tair-portfolio-api.q5yhpcm78q.chatgpt.site';
 const words=(ru,en)=>getLanguage()==='en'?en:ru;
 const node=(tag,props={},...children)=>{const e=document.createElement(tag);for(const [k,v] of Object.entries(props))if(k==='class')e.className=v;else if(k==='text')e.textContent=v;else if(k==='onClick')e.addEventListener('click',v);else e.setAttribute(k,v);for(const c of children)e.append(c);return e;};
-export function initBoard(audio){
+export function initBoard(audio,music){
   let session='',login=null,pollTimer=null,busy=false,editing=null,fileId=null,posts=[],opener=null,showArchive=false;
   let stopViews=[];
   let listRevision=0, loginRevision=0;
+  let musicShelf;
   const dialog=node('dialog',{class:'noticeboard-dialog','aria-labelledby':'noticeboard-title','data-no-translate':''});
   const close=node('button',{type:'button',class:'board-close',text:words('ЗАКРЫТЬ','CLOSE'),onClick:()=>dialog.close()});
   const board=node('section',{class:'noticeboard'});
@@ -91,12 +93,15 @@ export function initBoard(audio){
     if(card.querySelector('.board-confirm'))return;
     const box=node('div',{class:'board-confirm'},node('p',{text:words('Снять запись с доски? Её можно будет восстановить из архива.','Remove this notice from the board? You can restore it from the archive.')}),node('button',{type:'button',class:'board-tool board-tool--danger',text:words('Да, в архив','Yes, archive'),onClick:async()=>{try{await request('/api/admin/posts/'+p.id,{method:'DELETE'});if(editing===p.id)resetEditor();audio.play('paper');await loadPosts();}catch(e){message(e.message);}}}),node('button',{type:'button',class:'board-tool',text:words('Отмена','Cancel'),onClick:()=>box.remove()}));card.append(box);
   }
-  function setPanelOpen(open){panel.hidden=!open;owner.setAttribute('aria-expanded',String(open));}
+  function setPanelOpen(open){panel.hidden=!open;owner.setAttribute('aria-expanded',String(open));if(!open)musicShelf?.stop();}
   function edit(p){editing=p.id;fileId=p.file_id||p.fileId||null;title.value=p.title;body.value=p.body;published.checked=Boolean(p.published);pinned.checked=Boolean(p.pinned);file.value='';fileStatus.textContent=p.fileName||words('Без вложения','No attachment');editorTitle.textContent=words('ИЗМЕНИТЬ ЗАПИСЬ','EDIT NOTICE');setPanelOpen(true);form.scrollIntoView({block:'start'});title.focus({preventScroll:true});}
   function resetEditor(){editing=null;fileId=null;form.reset();fileStatus.textContent='';editorTitle.textContent=words('НОВАЯ ЗАПИСЬ','NEW NOTICE');}
-  function clearOwnerState(){
+  function clearOwnerState(event){
     loginRevision++;listRevision++;
     session='';login=null;clearTimeout(pollTimer);posts=[];showArchive=false;
+    musicShelf?.stop({resume:event?.type!=='pagehide'});
+    musicShelf?.element.remove();
+    musicShelf=undefined;
     stopViews.forEach(stop=>stop());stopViews=[];releaseReactions(list);list.replaceChildren();
     archive.hidden=true;archive.textContent=words('Архив записей','Archived notices');
     form.hidden=true;loginBox.hidden=false;busy=false;submit.disabled=false;loginButton.disabled=false;
@@ -114,7 +119,12 @@ export function initBoard(audio){
     if(document.hidden||!dialog.open)return;
     busy=true;check.disabled=true;
     const revision=loginRevision;
-    try{const data=await request('/api/admin/login/status',{},login.requestToken);if(revision!==loginRevision)return;if(data.status==='approved'){session=data.sessionToken;login=null;loginBox.hidden=true;form.hidden=false;archive.hidden=false;owner.textContent=words('Кабинет владельца','Owner desk');resetEditor();audio.play('linkVerified');await loadPosts();return;}}catch(e){if(revision===loginRevision){loginStatus.textContent=e.message;if(e.status===401){login=null;loginButton.disabled=false;telegram.hidden=true;telegram.removeAttribute('href');check.hidden=true;}}}
+    try{const data=await request('/api/admin/login/status',{},login.requestToken);if(revision!==loginRevision)return;if(data.status==='approved'){
+      session=data.sessionToken;login=null;loginBox.hidden=true;form.hidden=false;archive.hidden=false;
+      owner.textContent=words('Кабинет владельца','Owner desk');
+      if(music){musicShelf=createOwnerMusic(music);form.before(musicShelf.element);}
+      resetEditor();audio.play('linkVerified');await loadPosts();return;
+    }}catch(e){if(revision===loginRevision){loginStatus.textContent=e.message;if(e.status===401){login=null;loginButton.disabled=false;telegram.hidden=true;telegram.removeAttribute('href');check.hidden=true;}}}
     finally{if(revision===loginRevision){busy=false;check.disabled=false;if(login&&dialog.open&&!document.hidden)pollTimer=setTimeout(checkLogin,5000);}}
   }
   async function logout(){const token=session;clearOwnerState();owner.focus();const reload=loadPosts();try{await request('/api/admin/logout',{method:'POST'},token);}catch{}await reload;}
@@ -161,7 +171,7 @@ export function initBoard(audio){
     }finally{URL.revokeObjectURL(url);}
   }
   function open(){opener=document.activeElement;dialog.showModal();board.scrollTop=0;audio.play('paper');loadPosts();if(login)checkLogin();}
-  dialog.addEventListener('close',()=>{listRevision++;clearTimeout(pollTimer);audio.play('documentClose');stopViews.forEach(stop=>stop());stopViews=[];opener?.focus({preventScroll:true});});
+  dialog.addEventListener('close',()=>{musicShelf?.stop();listRevision++;clearTimeout(pollTimer);audio.play('documentClose');stopViews.forEach(stop=>stop());stopViews=[];opener?.focus({preventScroll:true});});
   // User gestures only: background authentication polling stays quiet.
   board.addEventListener('click',event=>{
     const control=event.target.closest('button,a');
@@ -171,7 +181,10 @@ export function initBoard(audio){
   },true);
   form.addEventListener('change',event=>{if(event.target.matches('input[type=checkbox],input[type=file]'))audio.play(event.target.type==='file'?'paper':'tick',{gain:.5});});
   form.addEventListener('keydown',event=>{if(event.target.matches('textarea,input:not([type=checkbox]):not([type=file])')&&!event.ctrlKey&&!event.metaKey&&(event.key.length===1||event.key==='Backspace'))audio.play('key',{gain:.35});});
-  document.addEventListener('visibilitychange' ,()=>{if(!document.hidden&&login&&dialog.open)checkLogin();});
+  document.addEventListener('visibilitychange' ,()=>{
+    if(document.hidden)musicShelf?.stop();
+    else if(login&&dialog.open)checkLogin();
+  });
   window.addEventListener('pagehide',clearOwnerState);
   window.addEventListener('pageshow',event=>{if(event.persisted&&dialog.open)void loadPosts();});
   return {open};
