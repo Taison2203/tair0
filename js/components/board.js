@@ -75,7 +75,8 @@ export function initBoard(audio){
         const image=p.fileMime?.startsWith('image/');
         const a=node('a',{href:image?'/photo/?'+encodeURIComponent(fid):href,target:'_blank',rel:'noopener noreferrer',class:'board-attachment'});
         if(p.fileMime?.startsWith('image/'))a.append(node('img',{src:href,alt:p.title,loading:'lazy',decoding:'async',referrerpolicy:'no-referrer'}));
-        a.append(node('span',{text:(p.fileName||words('Вложение','Attachment'))+' · '+Math.ceil((p.fileSize||0)/1024)+' KB'}));card.append(a);
+        if(!image)a.append(node('span',{text:words('Скачать вложение','Download attachment')}));
+        card.append(a);
       }else if(fid)card.append(node('p',{text:words('Вложение сохранено. Доступно посетителям после публикации.','Attachment saved. Available to visitors once published.')}));
       if(!p.deleted&&(!session||p.published)){card.append(createReaction('post:'+p.id));stopViews.push(observeView('post:'+p.id,card));}
       if(session){const controls=p.deleted?node('div',{class:'board-post__tools'},node('button',{type:'button',class:'board-tool',text:words('Восстановить как черновик','Restore as draft'),onClick:async()=>{try{await request('/api/admin/posts/'+p.id+'/restore',{method:'POST'});await loadPosts();}catch(e){message(e.message);}}})):node('div',{class:'board-post__tools'},node('button',{type:'button',class:'board-tool',text:words('Изменить','Edit'),onClick:()=>edit(p)}),node('button',{type:'button',class:'board-tool board-tool--danger',text:words('Убрать в архив…','Archive…'),onClick:()=>confirmDelete(p,card)}));card.append(controls);}
