@@ -34,7 +34,7 @@
   <link rel="stylesheet" href="css/inspection.css">
   <link rel="stylesheet" href="css/motion.css?v=entry-polish">
   <link rel="stylesheet" href="css/gallery.css?v=reception-20261119">
-  <link rel="stylesheet" href="css/access.css?v=language-eagle-3">
+  <link rel="stylesheet" href="css/access.css?v=mobile-entry-scroll">
   <link rel="stylesheet" href="css/sound-archive.css?v=shift-player-1">
   <link rel="stylesheet" href="css/board.css?v=owner-music-1">
   <link rel="stylesheet" href="css/refinements.css?v=desktop-scrollbars-1">
@@ -81,18 +81,7 @@
     </div>
   </div>
   <section id="language-screen" class="language-screen" aria-labelledby="language-title" data-no-translate>
-    <svg class="language-eagle" viewBox="0 0 64 52" width="176" height="143" shape-rendering="crispEdges" aria-hidden="true">
-      <g class="eagle-frame eagle-frame--0" fill="#d8cf9b"><path d="M6 16h6v3h6v3h8v4h5v10h-7v4h-5v-5h-5v3H9v-6H5V21h1z"/><path d="M6 16h6v3h6v3h8v4h5v10h-7v4h-5v-5h-5v3H9v-6H5V21h1z" transform="translate(64 0) scale(-1 1)"/></g>
-      <g class="eagle-frame eagle-frame--1" fill="#d8cf9b"><path d="M4 12h6v4h6v4h7v4h8v12h-8v4h-5v-5h-5v2H8v-6H4z"/><path d="M4 12h6v4h6v4h7v4h8v12h-8v4h-5v-5h-5v2H8v-6H4z" transform="translate(64 0) scale(-1 1)"/></g>
-      <g class="eagle-frame eagle-frame--2" fill="#d8cf9b"><path d="M2 8h6v4h6v4h7v5h10v15h-8v4h-5v-6h-5v2H8v-7H4v-7H2z"/><path d="M2 8h6v4h6v4h7v5h10v15h-8v4h-5v-6h-5v2H8v-7H4v-7H2z" transform="translate(64 0) scale(-1 1)"/></g>
-      <g class="eagle-frame eagle-frame--3" fill="#d8cf9b"><path d="M2 5h6v5h6v5h7v5h10v16h-8v4h-5v-7h-5v2H8v-8H4v-8H2z"/><path d="M2 5h6v5h6v5h7v5h10v16h-8v4h-5v-7h-5v2H8v-8H4v-8H2z" transform="translate(64 0) scale(-1 1)"/></g>
-      <g class="eagle-frame eagle-frame--4" fill="#d8cf9b"><path d="M2 2h6v7h6v5h7v5h10v17h-8v4h-5v-7h-5v2H8v-8H4v-9H2z"/><path d="M2 2h6v7h6v5h7v5h10v17h-8v4h-5v-7h-5v2H8v-8H4v-9H2z" transform="translate(64 0) scale(-1 1)"/></g>
-      <g fill="#d8cf9b">
-        <path d="M25 10h13v3h7v4H35v6h5v14h-4v5h5v4h-7v-3h-4v3h-7v-4h5v-5h-4V23h3v-6h-5v-4h3zM28 44h8v4h4v3H24v-3h4z"/>
-      </g>
-      <path fill="#1d221c" d="M33 13h3v3h-3zM29 27h6v9h-6z"/>
-      <path fill="#a3201a" d="M30 28h4v7h-4z"/>
-    </svg>
+    <img src="assets/img/eagle.svg" alt="" width="144" height="117">
     <p class="language-screen__serial">№ 2203</p>
     <h1 id="language-title">ЯЗЫК · LANGUAGE</h1>
     <div class="language-screen__choices">
@@ -105,7 +94,7 @@
     <img class="start__emblem" src="assets/img/eagle.svg" alt="Пиксельный герб: орёл с расправленными крыльями" width="240" height="195">
     <h1 class="start__title">ЛИЧНОЕ ДЕЛО ТАИРА <span class="start__number">№ 2203</span></h1>
     <p class="start__sub">СПРАВОЧНИК МИНИСТЕРСТВА ВЪЕЗДА · КПП АРСТОТЦКА</p>
-    
+
     <div class="progress" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Подготовка поста">
       <div class="progress__block"></div>
       <div class="progress__block"></div>
@@ -357,11 +346,11 @@
         <h2 id="contact-title" class="request__title">ЛИЧНОЕ ОБРАЩЕНИЕ</h2>
         <p class="request__notice">Подтвердите Telegram, заполните бланк и поставьте печать. Ответы придут в чат с ботом.</p>
         <div class="telegram-binding"><strong data-telegram-status>СВЕРКА КОНТАКТА</strong><p>Откройте бота, нажмите «Старт» и подтвердите привязку. Затем вернитесь сюда.</p><a data-telegram-link target="_blank" rel="noopener noreferrer" aria-disabled="true">Готовим пропуск…</a></div>
-        
+
         <label>ЦЕЛЬ ОБРАЩЕНИЯ:
           <select name="purpose"></select>
         </label>
-        
+
         <div class="request__identity">
         <label>ИМЯ / ОРГАНИЗАЦИЯ:
           <input type="text" name="name" placeholder="Рекрутер / Компания" required maxlength="80" autocomplete="off">
