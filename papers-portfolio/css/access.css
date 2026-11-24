@@ -1,6 +1,9 @@
 /* One entry choice, with the same paper, ink and eagle as the checkpoint. */
 .language-screen { position: fixed; inset: 0; z-index: 1100; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; padding: 32px 20px; overflow-y: auto; background: var(--desk-0); color: var(--paper); }
-.language-screen > img { width: 144px; height: 117px; image-rendering: pixelated; }
+.language-eagle { display: block; flex: none; width: 176px; height: 128px; shape-rendering: crispEdges; }
+.language-eagle__wing { transform-box: view-box; }
+.language-eagle__wing--left { transform-origin: 43% 48%; --fold: 17deg; }
+.language-eagle__wing--right { transform-origin: 57% 48%; --fold: -17deg; }
 .brand-intro {
   position: fixed;
   inset: 0;
@@ -138,8 +141,8 @@ html[lang="en"] .request__title { font-size: 13px; }
   .capture-shield .btn { font-size: 8px; }
   .site-footer__tools button { font-size: 11px; }
 }
-@media (max-height: 600px) { .language-screen { justify-content: start; padding-top: 24px; gap: 12px; } .language-screen > img { width: 96px; height: 78px; } .capture-shield[open] { align-items: start; } }
-@media (prefers-reduced-motion: reduce) { .language-screen > img { animation: none; } .language-screen__choices button { transition: none; } }
+@media (max-height: 600px) { .language-screen { justify-content: start; padding-top: 24px; gap: 12px; } .language-eagle { width: 110px; height: 80px; } .capture-shield[open] { align-items: start; } }
+@media (prefers-reduced-motion: reduce) { .language-screen__choices button { transition: none; } }
 
 @media (prefers-reduced-motion: no-preference) {
   .language-screen {
@@ -155,7 +158,12 @@ html[lang="en"] .request__title { font-size: 13px; }
     background: linear-gradient(transparent 47%, rgb(207 199 154 / 14%) 50%, transparent 53%);
     animation: entry-scan 720ms ease-out both;
   }
-  .language-screen > img { animation: eagle-reveal 550ms steps(5) both; }
+  .language-screen:not([inert]) .language-eagle {
+    animation: entry-paper 420ms ease-out both;
+  }
+  .language-screen:not([inert]) .language-eagle__wing {
+    animation: eagle-unfold 730ms steps(7, end) both, eagle-rest 4600ms 850ms steps(5, end) infinite;
+  }
   .brand-intro.is-playing { animation: brand-hold 2050ms linear both; }
   .brand-intro.is-playing .brand-intro__content { animation: brand-finish 310ms 1740ms ease both; }
   .entry-logo rect { transform-box: fill-box; transform-origin: center; }
@@ -170,6 +178,16 @@ html[lang="en"] .request__title { font-size: 13px; }
   .language-screen__choices button { animation: entry-paper 420ms 180ms ease-out both; }
   .language-screen__choices button + button { animation-delay: 250ms; }
   #start-screen:not([hidden]) .start__title { animation: entry-paper 440ms ease-out both; }
+}
+@keyframes eagle-unfold {
+  from { transform: rotate(var(--fold)) scaleX(.52) scaleY(.83); }
+  77% { transform: rotate(calc(-.18 * var(--fold))) scaleX(1.02); }
+  to { transform: none; }
+}
+@keyframes eagle-rest {
+  0%, 66%, 100% { transform: none; }
+  78% { transform: rotate(calc(.35 * var(--fold))) scaleX(.96); }
+  89% { transform: rotate(calc(-.22 * var(--fold))) scaleX(1.01); }
 }
 @keyframes entry-scan {
   from { transform: translateY(-55%); opacity: 1; }
