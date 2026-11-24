@@ -155,9 +155,11 @@ html[lang="en"] .request__title { font-size: 13px; }
     background: linear-gradient(transparent 47%, rgb(207 199 154 / 14%) 50%, transparent 53%);
     animation: entry-scan 720ms ease-out both;
   }
-  .language-screen:not([inert]) .eagle-frame { animation: eagle-frames 5s steps(1, end) infinite; }
-  .language-screen:not([inert]) .eagle-frame--1 { animation-name: eagle-frames-middle; }
-  .language-screen:not([inert]) .eagle-frame--2 { animation-name: eagle-frames-open; }
+  .language-screen:not([inert]) .eagle-frame--0 { animation: eagle-pose-0 2400ms steps(1, end) infinite; }
+  .language-screen:not([inert]) .eagle-frame--1 { animation: eagle-pose-1 2400ms steps(1, end) infinite; }
+  .language-screen:not([inert]) .eagle-frame--2 { animation: eagle-pose-2 2400ms steps(1, end) infinite; }
+  .language-screen:not([inert]) .eagle-frame--3 { animation: eagle-pose-3 2400ms steps(1, end) infinite; }
+  .language-screen:not([inert]) .eagle-frame--4 { animation: eagle-pose-4 2400ms steps(1, end) infinite; }
   .brand-intro.is-playing { animation: brand-hold 2050ms linear both; }
   .brand-intro.is-playing .brand-intro__content { animation: brand-finish 310ms 1740ms ease both; }
   .entry-logo rect { transform-box: fill-box; transform-origin: center; }
@@ -173,24 +175,14 @@ html[lang="en"] .request__title { font-size: 13px; }
   .language-screen__choices button + button { animation-delay: 250ms; }
   #start-screen:not([hidden]) .start__title { animation: entry-paper 440ms ease-out both; }
 }
-/* Discrete hand-drawn silhouettes share a fixed pixel grid. */
+/* Frame changes only: every contour remains on the pixel grid. */
 .eagle-frame { opacity: 0; }
-.eagle-frame--2 { opacity: 1; }
-@keyframes eagle-frames {
-  0%, 8% { opacity: 1; }
-  16%, 100% { opacity: 0; }
-}
-@keyframes eagle-frames-middle {
-  0%, 8% { opacity: 0; }
-  16%, 24% { opacity: 1; }
-  32%, 84% { opacity: 0; }
-  92%, 100% { opacity: 1; }
-}
-@keyframes eagle-frames-open {
-  0%, 24% { opacity: 0; }
-  32%, 84% { opacity: 1; }
-  92%, 100% { opacity: 0; }
-}
+.eagle-frame--4 { opacity: 1; }
+@keyframes eagle-pose-0 { 0%, 4% { opacity: 1; } 8%, 100% { opacity: 0; } }
+@keyframes eagle-pose-1 { 0%, 4% { opacity: 0; } 8% { opacity: 1; } 12%, 92% { opacity: 0; } 96%, 100% { opacity: 1; } }
+@keyframes eagle-pose-2 { 0%, 8% { opacity: 0; } 12% { opacity: 1; } 16%, 88% { opacity: 0; } 92% { opacity: 1; } 96%, 100% { opacity: 0; } }
+@keyframes eagle-pose-3 { 0%, 12% { opacity: 0; } 16% { opacity: 1; } 20%, 84% { opacity: 0; } 88% { opacity: 1; } 92%, 100% { opacity: 0; } }
+@keyframes eagle-pose-4 { 0%, 16% { opacity: 0; } 20%, 84% { opacity: 1; } 88%, 100% { opacity: 0; } }
 @keyframes entry-scan {
   from { transform: translateY(-55%); opacity: 1; }
   to { transform: translateY(55%); opacity: 0; }
