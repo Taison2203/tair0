@@ -155,7 +155,7 @@ html[lang="en"] .request__title { font-size: 13px; }
     background: linear-gradient(transparent 47%, rgb(207 199 154 / 14%) 50%, transparent 53%);
     animation: entry-scan 720ms ease-out both;
   }
-  .language-screen > img { animation: eagle-reveal 550ms steps(5) both; }
+  .language-screen > img { animation: none; }
   .brand-intro.is-playing { animation: brand-hold 2050ms linear both; }
   .brand-intro.is-playing .brand-intro__content { animation: brand-finish 310ms 1740ms ease both; }
   .entry-logo rect { transform-box: fill-box; transform-origin: center; }
