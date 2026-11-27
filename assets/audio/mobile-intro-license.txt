@@ -1,0 +1,4 @@
+Mobile intro mix from Kenney Interface Sounds (CC0 1.0).
+https://kenney.nl/assets/interface-sounds
+Source WAV conversion: https://github.com/Calinou/kenney-interface-sounds
+Source files: open_003.wav, open_002.wav, click_001.wav, minimize_006.wav.

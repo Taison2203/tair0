@@ -6,6 +6,13 @@ export function playBrandSound(intro, { desktop }) {
   try { context = new Audio(); } catch { return; }
 
   const startedAt = performance.now();
+  const mobileMix = desktop ? null : fetch(new URL('../../assets/audio/mobile-intro.wav', import.meta.url))
+    .then(response => {
+      if (!response.ok) throw new Error('Intro audio unavailable');
+      return response.arrayBuffer();
+    })
+    .then(bytes => context.decodeAudioData(bytes))
+    .catch(() => null);
   let played = false;
   let ended = false;
   function play() {
@@ -17,30 +24,15 @@ export function playBrandSound(intro, { desktop }) {
       playAir(context, (performance.now() - startedAt) / 1000);
       return;
     }
-    const elapsed = (performance.now() - startedAt) / 1000;
-    const start = context.currentTime + .025;
-    const timbre = context.createPeriodicWave(
-      new Float32Array(4),
-      new Float32Array([0, 1, .24, .07])
-    );
-    const notes = [[329.63, .12, .39], [493.88, .31, .40], [659.25, .51, .48],
-      [987.77, .78, .5], [659.25, 1.64, .38]];
-    for (const [frequency, offset, duration] of notes) {
-      if (offset < elapsed - .08) continue;
-      const tone = context.createOscillator();
-      tone.setPeriodicWave(timbre);
-      const envelope = context.createGain();
-      const at = start + Math.max(0, offset - elapsed);
-      tone.frequency.setValueAtTime(frequency * .995, at);
-      tone.frequency.exponentialRampToValueAtTime(frequency, at + .09);
-      envelope.gain.setValueAtTime(.0001, at);
-      envelope.gain.exponentialRampToValueAtTime(.105, at + .045);
-      envelope.gain.exponentialRampToValueAtTime(.047, at + .14);
-      envelope.gain.exponentialRampToValueAtTime(.0001, at + duration);
-      tone.connect(envelope).connect(context.destination);
-      tone.start(at);
-      tone.stop(at + duration);
-    }
+    void mobileMix.then(buffer => {
+      if (ended || !buffer) return;
+      const offset = (performance.now() - startedAt) / 1000;
+      if (offset >= buffer.duration) return;
+      const source = context.createBufferSource();
+      source.buffer = buffer;
+      source.connect(context.destination);
+      source.start(context.currentTime, offset);
+    });
   }
 
   function unlock() {
