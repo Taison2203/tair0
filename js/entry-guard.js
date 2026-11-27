@@ -4,10 +4,14 @@
   var root = document.documentElement;
   var agent = navigator.userAgent || '';
   var tv = /smart.?tv|tizen|webos|hbbtv|netcast|viera|bravia|googletv|android.?tv|aft\w+|roku|xbox|playstation|\bshield\b/i.test(agent);
-  var handheld = /android|iphone|ipad|ipod|mobile/i.test(agent);
-  if (!tv && (handheld || !window.matchMedia || !window.matchMedia('(min-width: 800px)').matches)) {
-    intro.classList.add('brand-intro--mobile');
+  function selectIntro() {
+    // Use the layout viewport so split-screen and foldable displays follow their available width.
+    var wide = window.matchMedia
+      ? window.matchMedia('(min-width: 640px)').matches
+      : root.clientWidth >= 640;
+    intro.classList.toggle('brand-intro--mobile', !wide);
   }
+  selectIntro();
   if (tv) root.classList.add('entry-tv');
 
   function showFallback() {
@@ -24,6 +28,7 @@
   var deadline = window.setTimeout(showFallback, 7500);
   var controller = window.portfolioEntry = {
     failed: false,
+    selectIntro: selectIntro,
     fallback: showFallback,
     loadingShift: function () { deadline = window.setTimeout(showFallback, 12000); },
     ready: function () { window.clearTimeout(deadline); }

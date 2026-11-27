@@ -48,6 +48,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const intro = document.querySelector('#brand-intro');
   const entry = window.portfolioEntry;
   if (entry?.failed) return;
+  entry?.selectIntro();
   const motion = !matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (motion) {
     const languageScreen = document.querySelector('#language-screen');
