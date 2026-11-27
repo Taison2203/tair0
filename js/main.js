@@ -28,7 +28,7 @@ import { initVisitorGuide } from './components/visitorGuide.js?v=reception-20261
 import { initBoard } from './components/board.js?v=tonal-shift-1';
 import { initSecrets } from './components/secrets.js?v=reception-20261119';
 import { initReactions } from './components/reactions.js?v=reception-20261119';
-import { playBrandSound } from './audio/brandSound.js?v=5';
+import { playBrandSound } from './audio/brandSound.js?v=6';
 
 async function loadRequiredFonts() {
   if (!document.fonts?.load) return;
@@ -46,18 +46,33 @@ document.addEventListener('DOMContentLoaded', async () => {
   initReceipts(audio);
   initCaptureProtection(audio);
   const intro = document.querySelector('#brand-intro');
+  const entry = window.portfolioEntry;
+  if (entry?.failed) return;
   const motion = !matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (motion) {
     const languageScreen = document.querySelector('#language-screen');
-    const desktop = matchMedia('(min-width: 800px) and (pointer: fine)').matches;
-    languageScreen.inert = true;
-    const finishSound = playBrandSound(intro, { desktop });
-    await stepAnim(intro, 'is-playing', desktop ? 3710 : 2110);
-    finishSound?.();
-    languageScreen.inert = false;
+    const desktop = !intro.classList.contains('brand-intro--mobile');
+    languageScreen.setAttribute('inert', '');
+    let finishSound;
+    try {
+      finishSound = playBrandSound(intro, { desktop });
+    } catch {
+      // An unavailable audio implementation must never block entry.
+    }
+    try {
+      await stepAnim(intro, 'is-playing', desktop ? 3710 : 2310);
+    } finally {
+      intro.hidden = true;
+      languageScreen.removeAttribute('inert');
+      try { finishSound?.(); } catch { /* Optional audio cleanup. */ }
+    }
   }
   intro.hidden = true;
-  await chooseLanguage();
+  if (entry?.failed) return;
+  const selectedLanguage = chooseLanguage();
+  entry?.ready();
+  await selectedLanguage;
+  entry?.loadingShift();
   const duplicateButton = document.querySelector('.dup-btn');
   duplicateButton?.querySelectorAll('br').forEach(br => br.replaceWith(document.createTextNode(' ')));
   if (duplicateButton) document.querySelector('.site-footer__tools')?.append(duplicateButton);
@@ -81,7 +96,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (skillCount) skillCount.textContent = String(CONTENT.workPass.length).padStart(2, '0');
 
   try {
-    await loadRequiredFonts();
+    await Promise.race([loadRequiredFonts(), new Promise(resolve => setTimeout(resolve, 1800))]);
     const deskPhoto = document.querySelector('[data-desk-photo]');
     if (deskPhoto) deskPhoto.replaceChildren(await makePortrait(CONTENT.passport.photo, 32, 42, CONTENT.passport.pixelArt));
     for (const portrait of document.querySelectorAll('[data-portrait-sound]')) {
@@ -111,15 +126,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     initPenalty({ audio, isShiftActive: () => document.body.dataset.phase === 'shift' });
 
     startScreen.updateProgress(1);
+    if (entry?.failed) return;
     startScreen.setReady();
+    entry?.ready();
     document.body.dataset.phase = 'ready';
     // Effects can synthesize on demand while the cached versions render.
     void audio.preload().catch(() => {});
   } catch (error) {
     console.error('[boot] required interface could not be prepared:', error);
-    startScreen.updateProgress(1);
-    startScreen.setReady();
-    document.body.dataset.phase = 'ready';
+    entry?.fallback();
+    return;
   }
 
   startScreen.onStart(async ({ muted }) => {

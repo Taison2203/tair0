@@ -5,28 +5,32 @@ export function playBrandSound(intro, { desktop }) {
   let context;
   try { context = new Audio(); } catch { return; }
 
-  const listeners = new AbortController();
   const startedAt = performance.now();
   let played = false;
+  let ended = false;
   function play() {
-    if (played || context.state !== 'running') return;
+    if (ended || played || context.state !== 'running') return;
     played = true;
-    listeners.abort();
+    intro.removeEventListener('pointerdown', unlock);
+    intro.removeEventListener('click', unlock);
     if (desktop) {
       playAir(context, (performance.now() - startedAt) / 1000);
       return;
     }
+    const elapsed = (performance.now() - startedAt) / 1000;
     const start = context.currentTime + .025;
     const timbre = context.createPeriodicWave(
       new Float32Array(4),
       new Float32Array([0, 1, .24, .07])
     );
-    const notes = [[392, 0, .42], [587.33, .17, .48], [783.99, .39, .62]];
+    const notes = [[329.63, .12, .39], [493.88, .31, .40], [659.25, .51, .48],
+      [987.77, .78, .5], [659.25, 1.64, .38]];
     for (const [frequency, offset, duration] of notes) {
+      if (offset < elapsed - .08) continue;
       const tone = context.createOscillator();
       tone.setPeriodicWave(timbre);
       const envelope = context.createGain();
-      const at = start + offset;
+      const at = start + Math.max(0, offset - elapsed);
       tone.frequency.setValueAtTime(frequency * .995, at);
       tone.frequency.exponentialRampToValueAtTime(frequency, at + .09);
       envelope.gain.setValueAtTime(.0001, at);
@@ -37,18 +41,20 @@ export function playBrandSound(intro, { desktop }) {
       tone.start(at);
       tone.stop(at + duration);
     }
-    setTimeout(() => { void context.close().catch(() => {}); }, 1150);
   }
 
   function unlock() {
-    if (played) return;
+    if (ended || played) return;
     void context.resume().then(play).catch(() => {});
   }
-  intro.addEventListener('click', unlock, { signal: listeners.signal });
+  intro.addEventListener('pointerdown', unlock);
+  intro.addEventListener('click', unlock);
   if (context.state === 'running') play();
   else unlock();
   return () => {
-    listeners.abort();
+    ended = true;
+    intro.removeEventListener('pointerdown', unlock);
+    intro.removeEventListener('click', unlock);
     if (context.state !== 'closed') void context.close().catch(() => {});
   };
 }
