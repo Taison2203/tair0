@@ -1,0 +1,46 @@
+name: Update shift news
+
+on:
+  schedule:
+    - cron: '17,47 * * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/shift-news.yml
+      - scripts/update-shift-news.py
+
+permissions:
+  contents: write
+
+concurrency:
+  group: shift-news
+  cancel-in-progress: false
+
+jobs:
+  publish-news:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build and publish the latest issue
+        shell: bash
+        run: |
+          set -euo pipefail
+          issue="$RUNNER_TEMP/shift-news.json"
+          worktree="$RUNNER_TEMP/news-feed"
+          python3 scripts/update-shift-news.py "$issue"
+          git worktree add --detach "$worktree" HEAD
+          if git ls-remote --exit-code --heads origin refs/heads/news-feed; then
+            git fetch origin refs/heads/news-feed
+            git -C "$worktree" switch --detach FETCH_HEAD
+          else
+            status=$?
+            if [ "$status" -ne 2 ]; then exit "$status"; fi
+            git -C "$worktree" switch --orphan published-news
+          fi
+          mkdir -p "$worktree/assets/data"
+          cp "$issue" "$worktree/assets/data/shift-news.json"
+          git -C "$worktree" add assets/data/shift-news.json
+          git -C "$worktree" -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'Update shift news'
+          git -C "$worktree" push origin HEAD:refs/heads/news-feed

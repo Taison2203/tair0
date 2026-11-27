@@ -8,7 +8,7 @@
   <meta name="description" content="Интерактивное портфолио Таира: пиксельный рабочий стол, личные дела, фотоархив и форма связи.">
   <meta name="theme-color" content="#1d221c">
   <meta name="referrer" content="no-referrer">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://tair-portfolio-api.q5yhpcm78q.chatgpt.site; font-src 'self'; connect-src 'self' https://tair-portfolio-api.q5yhpcm78q.chatgpt.site; media-src 'self' blob: data:; object-src 'none'; base-uri 'self'; form-action 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://tair-portfolio-api.q5yhpcm78q.chatgpt.site; font-src 'self'; connect-src 'self' https://tair-portfolio-api.q5yhpcm78q.chatgpt.site https://raw.githubusercontent.com/Taison2203/tair0/news-feed/assets/data/shift-news.json; media-src 'self' blob: data:; object-src 'none'; base-uri 'self'; form-action 'none'">
   <link rel="canonical" href="https://tair0.me/">
   <meta property="og:url" content="https://tair0.me/">
   <meta property="og:type" content="website">
@@ -37,7 +37,7 @@
   <link rel="stylesheet" href="css/access.css?v=adaptive-entry-1">
   <link rel="stylesheet" href="css/sound-archive.css?v=shift-player-1">
   <link rel="stylesheet" href="css/board.css?v=owner-music-1">
-  <link rel="stylesheet" href="css/refinements.css?v=desktop-scrollbars-1">
+  <link rel="stylesheet" href="css/refinements.css?v=desk-edition-1">
   <link rel="stylesheet" href="css/reactions.css?v=reactions-1">
   <link rel="stylesheet" href="css/visitor-guide.css?v=guide-20261119">
 </head>
@@ -172,11 +172,14 @@
     </div>
 
     <!-- Канцелярия и тайная записка -->
-    <button class="clip clip--b" type="button" aria-label="Открыть секретную записку EZIC">
-      <span class="secret-note__tag">НАЙДЕННАЯ ЗАПИСКА</span>
-      <strong class="secret-note__title">Прочитать</strong>
-      <span class="secret-note__hint">КОНТАКТ EZIC · НАЖМИТЕ</span>
-    </button>
+    <div class="desk-dispatches">
+      <button class="clip clip--b" type="button" aria-label="Открыть секретную записку EZIC">
+        <span class="secret-note__tag">НАЙДЕННАЯ ЗАПИСКА</span>
+        <strong class="secret-note__title">Прочитать</strong>
+        <span class="secret-note__hint">КОНТАКТ EZIC · НАЖМИТЕ</span>
+      </button>
+
+    </div>
 
     <button class="news-button" type="button" data-news-open aria-haspopup="dialog" aria-controls="news-reader" aria-expanded="false">
       <span class="news-button__icon" aria-hidden="true">▤</span>
@@ -253,6 +256,7 @@
       <button class="doc__close" aria-label="Закрыть паспорт">[X] ВЕРНУТЬ</button>
       <article class="passport pxframe">
         <header class="passport__header">
+          <img class="passport__crest" src="assets/img/eagle.svg" alt="" width="40" height="32">
           <h2 id="passport-title">ПАСПОРТ ГРАЖДАНИНА</h2>
         <div class="passport__docno">АРСТОТЦКА · <span data-passport-number></span></div>
         </header>
@@ -262,8 +266,6 @@
         </div>
         <div class="passport__barcode" aria-hidden="true"></div>
         <div class="passport__stamps" aria-hidden="true"></div>
-        <button class="passport__verify" type="button" data-verify-passport>ПОПРОБОВАТЬ РАБОТУ ИНСПЕКТОРА</button>
-        <p class="passport__verification">Сравните документы трёх посетителей в учебной смене.</p>
       </article>
     </dialog>
 
@@ -445,6 +447,6 @@
   </section>
   <noscript><style>#brand-intro, #language-screen, #start-screen, #desk { display: none !important; } #compatible-portfolio[hidden] { display: block !important; }</style></noscript>
   <script src="js/entry-guard.js?v=width-1"></script>
-  <script type="module" src="js/main.js?v=width-1"></script>
+  <script type="module" src="js/main.js?v=desk-edition-1"></script>
 </body>
 </html>

@@ -71,6 +71,7 @@ export function initBook(audio) {
 
   /* Render TOC view into Right Page */
   function renderTOC() {
+    tabsContainer.hidden = true;
     rightPage.replaceChildren();
 
     const title = el('h2', { class: 'page__title' }, 'СОДЕРЖАНИЕ');
@@ -146,6 +147,7 @@ export function initBook(audio) {
   function renderSection(tabKey) {
     const tabData = CONTENT.tabs.find((t) => t.key === tabKey);
     if (!tabData) return renderTOC();
+    tabsContainer.hidden = false;
 
     rightPage.replaceChildren();
 

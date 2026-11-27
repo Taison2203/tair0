@@ -1,10 +1,42 @@
-/** Poll the local, source-filtered news endpoint without blocking the handbook. */
+/** Read the latest publisher issue without blocking the handbook. */
 
 import { el } from '../core/dom.js?v=reception-20261119';
 import { apiFetch } from '../core/api.js?v=reception-20261119';
 import { getLocale } from '../core/i18n.js?v=reception-20261119';
 
 const REFRESH_MS = 15 * 60 * 1000;
+const ISSUE_MAX_AGE = 24 * 60 * 60 * 1000;
+const PUBLISHED_ISSUE = 'https://raw.githubusercontent.com/Taison2203/tair0/news-feed/assets/data/shift-news.json';
+
+async function readIssue(force) {
+  const options = () => ({
+    headers: { Accept: 'application/json' },
+    cache: 'no-store',
+    signal: AbortSignal.timeout?.(4500),
+  });
+  const sources = [
+    () => fetch(PUBLISHED_ISSUE, options()),
+    () => apiFetch('/api/news' + (force ? '?refresh=1' : ''), options()),
+    () => fetch(new URL('../../assets/data/shift-news.json', import.meta.url), options()),
+  ];
+  let saved;
+  for (const load of sources) {
+    try {
+      const response = await load();
+      if (!response.ok) continue;
+      const data = await response.json();
+      const checked = Date.parse(data.checkedAt);
+      const items = readableItems([...readableItems(data.context), ...readableItems(data.items)]);
+      if (!items.length || !Number.isFinite(checked)) continue;
+      const fresh = data.live && Date.now() - checked < ISSUE_MAX_AGE;
+      const issue = { ...data, items, live: Boolean(fresh) };
+      if (fresh) return issue;
+      if (!saved || checked > Date.parse(saved.checkedAt)) saved = issue;
+    } catch { /* Try the next source. */ }
+  }
+  if (saved) return saved;
+  throw new Error('News feed unavailable');
+}
 
 function readableItems(items) {
   if (!Array.isArray(items)) return [];
@@ -79,6 +111,7 @@ export function initNews(audio) {
   };
   let activeRequest = null;
   let lastUpdate = 0;
+  let displayedIssueTime = 0;
   function writeUpdated(value) {
     updated.textContent = value ? formatDate(value) + ' · ' + new Intl.DateTimeFormat(getLocale(), {
       hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Qyzylorda',
@@ -89,6 +122,7 @@ export function initNews(audio) {
     if (saved?.items?.length && Number.isFinite(Date.parse(saved.checkedAt)) && Date.now()-Date.parse(saved.checkedAt)<24*60*60*1000) {
       renderContext(readableItems(saved.items));
       writeUpdated(saved.checkedAt);
+      displayedIssueTime = Date.parse(saved.checkedAt);
     }
   } catch { /* storage is optional; the live feed still works */ }
 
@@ -103,19 +137,13 @@ export function initNews(audio) {
 
     activeRequest = (async () => {
       try {
-        const response = await apiFetch('/api/news' + (force ? '?refresh=1' : ''), {
-          headers: { Accept: 'application/json' },
-          cache: 'no-store',
-          signal: AbortSignal.timeout(12000),
-        });
-        if (!response.ok) throw new Error('news feed unavailable');
-        const data = await response.json();
-        const context = readableItems(data.context);
-        const items = readableItems(data.items);
-        if (data.live || items.length || context.length) {
-          renderContext([...context, ...items]);
+        const data = await readIssue(force);
+        const items = data.items;
+        if (Date.parse(data.checkedAt) >= displayedIssueTime) {
+          renderContext(items);
           writeUpdated(data.checkedAt);
-          try { localStorage.setItem('post-news-kz-v2', JSON.stringify({ items: [...context, ...items], checkedAt: data.checkedAt })); } catch { /* storage may be unavailable */ }
+          displayedIssueTime = Date.parse(data.checkedAt);
+          try { localStorage.setItem('post-news-kz-v2', JSON.stringify({ items, checkedAt: data.checkedAt })); } catch { /* Optional storage. */ }
         }
         lastUpdate = Date.now();
         if (force) audio?.play(data.live ? 'newsArrived' : 'warning');

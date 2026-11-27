@@ -179,6 +179,5 @@ export function initInspection(audio) {
     if (document.body.dataset.phase === 'shift') bus.emit('doc:open', { key: 'inspection' });
   }
   scanner?.addEventListener('click', open);
-  document.querySelector('[data-verify-passport]')?.addEventListener('click', open);
   renderVisitor();
 }

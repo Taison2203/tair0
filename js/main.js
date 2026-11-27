@@ -11,21 +11,21 @@ import {
   createScanner, initMuteButton,
 } from './components/desk.js?v=reception-20261119';
 import { initStartScreen } from './components/startScreen.js?v=entry-polish';
-import { initBook } from './components/book.js?v=entry-polish';
+import { initBook } from './components/book.js?v=desk-edition-1';
 import { initDocuments } from './components/documents.js?v=reception-20261119';
 import { initReceipts } from './components/receipts.js?v=reception-20261119';
-import { initNews } from './components/news.js?v=direct-feeds';
+import { initNews } from './components/news.js?v=desk-edition-1';
 import { initEzic, initPenalty } from './components/ezic.js?v=reception-20261119';
 import { bus } from './core/bus.js?v=reception-20261119';
 import { CONTENT } from './config/content.js?v=reception-20261119';
 import { makePortrait } from './core/pixelate.js?v=reception-20261119';
-import { initShift } from './components/shift.js?v=reception-20261119';
+import { initShift } from './components/shift.js?v=desk-edition-1';
 import { initAtmosphere } from './components/atmosphere.js?v=reception-20261119';
 import { chooseLanguage } from './core/i18n.js?v=reception-20261119';
 import { stepAnim } from './core/dom.js?v=brand-crossfade';
 import { initCaptureProtection } from './components/captureProtection.js?v=reception-20261119';
 import { initVisitorGuide } from './components/visitorGuide.js?v=reception-20261119';
-import { initBoard } from './components/board.js?v=tonal-shift-1';
+import { initBoard } from './components/board.js?v=desk-edition-1';
 import { initSecrets } from './components/secrets.js?v=reception-20261119';
 import { initReactions } from './components/reactions.js?v=reception-20261119';
 import { playBrandSound } from './audio/brandSound.js?v=8';
@@ -165,7 +165,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       document.querySelector('.tab[data-tab="' + requestedDoc + '"]')?.focus({ preventScroll: true });
       bus.emit('tab:select', { key: requestedDoc });
     } else {
-      document.querySelector('.book__tabs .tab')?.focus({ preventScroll: true });
+      document.querySelector('.toc .chip')?.focus({ preventScroll: true });
     }
 
     window.setTimeout(() => {

@@ -47,7 +47,7 @@ export function initBoard(audio,music){
   board.append(node('div',{class:'board-topbar'},node('header',{class:'board-header'},node('p',{class:'board-kicker',text:words('ЛИЧНЫЙ АРХИВ · ТАИР','PERSONAL ARCHIVE · TAIR')}),heading,sub),node('div',{class:'board-tools'},refresh,owner,archive)),status,panel,list);
   dialog.append(close,board);document.body.append(dialog);
   const openButton=node('button',{type:'button',class:'board-invitation','aria-haspopup':'dialog',onClick:open},node('span',{class:'board-invitation__pin','aria-hidden':'true'}),node('span',{class:'board-invitation__title',text:words('ДОСКА ОБЪЯВЛЕНИЙ','NOTICEBOARD')}),node('span',{class:'board-invitation__description',text:words('Заметки и обновления Таира · открыть','Tair’s notes and updates · open')}));
-  document.querySelector('#desk').append(openButton);
+  document.querySelector('.desk-dispatches').append(openButton);
   async function request(path,options={},token=session){
     const headers=new Headers(options.headers);if(token)headers.set('Authorization','Bearer '+token);
     let r;try{r=await fetch(API+path,{...options,headers,credentials:'omit',referrerPolicy:'no-referrer',signal:AbortSignal.timeout(25000)});}catch{throw Error(words('Нет связи с приёмной. Проверьте интернет и повторите позже.','Could not reach the reception. Check your connection and try later.'));}
