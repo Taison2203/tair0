@@ -1,4 +1,4 @@
-import { THEMES } from './shiftScores.js?v=tonal-shift-1';
+import { THEMES } from './shiftScores.js?v=archive-phrase-1';
 
 const BAR_STEPS = 16;
 const LOOKAHEAD = .16;

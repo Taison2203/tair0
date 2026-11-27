@@ -11,7 +11,7 @@ import {
 import { makePortrait } from '../core/pixelate.js?v=reception-20261119';
 import { bus } from '../core/bus.js?v=reception-20261119';
 import { CONTENT } from '../config/content.js?v=reception-20261119';
-import { t } from '../core/i18n.js?v=reception-20261119';
+import { getLocale, t } from '../core/i18n.js?v=reception-20261119';
 import { initContact } from './contact.js?v=reception-20261119';
 import { initGallery } from './gallery.js?v=reception-20261119';
 
@@ -185,6 +185,7 @@ export async function initDocuments(audio) {
     const fields = passport.querySelector('.passport__fields');
     if (fields) {
       const ageAtIssue = CONTENT.passport.issueYear - CONTENT.passport.birthYear;
+      const english = getLocale() === 'en-GB';
       const values = [
         ['ФАМИЛИЯ:', CONTENT.owner.surname || el('span', { class: 'classified', 'aria-label': 'Фамилия засекречена' }, 'ЗАСЕКРЕЧЕНО')],
         ['ИМЯ:', CONTENT.owner.givenName],
@@ -193,7 +194,10 @@ export async function initDocuments(audio) {
         ['ВОЗРАСТ:', String(ageAtIssue)],
         ['РОСТ:', `${CONTENT.passport.heightCm} СМ`],
         ['ГОРОД:', CONTENT.passport.documentCity],
-        ['СПЕЦИАЛЬНОСТЬ:', CONTENT.passport.major],
+        [english ? 'EDUCATION:' : 'ОБРАЗОВАНИЕ:', [
+          CONTENT.passport.major,
+          ...(english ? ['Web designer', 'Programmer', 'Vibe coder'] : ['Веб дизайнер', 'программист', 'вайбкодер']),
+        ].map(t).join(', ')],
         ['ВЫДАН:', String(CONTENT.passport.issueYear)],
       ];
       fields.replaceChildren(el('dl', {}, ...values.flatMap(([label, value]) => [

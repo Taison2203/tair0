@@ -3,7 +3,7 @@
 import { AudioEngine } from './audio/engine.js?v=reception-20261119';
 import { initSoundArchive } from './components/soundArchive.js?v=reception-20261119';
 import { SFX } from './audio/sfx.js?v=portrait-honk';
-import { Music } from './audio/music.js?v=tonal-shift-1';
+import { Music } from './audio/music.js?v=archive-phrase-1';
 import { initShiftMusic } from './components/shiftMusic.js?v=shift-player-1';
 import { initScale } from './core/scale.js?v=reception-20261119';
 import {
@@ -12,7 +12,7 @@ import {
 } from './components/desk.js?v=reception-20261119';
 import { initStartScreen } from './components/startScreen.js?v=entry-polish';
 import { initBook } from './components/book.js?v=desk-edition-1';
-import { initDocuments } from './components/documents.js?v=reception-20261119';
+import { initDocuments } from './components/documents.js?v=education-1';
 import { initReceipts } from './components/receipts.js?v=reception-20261119';
 import { initNews } from './components/news.js?v=desk-edition-1';
 import { initEzic, initPenalty } from './components/ezic.js?v=reception-20261119';
@@ -25,7 +25,7 @@ import { chooseLanguage } from './core/i18n.js?v=reception-20261119';
 import { stepAnim } from './core/dom.js?v=brand-crossfade';
 import { initCaptureProtection } from './components/captureProtection.js?v=reception-20261119';
 import { initVisitorGuide } from './components/visitorGuide.js?v=reception-20261119';
-import { initBoard } from './components/board.js?v=desk-edition-1';
+import { initBoard } from './components/board.js?v=desk-edition-2';
 import { initSecrets } from './components/secrets.js?v=reception-20261119';
 import { initReactions } from './components/reactions.js?v=reception-20261119';
 import { playBrandSound } from './audio/brandSound.js?v=8';

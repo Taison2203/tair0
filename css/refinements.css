@@ -98,3 +98,11 @@ button:disabled{cursor:wait}dialog{overscroll-behavior:contain}
 #doc-passport .passport__fields dl { gap: 6px 12px; }
 #doc-passport .passport__fields dd { border-bottom: 1px dotted #92885d; }
 #doc-passport .passport__barcode { border-top: 1px solid #92885d; padding-top: 4px; height: auto; }
+
+/* The footer and trainer share the row immediately below the book. */
+@media (min-width: 1000px) {
+  #desk > .site-footer { grid-area: 3 / 2; align-self: start; min-width: 0; }
+}
+@media (min-width: 1000px) and (max-width: 1199px) {
+  #desk > .site-footer { grid-column: 1; }
+}
