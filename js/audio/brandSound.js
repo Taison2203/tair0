@@ -6,7 +6,7 @@ export function playBrandSound(intro, { desktop }) {
   try { context = new Audio(); } catch { return; }
 
   const startedAt = performance.now();
-  const mobileMix = desktop ? null : fetch(new URL('../../assets/audio/mobile-intro.wav', import.meta.url))
+  const mobileMix = desktop ? null : fetch(new URL('../../assets/audio/mobile-intro.wav?v=soft-glass', import.meta.url))
     .then(response => {
       if (!response.ok) throw new Error('Intro audio unavailable');
       return response.arrayBuffer();
