@@ -1,5 +1,5 @@
 // Calendar boundaries in Kazakhstan (UTC+05:00).
-const winterStart = Date.parse('2026-12-01T00:00:00+05:00');
+const winterStart = Date.parse('2026-11-28T00:00:00+05:00');
 const holidayEnd = Date.parse('2027-01-15T00:00:00+05:00');
 const winterEnd = Date.parse('2027-03-01T00:00:00+05:00');
 

@@ -30,7 +30,7 @@ import { initBoard } from './components/board.js?v=desk-edition-2';
 import { initSecrets } from './components/secrets.js?v=reception-20261119';
 import { initReactions } from './components/reactions.js?v=reception-20261119';
 import { playBrandSound } from './audio/brandSound.js?v=winter-1';
-import { getSeason } from './core/season.js';
+import { getSeason } from './core/season.js?v=early-launch';
 import { addWinterCard, decorateWinter, initWinterSecrets } from './components/winter.js?v=snow-4';
 
 async function loadRequiredFonts() {
