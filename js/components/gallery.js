@@ -31,15 +31,23 @@ function paintPreview(canvas, photo) {
     // The public PNG already contains a flattened watermark. No clean original
     // is supplied to the renderer; browser restrictions are only an extra deterrent.
   };
+  const standard = 'assets/img/gallery/preview-' + photo.id + '.png?v=photo02-replaced-1';
   source.onerror = () => {
     if (canvas.dataset.photo !== photo.id) return;
+    if (source.getAttribute('src') !== standard) {
+      source.src = standard;
+      return;
+    }
     const c = canvas.getContext('2d');
     c.fillStyle = '#252820'; c.fillRect(0, 0, 384, 512);
     c.fillStyle = '#d8cf9b'; c.font = '14px monospace';
     c.fillText(t('Фото временно недоступно'), 30, 256);
   };
   canvas.dataset.photo = photo.id;
-  source.src = 'assets/img/gallery/preview-' + photo.id + '.png?v=photo02-replaced-1';
+  const season = document.documentElement.dataset.season;
+  source.src = season === 'winter' || season === 'holiday'
+    ? 'assets/img/gallery/winter/preview-' + photo.id + '.png?v=winter-2'
+    : standard;
 }
 
 export function protectedPhoto(id, label = '') {

@@ -3,7 +3,8 @@
 import { AudioEngine } from './audio/engine.js?v=reception-20261119';
 import { initSoundArchive } from './components/soundArchive.js?v=reception-20261119';
 import { SFX } from './audio/sfx.js?v=portrait-honk';
-import { Music } from './audio/music.js?v=archive-phrase-1';
+import { Music } from './audio/music.js?v=winter-1';
+import { WINTER_THEMES } from './audio/shiftScores.js?v=winter-1';
 import { initShiftMusic } from './components/shiftMusic.js?v=shift-player-1';
 import { initScale } from './core/scale.js?v=reception-20261119';
 import {
@@ -11,8 +12,8 @@ import {
   createScanner, initMuteButton,
 } from './components/desk.js?v=reception-20261119';
 import { initStartScreen } from './components/startScreen.js?v=entry-polish';
-import { initBook } from './components/book.js?v=desk-edition-1';
-import { initDocuments } from './components/documents.js?v=education-1';
+import { initBook } from './components/book.js?v=winter-3';
+import { initDocuments } from './components/documents.js?v=winter-3';
 import { initReceipts } from './components/receipts.js?v=reception-20261119';
 import { initNews } from './components/news.js?v=desk-edition-1';
 import { initEzic, initPenalty } from './components/ezic.js?v=reception-20261119';
@@ -21,14 +22,16 @@ import { CONTENT } from './config/content.js?v=reception-20261119';
 import { makePortrait } from './core/pixelate.js?v=reception-20261119';
 import { initShift } from './components/shift.js?v=desk-edition-1';
 import { initAtmosphere } from './components/atmosphere.js?v=reception-20261119';
-import { chooseLanguage } from './core/i18n.js?v=reception-20261119';
+import { chooseLanguage, getLanguage } from './core/i18n.js?v=reception-20261119';
 import { stepAnim } from './core/dom.js?v=brand-crossfade';
 import { initCaptureProtection } from './components/captureProtection.js?v=reception-20261119';
 import { initVisitorGuide } from './components/visitorGuide.js?v=reception-20261119';
 import { initBoard } from './components/board.js?v=desk-edition-2';
 import { initSecrets } from './components/secrets.js?v=reception-20261119';
 import { initReactions } from './components/reactions.js?v=reception-20261119';
-import { playBrandSound } from './audio/brandSound.js?v=8';
+import { playBrandSound } from './audio/brandSound.js?v=winter-1';
+import { getSeason } from './core/season.js';
+import { addWinterCard, decorateWinter, initWinterSecrets } from './components/winter.js?v=snow-4';
 
 async function loadRequiredFonts() {
   if (!document.fonts?.load) return;
@@ -41,6 +44,10 @@ async function loadRequiredFonts() {
 
 document.addEventListener('DOMContentLoaded', async () => {
   document.body.dataset.phase = 'boot';
+  const season = getSeason(Date.now(), window.location);
+  const winter = season !== 'default';
+  document.documentElement.dataset.season = season;
+  const gust = winter ? decorateWinter() : null;
   initScale();
   const audio = new AudioEngine(SFX);
   initReceipts(audio);
@@ -56,7 +63,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     languageScreen.setAttribute('inert', '');
     let finishSound;
     try {
-      finishSound = playBrandSound(intro, { desktop });
+      finishSound = playBrandSound(intro, { desktop, winter });
     } catch {
       // An unavailable audio implementation must never block entry.
     }
@@ -78,7 +85,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   duplicateButton?.querySelectorAll('br').forEach(br => br.replaceWith(document.createTextNode(' ')));
   if (duplicateButton) document.querySelector('.site-footer__tools')?.append(duplicateButton);
   const startScreen = initStartScreen();
-  const music = new Music(audio);
+  const music = winter ? new Music(audio, { themes: WINTER_THEMES }) : new Music(audio);
 
   makeDeskTexture();
   makeGrainTexture();
@@ -114,6 +121,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (field) field.textContent = value;
     });
     initBook(audio);
+    if (season === 'holiday') addWinterCard(audio, getLanguage());
+    if (winter) initWinterSecrets(audio, getLanguage(), gust);
     initNews(audio);
     initSoundArchive(audio);
     initShiftMusic(music, audio);

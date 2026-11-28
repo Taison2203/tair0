@@ -7,7 +7,7 @@ import { $, el, stepAnim } from '../core/dom.js?v=reception-20261119';
 import { bus } from '../core/bus.js?v=reception-20261119';
 import { CONTENT } from '../config/content.js?v=reception-20261119';
 import { getLanguage } from '../core/i18n.js?v=reception-20261119';
-import { protectedPhoto } from './gallery.js?v=reception-20261119';
+import { protectedPhoto } from './gallery.js?v=winter-3';
 
 export function initBook(audio) {
   const bookEl = $('.book');

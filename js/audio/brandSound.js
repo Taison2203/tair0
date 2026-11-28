@@ -1,12 +1,14 @@
+import { playWinterBells } from './winterBells.js';
+
 /** Sound follows the active intro, including when playback unlocks during it. */
-export function playBrandSound(intro, { desktop }) {
+export function playBrandSound(intro, { desktop, winter = false }) {
   const Audio = window.AudioContext || window.webkitAudioContext;
   if (!Audio) return;
   let context;
   try { context = new Audio(); } catch { return; }
 
   const startedAt = performance.now();
-  const mobileMix = desktop ? null : fetch(new URL('../../assets/audio/mobile-intro.wav?v=soft-glass', import.meta.url))
+  const mobileMix = desktop || winter ? null : fetch(new URL('../../assets/audio/mobile-intro.wav?v=soft-glass', import.meta.url))
     .then(response => {
       if (!response.ok) throw new Error('Intro audio unavailable');
       return response.arrayBuffer();
@@ -20,6 +22,10 @@ export function playBrandSound(intro, { desktop }) {
     played = true;
     intro.removeEventListener('pointerdown', unlock);
     intro.removeEventListener('click', unlock);
+    if (winter) {
+      playWinterBells(context, desktop ? 'desktop' : 'mobile', (performance.now() - startedAt) / 1000);
+      return;
+    }
     if (desktop) {
       playAir(context, (performance.now() - startedAt) / 1000);
       return;

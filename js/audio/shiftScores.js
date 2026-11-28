@@ -105,3 +105,15 @@ function arrange([id, title, titleEn, bpm, rhythm, lead, mode, theme, reply]) {
 }
 
 export const THEMES = scores.map(arrange);
+
+export const WINTER_THEMES = [
+  ['snow-over-pavlton','Снег над Павлтоном','Snow over Pavlton',76,'sustain','bell','major',
+    ['F 5:2 8:1 7:1 5:2 3:2','Bb 4:3 6:1 8:2 6:2','Gm 4:2 6:2 9:3 6:1','C 7:2 5:1 4:1 2:4'],
+    ['Dm 6:2 8:2 10:2 8:2','F 7:1 5:1 3:2 5:4']],
+  ['last-december-shift','Последняя смена декабря','Last Shift of December',68,'rail','flute','minor',
+    ['Dm 3:3 1:1 5:4','Bb 6:2 5:1 3:1 1:4','Gm 4:2 6:1 8:1 6:2 4:2','C 7:2 2:2 1:4'],
+    ['F 3:1 5:1 8:4 7:2','Gm 6:2 4:1 3:1 4:4']],
+  ['lights-at-the-post','Огоньки на посту','Lights at the Post',112,'bounce','reed','major',
+    ['F 1:1 3:1 5:2 8:1 5:1 3:2','C 2:1 5:1 7:2 9:1 7:1 5:2','Bb 4:2 6:1 4:1 8:2 6:2','F 5:1 4:1 3:2 1:4'],
+    ['Dm 6:1 8:1 10:2 8:2 6:2','C 9:2 7:1 5:1 7:2 2:2']],
+].map(arrange);

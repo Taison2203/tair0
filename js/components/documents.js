@@ -13,7 +13,7 @@ import { bus } from '../core/bus.js?v=reception-20261119';
 import { CONTENT } from '../config/content.js?v=reception-20261119';
 import { getLocale, t } from '../core/i18n.js?v=reception-20261119';
 import { initContact } from './contact.js?v=reception-20261119';
-import { initGallery } from './gallery.js?v=reception-20261119';
+import { initGallery } from './gallery.js?v=winter-3';
 
 const VALID_DOCS = new Set(['passport', 'pass', 'cases', 'contact', 'gallery', 'inspection']);
 const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;

@@ -1,4 +1,4 @@
-import { THEMES } from './shiftScores.js?v=archive-phrase-1';
+import { THEMES, WINTER_THEMES } from './shiftScores.js?v=winter-1';
 
 const BAR_STEPS = 16;
 const LOOKAHEAD = .16;
@@ -14,9 +14,10 @@ const CHORDS = {
   C:  { bass: 36, arp: [52, 55, 60, 55] },
 };
 
-export const MUSIC_TRACKS = THEMES.map(({ id, title, titleEn, bpm, bars }) => ({
+export const MUSIC_TRACKS = [...THEMES, ...WINTER_THEMES].map(({ id, title, titleEn, bpm, bars }) => ({
   id, title, titleEn, bpm, duration: bars.length * 240 / bpm,
 }));
+const trackById = new Map(MUSIC_TRACKS.map(track => [track.id, track]));
 const mtof = midi => 440 * 2 ** ((midi - 69) / 12);
 
 function makePulse(context, duty) {
@@ -48,30 +49,31 @@ function makeNoise(context) {
 }
 
 export class Music extends EventTarget {
-  constructor(engine) {
+  constructor(engine, { themes = THEMES } = {}) {
     super();
     this.e = engine;
+    this.themes = themes;
     this.step = 0;
     this.next = 0;
     this.timer = null;
     this.voices = new Set();
     this.resources = null;
-    this.themeIndex = Math.floor(Math.random() * THEMES.length);
+    this.themeIndex = Math.floor(Math.random() * this.themes.length);
     this.previewState = null;
     this.onTrackEnd = null;
     this.soundingIndex = this.themeIndex;
     this.pendingTrack = null;
   }
 
-  get currentTrack() { return MUSIC_TRACKS[this.soundingIndex]; }
-  get nextTrack() { return MUSIC_TRACKS[(this.soundingIndex + 1) % THEMES.length]; }
+  get currentTrack() { return trackById.get(this.themes[this.soundingIndex].id); }
+  get nextTrack() { return trackById.get(this.themes[(this.soundingIndex + 1) % this.themes.length].id); }
   get playing() { return this.timer !== null && !this.previewState; }
 
   skip() {
     if (this.previewState) return;
     const playing = this.playing;
     this.stop();
-    this.themeIndex = (this.soundingIndex + 1) % THEMES.length;
+    this.themeIndex = (this.soundingIndex + 1) % this.themes.length;
     this.soundingIndex = this.themeIndex;
     this.step = 0;
     if (playing) this.start();
@@ -124,7 +126,8 @@ export class Music extends EventTarget {
   }
 
   async preview(id, { onEnd } = {}) {
-    const themeIndex = THEMES.findIndex(theme => theme.id === id);
+    const library = [...THEMES, ...WINTER_THEMES];
+    const themeIndex = library.findIndex(theme => theme.id === id);
     const AudioContext = globalThis.AudioContext || globalThis.webkitAudioContext;
     if (themeIndex < 0 || !AudioContext) return false;
     let context;
@@ -158,7 +161,7 @@ export class Music extends EventTarget {
       const volume = context.createGain();
       volume.gain.value = this.e.volume?.music || .75;
       musicBus.connect(volume).connect(context.destination);
-      const player = new Music({ ctx: context, musicBus });
+      const player = new Music({ ctx: context, musicBus }, { themes: library });
       state.player = player;
       player.themeIndex = themeIndex;
       player.onTrackEnd = () => {
@@ -202,7 +205,7 @@ export class Music extends EventTarget {
       this.pendingTrack = null;
       this.dispatchEvent(new Event('change'));
     }
-    if (this.onTrackEnd && this.step === THEMES[this.themeIndex].bars.length * BAR_STEPS) {
+    if (this.onTrackEnd && this.step === this.themes[this.themeIndex].bars.length * BAR_STEPS) {
       if (ctx.currentTime >= this.next) this.onTrackEnd();
       return;
     }
@@ -211,11 +214,11 @@ export class Music extends EventTarget {
       this.next = ctx.currentTime + .08;
     }
     while (this.next < ctx.currentTime + LOOKAHEAD) {
-      const theme = THEMES[this.themeIndex];
+      const theme = this.themes[this.themeIndex];
       if (this.step === 0 && this.themeIndex !== this.soundingIndex && !this.pendingTrack) {
         this.pendingTrack = { index: this.themeIndex, time: this.next };
       }
-      const nextTheme = THEMES[(this.themeIndex + 1) % THEMES.length];
+      const nextTheme = this.themes[(this.themeIndex + 1) % this.themes.length];
       const remaining = theme.bars.length * BAR_STEPS - this.step;
       const cross = this.onTrackEnd ? 0 : Math.max(0, 1 - remaining / 9);
       const bpm = theme.bpm + (nextTheme.bpm - theme.bpm) * cross;
@@ -235,7 +238,7 @@ export class Music extends EventTarget {
       if (++this.step === theme.bars.length * BAR_STEPS) {
         if (this.onTrackEnd) return;
         this.step = 0;
-        this.themeIndex = (this.themeIndex + 1) % THEMES.length;
+        this.themeIndex = (this.themeIndex + 1) % this.themes.length;
       }
     }
   }
@@ -254,6 +257,9 @@ export class Music extends EventTarget {
 
     const note = (voice, pitch, beats, gain) => this.tone(voice, pitch, time, beats * stepSeconds, gain * level);
     this.playBacking(theme.rhythm, chord, position, note);
+    if (theme.id === 'lights-at-the-post' && (position === 6 || position === 14)) {
+      note('bell', chord.arp[position === 6 ? 1 : 2] + 24, 2.4, .034);
+    }
     for (const [at, length, pitch] of melody) {
       if (at !== position) continue;
       const accent = at % 4 === 0 ? 1 : .8;

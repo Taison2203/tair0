@@ -1,4 +1,4 @@
-import { MUSIC_TRACKS } from '../audio/music.js?v=archive-phrase-1';
+import { MUSIC_TRACKS } from '../audio/music.js?v=winter-1';
 import { el } from '../core/dom.js?v=reception-20261119';
 import { getLanguage } from '../core/i18n.js?v=reception-20261119';
 
